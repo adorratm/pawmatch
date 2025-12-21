@@ -4,10 +4,8 @@
     "slug": "pawmatch",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#6a3f2a"
     },
@@ -20,17 +18,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#6a3f2a"
       },
       "package": "com.pawmatch.app"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
+    "scheme": "pawmatch",
     "plugins": [
       "expo-router"
     ]
   }
 }
-
