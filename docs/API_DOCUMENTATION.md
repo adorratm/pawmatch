@@ -501,3 +501,4 @@ Tüm hatalar aşağıdaki formatta döner:
 - `500` - Internal Server Error
 
 
+
