@@ -1,63 +1,77 @@
 import React, { useEffect } from 'react';
-import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from '../stores/authStore';
+import WelcomeScreen from '../screens/WelcomeScreen';
+import Onboarding1Screen from '../screens/Onboarding1Screen';
+import Onboarding2Screen from '../screens/Onboarding2Screen';
+import LoginScreen from '../screens/LoginScreen';
+import DiscoverScreen from '../screens/DiscoverScreen';
+import DiscoverMapScreen from '../screens/DiscoverMapScreen';
+import PetDetailScreen from '../screens/PetDetailScreen';
+import CreatePetProfileScreen from '../screens/CreatePetProfileScreen';
+import MatchesScreen from '../screens/MatchesScreen';
+import NewMatchNotificationScreen from '../screens/NewMatchNotificationScreen';
+import ConversationsScreen from '../screens/ConversationsScreen';
+import ChatScreen from '../screens/ChatScreen';
+import FilterScreen from '../screens/FilterScreen';
+import SuggestMeetingPointScreen from '../screens/SuggestMeetingPointScreen';
+import VeterinariansScreen from '../screens/VeterinariansScreen';
+import VeterinariansMapScreen from '../screens/VeterinariansMapScreen';
+import VeterinarianDetailScreen1 from '../screens/VeterinarianDetailScreen1';
+import VeterinarianDetailScreen2 from '../screens/VeterinarianDetailScreen2';
+import AppointmentHistoryScreen from '../screens/AppointmentHistoryScreen';
+import AppointmentManagementScreen from '../screens/AppointmentManagementScreen';
+import RatingScreen1 from '../screens/RatingScreen1';
+import RatingScreen2 from '../screens/RatingScreen2';
+import SettingsScreen1 from '../screens/SettingsScreen1';
+import SettingsScreen2 from '../screens/SettingsScreen2';
+import NotificationPreferencesScreen1 from '../screens/NotificationPreferencesScreen1';
+import NotificationPreferencesScreen2 from '../screens/NotificationPreferencesScreen2';
+import AboutScreen from '../screens/AboutScreen';
+import HelpSupportScreen from '../screens/HelpSupportScreen';
+import InAppPurchasesScreen from '../screens/InAppPurchasesScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '../constants/config';
 
-// Screens
-import WelcomeScreen from '../screens/onboarding/WelcomeScreen';
-import Onboarding1Screen from '../screens/onboarding/Onboarding1Screen';
-import Onboarding2Screen from '../screens/onboarding/Onboarding2Screen';
-import AuthScreen from '../screens/auth/AuthScreen';
-import ProfileCreateScreen from '../screens/profile/ProfileCreateScreen';
-import MatchingScreen from '../screens/matching/MatchingScreen';
-import ChatListScreen from '../screens/chat/ChatListScreen';
-import ChatDetailScreen from '../screens/chat/ChatDetailScreen';
-import ProfileScreen from '../screens/profile/ProfileScreen';
-import SettingsScreen from '../screens/settings/SettingsScreen';
-
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
-// Simple icon component - replace with react-native-vector-icons
-const Icon = ({ name, size, color }: any) => (
-  <Text style={{ fontSize: size, color }}>{name}</Text>
-);
 
 function MainTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.textMuted,
         headerShown: false,
-        tabBarActiveTintColor: '#6a3f2a',
-        tabBarInactiveTintColor: '#8c7b70',
-        tabBarStyle: {
-          borderTopWidth: 1,
-          borderTopColor: '#E5E5E5',
-          paddingTop: 5,
-          paddingBottom: 5,
-          height: 60,
-        },
       }}
     >
       <Tab.Screen
-        name="Matching"
-        component={MatchingScreen}
+        name="Discover"
+        component={DiscoverScreen}
         options={{
-          tabBarLabel: 'Keşfet',
-          tabBarIcon: ({ color }) => (
-            <Icon name="style" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="paw" size={size} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name="ChatList"
-        component={ChatListScreen}
+        name="Matches"
+        component={MatchesScreen}
         options={{
-          tabBarLabel: 'Mesajlar',
-          tabBarIcon: ({ color }) => (
-            <Icon name="chat_bubble" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="heart" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Chat"
+        component={ConversationsScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="chatbubbles" size={size} color={color} />
           ),
         }}
       />
@@ -65,9 +79,8 @@ function MainTabs() {
         name="Profile"
         component={ProfileScreen}
         options={{
-          tabBarLabel: 'Profil',
-          tabBarIcon: ({ color }) => (
-            <Icon name="person" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person" size={size} color={color} />
           ),
         }}
       />
@@ -80,10 +93,10 @@ export default function AppNavigator() {
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+  }, []);
 
   if (isLoading) {
-    return null; // Or a loading screen
+    return null; // Show loading screen
   }
 
   return (
@@ -94,26 +107,34 @@ export default function AppNavigator() {
             <Stack.Screen name="Welcome" component={WelcomeScreen} />
             <Stack.Screen name="Onboarding1" component={Onboarding1Screen} />
             <Stack.Screen name="Onboarding2" component={Onboarding2Screen} />
-            <Stack.Screen name="Auth" component={AuthScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
           </>
         ) : (
           <>
-            <Stack.Screen name="MainTabs" component={MainTabs} />
-            <Stack.Screen
-              name="ProfileCreate"
-              component={ProfileCreateScreen}
-              options={{ presentation: 'modal' }}
-            />
-            <Stack.Screen
-              name="ChatDetail"
-              component={ChatDetailScreen}
-              options={{ presentation: 'card' }}
-            />
-            <Stack.Screen
-              name="Settings"
-              component={SettingsScreen}
-              options={{ presentation: 'card' }}
-            />
+            <Stack.Screen name="Main" component={MainTabs} />
+            <Stack.Screen name="DiscoverMap" component={DiscoverMapScreen} />
+            <Stack.Screen name="PetDetail" component={PetDetailScreen} />
+            <Stack.Screen name="CreatePetProfile" component={CreatePetProfileScreen} />
+            <Stack.Screen name="Matches" component={MatchesScreen} />
+            <Stack.Screen name="NewMatchNotification" component={NewMatchNotificationScreen} />
+            <Stack.Screen name="Chat" component={ChatScreen} />
+            <Stack.Screen name="Filter" component={FilterScreen} />
+            <Stack.Screen name="SuggestMeetingPoint" component={SuggestMeetingPointScreen} />
+            <Stack.Screen name="Veterinarians" component={VeterinariansScreen} />
+            <Stack.Screen name="VeterinariansMap" component={VeterinariansMapScreen} />
+            <Stack.Screen name="VeterinarianDetail1" component={VeterinarianDetailScreen1} />
+            <Stack.Screen name="VeterinarianDetail2" component={VeterinarianDetailScreen2} />
+            <Stack.Screen name="AppointmentHistory" component={AppointmentHistoryScreen} />
+            <Stack.Screen name="AppointmentManagement" component={AppointmentManagementScreen} />
+            <Stack.Screen name="Rating1" component={RatingScreen1} />
+            <Stack.Screen name="Rating2" component={RatingScreen2} />
+            <Stack.Screen name="Settings1" component={SettingsScreen1} />
+            <Stack.Screen name="Settings2" component={SettingsScreen2} />
+            <Stack.Screen name="NotificationPreferences1" component={NotificationPreferencesScreen1} />
+            <Stack.Screen name="NotificationPreferences2" component={NotificationPreferencesScreen2} />
+            <Stack.Screen name="About" component={AboutScreen} />
+            <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
+            <Stack.Screen name="InAppPurchases" component={InAppPurchasesScreen} />
           </>
         )}
       </Stack.Navigator>
