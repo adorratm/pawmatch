@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Randevu Geçmişi</title>
+<!-- Material Symbols Link -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#6a3f2a",
+                "background-light": "#f8f7f6",
+                "background-dark": "#1d1715",
+              },
+              fontFamily: {
+                "display": ["Manrope", "Noto Sans", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        /* Custom scrollbar hiding for cleaner UI on mobile */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen relative pb-24">
+<!-- Top App Bar -->
+<div class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
+<div class="flex items-center px-4 py-3 justify-between">
+<button class="text-[#161413] dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="text-[#161413] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Randevu Geçmişi</h2>
+<div class="flex w-10 items-center justify-end">
+<button class="flex items-center justify-center text-[#161413] dark:text-white rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors size-10">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-3 px-4 py-2 overflow-x-auto no-scrollbar pb-3">
+<!-- Active Chip -->
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary pl-5 pr-5 shadow-sm transition-transform active:scale-95">
+<p class="text-white text-sm font-bold leading-normal">Tümü</p>
+</button>
+<!-- Inactive Chips -->
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-[#332b28] border border-gray-200 dark:border-gray-700 pl-5 pr-5 transition-transform active:scale-95">
+<p class="text-[#161413] dark:text-gray-200 text-sm font-medium leading-normal">Tamamlanan</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-[#332b28] border border-gray-200 dark:border-gray-700 pl-5 pr-5 transition-transform active:scale-95">
+<p class="text-[#161413] dark:text-gray-200 text-sm font-medium leading-normal">İptal Edilen</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-[#332b28] border border-gray-200 dark:border-gray-700 pl-5 pr-5 transition-transform active:scale-95">
+<p class="text-[#161413] dark:text-gray-200 text-sm font-medium leading-normal">Yaklaşan</p>
+</button>
+</div>
+</div>
+<!-- Scrollable Content -->
+<div class="flex flex-col w-full max-w-md mx-auto">
+<!-- Section Header -->
+<div class="px-4 py-4">
+<h4 class="text-primary dark:text-[#a0857a] text-xs font-bold uppercase tracking-wider opacity-80 pl-1">Ekim 2023</h4>
+</div>
+<!-- Card 1: Completed -->
+<div class="px-4 mb-4">
+<div class="flex items-stretch justify-between gap-4 rounded-2xl bg-white dark:bg-[#2a2422] p-4 shadow-sm border border-gray-100 dark:border-gray-800">
+<div class="flex flex-[2_2_0px] flex-col justify-between gap-3">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<p class="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase tracking-wide">Tamamlandı</p>
+</div>
+<p class="text-[#161413] dark:text-white text-base font-bold leading-tight">Pati Veteriner Kliniği</p>
+<div class="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-sm">
+<span class="material-symbols-outlined text-base">pets</span>
+<span>Tarçın • Yıllık Aşı</span>
+</div>
+<p class="text-primary dark:text-[#a0857a] text-sm font-bold mt-1">12 Ekim, 14:30</p>
+</div>
+<button class="group flex items-center gap-1 text-sm font-bold text-[#161413] dark:text-white hover:text-primary dark:hover:text-[#a0857a] transition-colors w-fit">
+<span>Detaylar</span>
+<span class="material-symbols-outlined text-lg transition-transform group-hover:translate-x-1">chevron_right</span>
+</button>
+</div>
+<!-- Image Section -->
+<div class="w-24 shrink-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-white/5 rounded-xl overflow-hidden relative">
+<div class="absolute inset-0 bg-cover bg-center opacity-90" data-alt="Small brown dog sitting on vet table" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC00eIl-8xU7z2Q5Ggv6SqzePaNkD-hu4D6a_HM_ZoP8UOVIjcosiVr-O8gYVzpdSbWfCCpsLKxFVw_3ZEG9xItDwn3jbSUdZxhotASWouTd2ENMbhB9niaoB5BtGtLHUYDFNjMPog8_vebmAVgm8raysrea8HUyEtXWnGdsy-h2CF9tUy4BjUTtEPfJ5GW3gi6L8ZnPlAaUH9bwXZzPa3oXb5913SNI8fkb1L64su_d5F1rTQzvYLKIgKO05cttvXwXAOkbWiT0cke");'></div>
+</div>
+</div>
+</div>
+<!-- Card 2: Completed -->
+<div class="px-4 mb-4">
+<div class="flex items-stretch justify-between gap-4 rounded-2xl bg-white dark:bg-[#2a2422] p-4 shadow-sm border border-gray-100 dark:border-gray-800">
+<div class="flex flex-[2_2_0px] flex-col justify-between gap-3">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<p class="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase tracking-wide">Tamamlandı</p>
+</div>
+<p class="text-[#161413] dark:text-white text-base font-bold leading-tight">Mutlu Kuyruklar Vet</p>
+<div class="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-sm">
+<span class="material-symbols-outlined text-base">pets</span>
+<span>Boncuk • Genel Kontrol</span>
+</div>
+<p class="text-primary dark:text-[#a0857a] text-sm font-bold mt-1">05 Ekim, 10:00</p>
+</div>
+<button class="group flex items-center gap-1 text-sm font-bold text-[#161413] dark:text-white hover:text-primary dark:hover:text-[#a0857a] transition-colors w-fit">
+<span>Detaylar</span>
+<span class="material-symbols-outlined text-lg transition-transform group-hover:translate-x-1">chevron_right</span>
+</button>
+</div>
+<div class="w-24 shrink-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-white/5 rounded-xl overflow-hidden relative">
+<div class="absolute inset-0 bg-cover bg-center opacity-90" data-alt="Close up of a cat looking at the camera" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCZfI6RA2HuGzArzOalD0Nv0EtkxX4Y2P3mwfT9W_BxJkkQ3tunVtZpJi_1FI_6LGY9AMliEbEgtydsMDOG3lVGmJvtt81MbFy-d3S-o4pnQ90GizxaXIZfa9t6nUe2Yg8T1X2j0VJ0eSIPtDOTkatdDMXG_ZOitt7bQJ0lbw1VnLje505S1zHDWYbMobl2JEHI0e_awpmbPh6poyG65_dmz3o0k7pIw0mEQOs4TCfV57oS0cRoWNTUiO1uOiLE_ErGwJOzlP--qmM3");'></div>
+</div>
+</div>
+</div>
+<!-- Section Header -->
+<div class="px-4 py-4 pt-2">
+<h4 class="text-primary dark:text-[#a0857a] text-xs font-bold uppercase tracking-wider opacity-80 pl-1">Eylül 2023</h4>
+</div>
+<!-- Card 3: Cancelled -->
+<div class="px-4 mb-4">
+<div class="flex items-stretch justify-between gap-4 rounded-2xl bg-white dark:bg-[#2a2422] p-4 shadow-sm border border-gray-100 dark:border-gray-800 opacity-75">
+<div class="flex flex-[2_2_0px] flex-col justify-between gap-3">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="w-2 h-2 rounded-full bg-red-500"></span>
+<p class="text-red-500 text-xs font-semibold uppercase tracking-wide">İptal Edildi</p>
+</div>
+<p class="text-[#161413] dark:text-white text-base font-bold leading-tight line-through decoration-gray-400">Şehir Veteriner</p>
+<div class="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-sm">
+<span class="material-symbols-outlined text-base">pets</span>
+<span>Tarçın • Tırnak Kesimi</span>
+</div>
+<p class="text-gray-400 dark:text-gray-500 text-sm font-bold mt-1">28 Eylül, 16:15</p>
+</div>
+<button class="group flex items-center gap-1 text-sm font-bold text-gray-400 dark:text-gray-500 hover:text-[#161413] dark:hover:text-white transition-colors w-fit">
+<span>Notları Gör</span>
+<span class="material-symbols-outlined text-lg transition-transform group-hover:translate-x-1">chevron_right</span>
+</button>
+</div>
+<div class="w-24 shrink-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-white/5 rounded-xl overflow-hidden relative grayscale">
+<div class="absolute inset-0 bg-cover bg-center opacity-90" data-alt="Modern veterinary clinic reception area" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA1QEd_3XUkuO8L6Hpje_a8wAzJWCu8aeKdv6lMOsYcKzm8wPUEgzPklkZ8NiCk81rY1Ua6P0zj8IFUceSQJSahLUSL8hcnWOQwk0UR5GLhJZl91sCg2hL074uxojChv6SUxjnzSBpSeEwkODQVWUyHeL-7nOpIzfmQJoi3QMNnw_R8D73WBimWi3uMfkz3Bxl9JWla7llgFHkxgE35CXOw8bIIQZSlf0jM-6YgxnEyR-IPWAu5WAUIskyWDQMv3K-gboWOoKmBsv2K");'></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Button / Sticky Footer -->
+<div class="fixed bottom-6 right-4 left-4 z-40 flex justify-end pointer-events-none">
+<button class="pointer-events-auto shadow-[0_8px_30px_rgb(0,0,0,0.12)] bg-primary hover:bg-[#5a3523] text-white rounded-2xl px-6 py-4 flex items-center gap-3 font-bold text-base transition-all active:scale-95">
+<span class="material-symbols-outlined">add_circle</span>
+            Yeni Randevu Al
+        </button>
+</div>
+</body></html>

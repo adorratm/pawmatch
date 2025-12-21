@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pet Match Chat UI</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a3f2a", // Dark Pastel Brown as accent
+                        "primary-dark": "#4e2e1e", 
+                        "background-light": "#ffffff", // Changed to pure white as requested
+                        "background-dark": "#2c2621", 
+                        "surface-light": "#ffffff", // Surface elements also white
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-gray-50 font-display flex flex-col items-center justify-center min-h-screen py-10 gap-10">
+<div class="relative flex h-[812px] w-full max-w-[375px] flex-col bg-background-light dark:bg-background-dark overflow-hidden rounded-[40px] shadow-2xl border-[8px] border-white dark:border-neutral-800">
+<header class="flex items-center justify-between px-6 pt-12 pb-4 bg-white dark:bg-background-dark sticky top-0 z-10">
+<div class="flex flex-col">
+<h1 class="text-2xl font-extrabold text-neutral-900 dark:text-white tracking-tight">Mesajlar</h1>
+</div>
+<button class="flex items-center justify-center size-10 rounded-full bg-white dark:bg-neutral-800 shadow-sm border border-neutral-100 dark:border-neutral-700 text-neutral-900 dark:text-white hover:border-primary/50 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</header>
+<div class="flex-1 overflow-y-auto no-scrollbar pb-20 bg-white dark:bg-background-dark">
+<div class="px-6 mb-6">
+<div class="flex items-center w-full h-12 px-4 rounded-2xl bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/20 transition-all shadow-sm">
+<span class="material-symbols-outlined text-neutral-400">search</span>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-neutral-900 dark:text-white placeholder-neutral-400 text-sm font-medium h-full ml-2" placeholder="Eşleşmelerde ara..." type="text"/>
+</div>
+</div>
+<div class="mb-8">
+<div class="px-6 flex justify-between items-end mb-4">
+<h2 class="text-sm font-bold text-primary uppercase tracking-wider">Yeni Eşleşmeler</h2>
+<span class="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">2</span>
+</div>
+<div class="flex overflow-x-auto no-scrollbar px-6 gap-4 pb-2">
+<div class="flex flex-col items-center space-y-2 shrink-0 cursor-pointer group">
+<div class="relative">
+<div class="size-[72px] rounded-full p-0.5 bg-primary">
+<div class="size-full rounded-full border-2 border-white dark:border-background-dark overflow-hidden bg-neutral-100">
+<img class="size-full object-cover" data-alt="Golden Retriever puppy smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSzBjoySTzzNDEkHlMnBipKaY-8eLRUDuM8JV_5_adzsAX_UGWTVa1gNVBVNyXfojPVlIYxHvnZ_rKB7z3NQPUL3yTx6_N5IbPTQujCSdzU3M5QV5LfslCRlzcc4EMfKf3jxWkSShHYSbzd4j4y5w-A6Svsr0PABx9xqXFeyoKpPiDdOb7ffypgI7RZBi7JPKA7PEKpZv0yZXHEZld6LNeBnpmFz4nniLAa8eeYs54dxtvpjlWjZ98YW-pbPa2YbhZgT7DLdmL1YfY"/>
+</div>
+</div>
+<div class="absolute bottom-0 right-0 bg-primary border-2 border-white dark:border-background-dark rounded-full p-1 flex items-center justify-center size-6 shadow-sm">
+<span class="material-symbols-outlined text-[14px] text-white font-bold">favorite</span>
+</div>
+</div>
+<span class="text-sm font-bold text-neutral-900 dark:text-white group-hover:text-primary transition-colors">Tarçın</span>
+</div>
+<div class="flex flex-col items-center space-y-2 shrink-0 cursor-pointer group">
+<div class="relative">
+<div class="size-[72px] rounded-full p-0.5 bg-primary">
+<div class="size-full rounded-full border-2 border-white dark:border-background-dark overflow-hidden bg-neutral-100">
+<img class="size-full object-cover" data-alt="Siamese cat looking majestic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrGH_-A3IWi12P8HfvOMqX9FXuMjHAOm8DWAcCk8TYkSVwCVEQLj2tLH_OA1Pj3aGBRVBNY1ahvPtgMYoceV7_uKANEzxLlFbrpUxBhJ0GCbpHIxO08N1b2CQwEQLVORSCECMED-5zJ-yzppw9-GpfPIgWwcVvoHWOqt4IVw140U80SAZ3-K9oTTqOWLwmXFcFkXw7_QQkeqjhTVHe9ZPy4Tn6CP_c3pu5sfW4Fv0_JW6wI3EQx5gE4tBGf9QHS47Kk-wl98s4h88W"/>
+</div>
+</div>
+</div>
+<span class="text-sm font-bold text-neutral-900 dark:text-white group-hover:text-primary transition-colors">Luna</span>
+</div>
+<div class="flex flex-col items-center space-y-2 shrink-0 opacity-70 cursor-pointer group hover:opacity-100 transition-opacity">
+<div class="size-[72px] rounded-full border-2 border-neutral-200 dark:border-neutral-700 overflow-hidden bg-neutral-100 group-hover:border-primary/50 transition-colors">
+<img class="size-full object-cover grayscale-[20%]" data-alt="Bulldog wearing a bandana" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiizNgz9wVzoavPQ0gzZJyFJXfqwhPDlKV1lZhk7yYF6KeB7ZSI6bVqPg0vAiwJeFqFcl8i0858N796MCwIR7elf51pNg1uIrRsbrrh1xEIP3beot7wTkcTaBN2lv6u70o4QjrGbcne5bu4ZLj8S-CK_NsLC5fA2o5S6N99TRDszmUp_aLhqO04PbGBWr-ZxDLTccVDOhi_RKJVxpjpSIrDgBHv78ZlT0X2G9pchVthWGhCdYMHPKJ1t_W4Atxhlp5ww7Oc0xvXBNr"/>
+</div>
+<span class="text-sm font-medium text-neutral-500 dark:text-neutral-400 group-hover:text-primary">Rocky</span>
+</div>
+<div class="flex flex-col items-center space-y-2 shrink-0 opacity-70 cursor-pointer group hover:opacity-100 transition-opacity">
+<div class="size-[72px] rounded-full border-2 border-neutral-200 dark:border-neutral-700 overflow-hidden bg-neutral-100 group-hover:border-primary/50 transition-colors">
+<img class="size-full object-cover grayscale-[20%]" data-alt="Pug looking surprised" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRj3yRZr0gozMJjObGp17luJE6TCn8-yX6-OTn2i2CKs-j_LLz8_BIcFQq5cQKj6eaXKhpSrCJ_CvI4n-FU4PhlWg9X3TZlMSIug2RfjoYu7ILGiCMZ8pyNqApNfRguP0_hO6zCsSzcuBUXI5VdzOqdIRCYb_wFhhZLT6bn3pubZ_Xk8Fx7rQ7UCNht7vHQhOXxJ5dh5VUAbwryiDEKnCat6I4k7DqVLBELCtq2eDeZ5vna7EV_z70VbfXMOrc-k_tjmWrrSHgDwRm"/>
+</div>
+<span class="text-sm font-medium text-neutral-500 dark:text-neutral-400 group-hover:text-primary">Miya</span>
+</div>
+</div>
+</div>
+<div class="px-6 space-y-1">
+<h2 class="text-sm font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-4">Sohbetler</h2>
+<div class="group flex items-center gap-4 p-3 -mx-3 rounded-2xl bg-white dark:bg-neutral-800 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-neutral-100 dark:border-neutral-700 cursor-pointer hover:border-primary/30 transition-all">
+<div class="relative shrink-0">
+<div class="size-14 rounded-full overflow-hidden bg-neutral-100">
+<img class="size-full object-cover" data-alt="White fluffy dog named Pamuk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-gcWUNffoK7BV-QopM3c0OwCj4a9-xNvG3P9HO4xghgPFRPwlxjR9uNUN9n_nHWfc9kOt8H5BuzF8Ziye2bx8EA78Lw-oR3G_lIMrHkV-Tbjs8T0CEjEwaug6RnETD7XWf2MVlq_rYIr-zw_zU9lvpR3N4RRPR1FZnWcqCDsytV5DVEVlmYxFr66IuCSJVHQhkXQ-lf4Wte1RfTKcQ8GcqQf_FJMvClXM1EXQlMeYT9_rKyoAGxZ6hcQK5-lFAD_a5OY9CkBLJCIc"/>
+</div>
+<span class="absolute bottom-0 right-0 size-3.5 bg-green-500 border-2 border-white dark:border-neutral-800 rounded-full"></span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-0.5">
+<h3 class="text-base font-bold text-neutral-900 dark:text-white truncate">Pamuk 🐶</h3>
+<span class="text-xs font-bold text-primary">14:30</span>
+</div>
+<p class="text-sm text-neutral-900 dark:text-neutral-200 font-medium truncate">Merhaba! Pamuk parkta oynamayı...</p>
+</div>
+<div class="shrink-0">
+<div class="size-5 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-white shadow-sm shadow-primary/40">1</div>
+</div>
+</div>
+<div class="group flex items-center gap-4 p-3 -mx-3 rounded-2xl hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer">
+<div class="relative shrink-0">
+<div class="size-14 rounded-full overflow-hidden bg-neutral-100 border border-neutral-100 dark:border-neutral-700">
+<img class="size-full object-cover" data-alt="Grey cat with green eyes named Boncuk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvJaQtfuJEvfceOcYYi7DZPCYNd5EijBKVHgHzgotMXIRAhsIiTejFtNgRW1ulO7cLe5FH6Fub7KpXpSzPPfHWsMpHQvD8iQ57zqa7JLBvV-lv7xOIhc3V3_X-JHd9GD8oFNZ_YOa1qpABZtSOgVIMuyfvoaZLqaqVnzzqPdwbS8Glf8NYNTDdV65uyJeHu3SRRhe_Tns8eM317iDcVljDkgaoxQtGM7pIWKcqzrzqDE--7NpnarW49HLZlJCUD0CMkm6qyIe4Wk7-"/>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-0.5">
+<h3 class="text-base font-bold text-neutral-900 dark:text-white truncate">Boncuk</h3>
+<span class="text-xs font-medium text-neutral-400">Dün</span>
+</div>
+<p class="text-sm text-neutral-500 dark:text-neutral-400 truncate">Evet, bayılır! Bu hafta sonu müs...</p>
+</div>
+</div>
+<div class="group flex items-center gap-4 p-3 -mx-3 rounded-2xl hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer">
+<div class="relative shrink-0">
+<div class="size-14 rounded-full overflow-hidden bg-neutral-100 border border-neutral-100 dark:border-neutral-700">
+<img class="size-full object-cover" data-alt="German Shepherd named Max" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSpgZwTWiTE5i_5zyVYwXOORzu0jwkm0LIpXl3HZv-Am4p0a2S0FIvW47VhQ06kRfdUdMCK7vFeX7_2MvqdEBVH6AmygNGc4f93O0W8xp9B-SY0IMr1zuuvvI1gWLQ1Ip_mv-zg0IOiYEsm3zPrC9b0_roSHyoud30LwXUW_lyT-NLL_qp-Wclt8Sv6aBFpuU_B_7iSiWhEUpkXd3rPs-eylds3_q7MOiZCffIqKaE1cpAARGfiPVdYkiyGaPTYoePmhHqNcKp2AKi"/>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-0.5">
+<h3 class="text-base font-bold text-neutral-900 dark:text-white truncate">Max</h3>
+<span class="text-xs font-medium text-neutral-400">Cuma</span>
+</div>
+<p class="text-sm text-neutral-500 dark:text-neutral-400 truncate">Selam, Max ile tanışmak isteriz.</p>
+</div>
+<div class="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary text-sm">chevron_right</span>
+</div>
+</div>
+<div class="group flex items-center gap-4 p-3 -mx-3 rounded-2xl hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors cursor-pointer">
+<div class="relative shrink-0">
+<div class="size-14 rounded-full overflow-hidden bg-neutral-100 border border-neutral-100 dark:border-neutral-700">
+<img class="size-full object-cover" data-alt="Parrot looking colorful" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmwHTNxcQEfl9f_-aiuXkTdB3t1ciK0q_XN0XKfgOOqBjHh4rH7zt9j3kFBh9aBquOkFxnux388YKl8GiiorTN1aYx-lnysi8ITh0G-N8c-fKYvTbdjt_xf0Ilg14qGtY6cznOBwVTPEyjHM5BFy5-hWmkOOprHQ23sHbFQLmGmT31E-Yi5QktDW8DHdQ7QDOSnWaTM1lbp-Az8iukcoY9cmhdW8FGBCBJWCY-zNXoROgLeP_DmZ4OwHqx3BPFrpdbzrmTX5wQZ2e2"/>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline mb-0.5">
+<h3 class="text-base font-bold text-neutral-900 dark:text-white truncate">Çiko</h3>
+<span class="text-xs font-medium text-neutral-400">Perşembe</span>
+</div>
+<p class="text-sm text-neutral-500 dark:text-neutral-400 truncate">Harika görünüyor! 🦜</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="absolute bottom-0 w-full bg-white dark:bg-neutral-900 border-t border-neutral-100 dark:border-neutral-800 pb-5 pt-3 px-6 flex justify-between items-center z-20">
+<button class="flex flex-col items-center gap-1 text-neutral-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[28px]">style</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-neutral-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[28px]">explore</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined fill-current text-[28px]">chat_bubble</span>
+<span class="size-1.5 rounded-full bg-primary"></span>
+</button>
+<button class="flex flex-col items-center gap-1 text-neutral-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[28px]">person</span>
+</button>
+</nav>
+</div>
+<div class="relative flex h-[812px] w-full max-w-[375px] flex-col bg-background-light dark:bg-background-dark overflow-hidden rounded-[40px] shadow-2xl border-[8px] border-white dark:border-neutral-800">
+<header class="flex items-center justify-between px-4 pt-12 pb-3 bg-white dark:bg-neutral-900 shadow-sm z-20 sticky top-0 border-b border-neutral-100 dark:border-neutral-800">
+<div class="flex items-center gap-2 text-neutral-900 dark:text-white cursor-pointer hover:opacity-70 group">
+<span class="material-symbols-outlined text-primary group-hover:-translate-x-1 transition-transform">arrow_back_ios_new</span>
+<div class="size-9 rounded-full overflow-hidden bg-neutral-100 border border-neutral-100 dark:border-neutral-700">
+<img class="size-full object-cover" data-alt="White fluffy dog named Pamuk small avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAawhoImLsL2silV307vNydYGMkpyOlABSWeebzS-ApjuWtLRkjczcv8W-l5rO3bfLuxxPJV2MpF8hl00MDwoHJA1eoeLCyopUq3lN296bDdc9tpR5kd4FVyvnsBnWpkrBXZcRMuG-MvGNZ-1rNBsCE7zYKYkawsQtIzGuQ5r1fuLSZRHw4ARmwRtzE2EVk6OiHUTKsoNUQMVEhFUVvNyQqP1CgSfvtHcR54kH6Pi5YV9ASF-UAKf3PKOUIgBBLJgtTErl9nJ3Cddgh"/>
+</div>
+<div class="flex flex-col">
+<h1 class="text-base font-bold leading-none">Pamuk 🐶</h1>
+<span class="text-xs text-primary font-medium mt-0.5">Çevrimiçi</span>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="text-neutral-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">videocam</span>
+</button>
+<button class="text-neutral-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">info</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto px-4 py-6 space-y-6 no-scrollbar bg-white dark:bg-background-dark">
+<div class="flex justify-center">
+<span class="bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 text-xs py-1 px-3 rounded-full font-medium border border-neutral-200 dark:border-neutral-700">
+                    Bugün 14:15
+                </span>
+</div>
+<div class="flex justify-center w-full my-4">
+<div class="text-center">
+<div class="size-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-2 animate-pulse">
+<span class="material-symbols-outlined text-3xl text-primary">celebration</span>
+</div>
+<p class="text-sm text-neutral-500 dark:text-neutral-400 w-3/4 mx-auto">Pamuk ile eşleştiniz! Şimdi bir merhaba deyin 👋</p>
+</div>
+</div>
+<div class="flex items-end gap-2 group">
+<div class="size-8 rounded-full overflow-hidden bg-neutral-100 shrink-0 mb-1 border border-neutral-100 dark:border-neutral-700">
+<img class="size-full object-cover" data-alt="White fluffy dog named Pamuk avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8UAXscDAXn6KGsvgbCempqwl19CAkPAsklQEXqjZJn59Ydv5NiIruiEgbAEXgzNJz8sU52oN9ntYmjpPCT_z1bKOepqYRSNREQ2Miu6Oy-48rDwoBzgwDjS8u7uNIiB0QdDbMD6WD9uB3kDUihFDOZp071mXXko8Pk7RSgUkeFr2ajTzYVfno45VrDNOd59NEVwYK0LW4L-RKcNNhRRMDfZxd8uKUJpOD0tXC483oGEnBaDnwDKkubotJeCh0Ckm9vsbw-U32lCZg"/>
+</div>
+<div class="max-w-[75%]">
+<div class="bg-neutral-100 dark:bg-neutral-800 rounded-2xl rounded-bl-none p-3.5 border border-transparent dark:border-neutral-700">
+<p class="text-sm text-neutral-800 dark:text-neutral-100 font-medium leading-relaxed">Selam! Profilinizi çok beğendik. Pamuk oyun oynamayı çok sever.</p>
+</div>
+<span class="text-[10px] text-neutral-400 ml-1 mt-1 block">14:16</span>
+</div>
+</div>
+<div class="flex items-end justify-end gap-2">
+<div class="max-w-[75%] flex flex-col items-end">
+<div class="bg-primary text-white rounded-2xl rounded-br-none p-3.5 shadow-md shadow-primary/20">
+<p class="text-sm font-medium leading-relaxed">Merhaba! Pamuk çok tatlı görünüyor 😍 Parkta oynamayı sever mi?</p>
+</div>
+<div class="flex items-center gap-1 mt-1 mr-1">
+<span class="text-[10px] text-neutral-400">14:20</span>
+<span class="material-symbols-outlined text-[12px] text-primary">done_all</span>
+</div>
+</div>
+</div>
+<div class="flex items-end gap-2 group">
+<div class="size-8 rounded-full overflow-hidden bg-neutral-100 shrink-0 mb-1 border border-neutral-100 dark:border-neutral-700">
+<img class="size-full object-cover" data-alt="White fluffy dog named Pamuk avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3abIX6_swkT-vr8bKgmc8QCGHdgckjNWwtDP7JVPPbEGSz2QbXpRurtzKKsd50hiZHnUXRxuY6-133aIozfLfH6y23Ap3T3PbROkMmvKQw8Zt6CHXL3cU-71_naCjGITapfw2KiBISVmC_RSgs1YPZPflop3kKVBjAHHcYUCkDkbu7p8JthwER92oEq-B8cg1BY8g-TsunrNSJjPC0Bpv_jiTolikDiRbQV8cbtLLePKnPPedIj1N7obvfZzrMxQslxHRinNlX50f"/>
+</div>
+<div class="max-w-[75%]">
+<div class="bg-neutral-100 dark:bg-neutral-800 rounded-2xl rounded-bl-none p-3.5 border border-transparent dark:border-neutral-700">
+<p class="text-sm text-neutral-800 dark:text-neutral-100 font-medium leading-relaxed">Evet, bayılır! Özellikle top oynamaya hiç hayır demez. Bu hafta sonu müsait misiniz?</p>
+</div>
+<span class="text-[10px] text-neutral-400 ml-1 mt-1 block">14:30</span>
+</div>
+</div>
+<div class="flex items-end gap-2">
+<div class="size-8 rounded-full overflow-hidden bg-neutral-100 shrink-0 mb-1 border border-neutral-100 dark:border-neutral-700">
+<img class="size-full object-cover" data-alt="White fluffy dog named Pamuk avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1Y-sIHZ6Fr1PFNtiVNUJjhi8lIe9VmCoeTbhb6H6gi3BmB02etCpTrBblTmS1CMntFKdTH6sokyv_F4ObmxTLG27un3znXI3P0Qh7wc_Wl0ydOVRfIT6NT9SE_Yx0PT4lQktrklgV9PHEBb59ybFUfhvU7x34iutZEVk-rzS2I4cYWmoaBR1mAbImiHkyxc7SfwTnYanJYXG-DLS9rMo-pjDuXIJ8_AV0fGuI2e6ly_JvZmZ0y5deM2jIegqgApAuqyPZXRbiI5XS"/>
+</div>
+<div class="bg-neutral-100 dark:bg-neutral-800 rounded-2xl rounded-bl-none px-4 py-3 flex gap-1 items-center">
+<div class="size-1.5 bg-neutral-400 rounded-full animate-bounce"></div>
+<div class="size-1.5 bg-neutral-400 rounded-full animate-bounce delay-75"></div>
+<div class="size-1.5 bg-neutral-400 rounded-full animate-bounce delay-150"></div>
+</div>
+</div>
+</div>
+<div class="w-full bg-white dark:bg-neutral-900 border-t border-neutral-100 dark:border-neutral-800 p-4 pb-8 z-20">
+<div class="flex items-end gap-3">
+<button class="size-10 rounded-full bg-neutral-50 dark:bg-neutral-800 text-neutral-500 hover:bg-neutral-100 hover:text-primary dark:hover:bg-neutral-700 flex items-center justify-center shrink-0 transition-colors border border-neutral-200 dark:border-neutral-700">
+<span class="material-symbols-outlined">add</span>
+</button>
+<div class="flex-1 bg-neutral-50 dark:bg-neutral-800 rounded-[24px] flex items-center px-4 min-h-[44px] py-2 border border-neutral-200 dark:border-neutral-700 focus-within:border-primary focus-within:bg-white dark:focus-within:bg-neutral-900 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+<input class="w-full bg-transparent border-none focus:ring-0 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 max-h-24" placeholder="Mesaj yazın..." type="text"/>
+<button class="text-neutral-400 hover:text-primary ml-2 transition-colors">
+<span class="material-symbols-outlined">sentiment_satisfied</span>
+</button>
+</div>
+<button class="size-10 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-transform hover:shadow-primary/40">
+<span class="material-symbols-outlined fill-current">send</span>
+</button>
+</div>
+</div>
+</div>
+</body></html>

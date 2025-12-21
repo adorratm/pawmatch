@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>In-App Purchases</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a3f2a", // Updated Accent Color
+                        "primary-light": "#f4efec", // Updated Light Tint for selection
+                        "background-light": "#ffffff", // Updated to White
+                        "background-dark": "#211911",
+                        "text-main": "#171411",
+                        "text-sub": "#877564",
+                        "border-color": "#e5e0dc"
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: "Plus Jakarta Sans", sans-serif;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-text-main dark:text-white antialiased">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-24">
+<div class="sticky top-0 z-10 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm p-4 justify-between">
+<button class="text-text-main dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+<h2 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-tight opacity-0">Premium</h2> 
+<button class="flex items-center justify-end">
+<p class="text-text-sub dark:text-gray-400 text-sm font-bold leading-normal tracking-wide shrink-0 hover:text-primary transition-colors">Restore</p>
+</button>
+</div>
+<div class="flex flex-col items-center justify-center px-4 pt-2 pb-6">
+<div class="relative w-full max-w-sm aspect-[4/3] rounded-2xl overflow-hidden shadow-sm">
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10"></div>
+<img alt="Happy dog being hugged by owner outdoors" class="w-full h-full object-cover" data-alt="Happy dog being hugged by owner outdoors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBa6YPxu9RgD7Vc0uJOYpxZ_gtyq3bOXShWTQr-txrF1qMlSa2cjizHbnWJpTdfy4zhbNLRkU4GISt0jxwuOkxsSYkeXdPHWx1s-IEri4MlOHyB6iROhmsbA8LTHziiRuik3L9AnfsDUZahBswzlwIbUcPBjy7n_NmBs4ZQKjzlQnQeZKEX_eEnbA26EEKnYs__kU5BRQYRhhmLLl1NNZPrn9SGTI7oFh8stmOpCfmsAHfBw75ZDG0B2VpYAn-2f-9GkmPjyEDKb_LP"/>
+<div class="absolute bottom-4 left-4 right-4 z-20 text-center">
+<div class="inline-flex items-center gap-1 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30">
+<span class="material-symbols-outlined text-white text-[16px]">verified</span>
+<span class="text-white text-xs font-bold tracking-wide">Paws Premium</span>
+</div>
+</div>
+</div>
+</div>
+<div class="px-6 text-center">
+<h1 class="text-text-main dark:text-white text-[28px] font-extrabold leading-tight tracking-tight mb-2">Upgrade Your Paws Experience</h1>
+<p class="text-text-sub dark:text-gray-400 text-base font-normal leading-relaxed">
+                Unlock exclusive features to find your pet's perfect match faster.
+            </p>
+</div>
+<div class="mt-8 mb-4 w-full overflow-x-auto hide-scrollbar pl-4">
+<div class="flex flex-nowrap gap-4 pr-4">
+<div class="flex flex-col items-center gap-2 min-w-[88px]">
+<div class="size-14 rounded-full bg-primary/10 dark:bg-primary/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">favorite</span>
+</div>
+<p class="text-xs font-bold text-center text-text-main dark:text-gray-200 leading-tight">See Who<br/>Liked You</p>
+</div>
+<div class="flex flex-col items-center gap-2 min-w-[88px]">
+<div class="size-14 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-500">
+<span class="material-symbols-outlined text-[28px]">bolt</span>
+</div>
+<p class="text-xs font-bold text-center text-text-main dark:text-gray-200 leading-tight">Unlimited<br/>Swipes</p>
+</div>
+<div class="flex flex-col items-center gap-2 min-w-[88px]">
+<div class="size-14 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-500">
+<span class="material-symbols-outlined text-[28px]">replay</span>
+</div>
+<p class="text-xs font-bold text-center text-text-main dark:text-gray-200 leading-tight">Unlimited<br/>Rewinds</p>
+</div>
+<div class="flex flex-col items-center gap-2 min-w-[88px]">
+<div class="size-14 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-500">
+<span class="material-symbols-outlined text-[28px]">block</span>
+</div>
+<p class="text-xs font-bold text-center text-text-main dark:text-gray-200 leading-tight">No Ads<br/>Experience</p>
+</div>
+<div class="flex flex-col items-center gap-2 min-w-[88px]">
+<div class="size-14 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-pink-500">
+<span class="material-symbols-outlined text-[28px]">rocket_launch</span>
+</div>
+<p class="text-xs font-bold text-center text-text-main dark:text-gray-200 leading-tight">5 Super Paws<br/>Weekly</p>
+</div>
+</div>
+</div>
+<div class="px-4 mt-6 flex flex-col gap-3">
+<label class="relative flex items-center justify-between p-4 rounded-xl border-2 border-primary bg-primary-light dark:bg-primary/10 cursor-pointer transition-all shadow-sm">
+<input checked="" class="peer sr-only" name="subscription" type="radio"/>
+<div class="absolute -top-3 right-4 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                    Best Value
+                </div>
+<div class="flex flex-col">
+<span class="text-lg font-bold text-text-main dark:text-white">12 Months</span>
+<span class="text-sm text-text-sub dark:text-gray-400 font-medium">Save 60%</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xl font-black text-text-main dark:text-white">39.99 TL<span class="text-sm font-medium text-text-sub dark:text-gray-400">/mo</span></span>
+<span class="text-xs font-medium text-primary">Total 479.88 TL</span>
+</div>
+<div class="absolute inset-0 border-2 border-primary rounded-xl pointer-events-none hidden peer-checked:block"></div>
+</label>
+<label class="relative flex items-center justify-between p-4 rounded-xl border border-border-color bg-white dark:bg-white/5 cursor-pointer hover:border-primary/50 transition-all shadow-sm">
+<input class="peer sr-only" name="subscription" type="radio"/>
+<div class="absolute -top-3 right-4 bg-gray-200 dark:bg-gray-700 text-text-sub dark:text-gray-300 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
+                    Most Popular
+                </div>
+<div class="flex flex-col">
+<span class="text-lg font-bold text-text-main dark:text-white">6 Months</span>
+<span class="text-sm text-text-sub dark:text-gray-400 font-medium">Save 40%</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xl font-black text-text-main dark:text-white">59.99 TL<span class="text-sm font-medium text-text-sub dark:text-gray-400">/mo</span></span>
+<span class="text-xs font-medium text-text-sub dark:text-gray-400">Total 359.94 TL</span>
+</div>
+<div class="absolute inset-0 border-2 border-primary rounded-xl pointer-events-none hidden peer-checked:block"></div>
+</label>
+<label class="relative flex items-center justify-between p-4 rounded-xl border border-border-color bg-white dark:bg-white/5 cursor-pointer hover:border-primary/50 transition-all shadow-sm">
+<input class="peer sr-only" name="subscription" type="radio"/>
+<div class="flex flex-col">
+<span class="text-lg font-bold text-text-main dark:text-white">1 Month</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xl font-black text-text-main dark:text-white">99.99 TL<span class="text-sm font-medium text-text-sub dark:text-gray-400">/mo</span></span>
+</div>
+<div class="absolute inset-0 border-2 border-primary rounded-xl pointer-events-none hidden peer-checked:block"></div>
+</label>
+</div>
+<div class="mt-8 px-4">
+<h3 class="text-sm font-bold text-text-sub dark:text-gray-400 uppercase tracking-wider mb-3 pl-1">One-Time Boosts</h3>
+<div class="grid grid-cols-2 gap-3">
+<button class="flex flex-col items-start p-3 rounded-lg border border-border-color bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors text-left">
+<div class="flex items-center gap-2 mb-2 w-full">
+<div class="p-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-500">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+</div>
+<span class="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-[10px] font-bold px-1.5 py-0.5 rounded">x1</span>
+</div>
+<span class="text-sm font-bold text-text-main dark:text-white">Profile Boost</span>
+<span class="text-xs text-text-sub dark:text-gray-400">Be seen by 10x more people</span>
+<span class="mt-2 text-sm font-black text-text-main dark:text-white">29.99 TL</span>
+</button>
+<button class="flex flex-col items-start p-3 rounded-lg border border-border-color bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors text-left">
+<div class="flex items-center gap-2 mb-2 w-full">
+<div class="p-1.5 rounded-full bg-pink-100 dark:bg-pink-900/30 text-pink-500">
+<span class="material-symbols-outlined text-[18px]">star</span>
+</div>
+<span class="bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-300 text-[10px] font-bold px-1.5 py-0.5 rounded">x5</span>
+</div>
+<span class="text-sm font-bold text-text-main dark:text-white">Super Likes</span>
+<span class="text-xs text-text-sub dark:text-gray-400">Stand out from the crowd</span>
+<span class="mt-2 text-sm font-black text-text-main dark:text-white">49.99 TL</span>
+</button>
+</div>
+</div>
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md border-t border-border-color dark:border-white/10 z-50">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold text-lg py-4 rounded-full shadow-lg shadow-[#6a3f2a]/20 dark:shadow-none transition-all active:scale-[0.98]">
+                Subscribe Now
+            </button>
+<div class="flex justify-center gap-4 mt-3">
+<a class="text-[11px] text-text-sub dark:text-gray-500 font-medium hover:underline" href="#">Privacy Policy</a>
+<a class="text-[11px] text-text-sub dark:text-gray-500 font-medium hover:underline" href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+<script>
+        // Simple script to handle radio button visual state changes if needed
+        const radios = document.querySelectorAll('input[name="subscription"]');
+        radios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Remove styling from all labels
+                document.querySelectorAll('label').forEach(label => {
+                    label.classList.remove('border-primary', 'bg-primary-light', 'dark:bg-primary/10');
+                    label.classList.add('border-border-color', 'bg-white', 'dark:bg-white/5');
+                    // Reset price color inside
+                    const priceEl = label.querySelector('.text-primary');
+                    if(priceEl && !priceEl.classList.contains('text-xl')) { // avoid changing the main price text
+                         priceEl.classList.remove('text-primary');
+                         priceEl.classList.add('text-text-sub', 'dark:text-gray-400');
+                    }
+                });
+                // Add styling to selected label
+                const selectedLabel = this.closest('label');
+                selectedLabel.classList.remove('border-border-color', 'bg-white', 'dark:bg-white/5');
+                selectedLabel.classList.add('border-2', 'border-primary', 'bg-primary-light', 'dark:bg-primary/10');
+                // Set total price color to primary
+                 const selectedPriceEl = selectedLabel.querySelector('.flex-col.items-end .text-xs');
+                 if(selectedPriceEl) {
+                     selectedPriceEl.classList.remove('text-text-sub', 'dark:text-gray-400');
+                     selectedPriceEl.classList.add('text-primary');
+                 }
+            });
+        });
+    </script>
+
+</body></html>

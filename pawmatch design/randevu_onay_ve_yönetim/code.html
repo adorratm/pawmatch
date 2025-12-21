@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Randevu Onay ve Yönetim</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a3f2a",
+                        "background-light": "#ffffff",
+                        "background-dark": "#1d1715",
+                        "text-main": "#161413",
+                        "text-secondary": "#80726b",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-text-main font-display antialiased">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto bg-white dark:bg-background-dark">
+<!-- Top App Bar -->
+<div class="sticky top-0 z-50 flex items-center bg-white/95 backdrop-blur-sm dark:bg-background-dark/95 p-4 border-b border-gray-100 dark:border-gray-800">
+<div class="text-text-main dark:text-white flex size-12 shrink-0 items-center justify-start cursor-pointer">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</div>
+<h2 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Randevu Detayları</h2>
+<div class="flex w-12 items-center justify-end cursor-pointer">
+<p class="text-primary text-base font-bold leading-normal tracking-[0.015em] shrink-0">Tamam</p>
+</div>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 flex flex-col px-4 pt-6 pb-8 gap-6">
+<!-- Success Header -->
+<div class="flex flex-col items-center gap-4 py-2">
+<div class="flex items-center justify-center size-20 rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-[48px] filled" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<h1 class="text-text-main dark:text-white text-2xl font-bold leading-tight tracking-tight text-center">Randevu Onaylandı!</h1>
+<p class="text-text-secondary text-sm font-medium leading-normal text-center max-w-[280px]">
+                        Randevunuz başarıyla oluşturuldu. Aşağıda detayları bulabilirsiniz.
+                    </p>
+</div>
+</div>
+<hr class="border-gray-100 dark:border-gray-800 w-full"/>
+<!-- Clinic Profile Card -->
+<div class="flex flex-col gap-3">
+<h3 class="text-text-main dark:text-white text-lg font-bold">Klinik Bilgileri</h3>
+<div class="flex gap-4 p-3 rounded-xl border border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-white/5">
+<div class="bg-center bg-no-repeat bg-cover rounded-lg size-20 shrink-0" data-alt="Modern veterinary clinic exterior with glass front" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAjDvm_xM0r1w5mnLhMKCfQPbJqr2JedsZzE6FXM_wfPmmMT6e-N14woMzMw_zZc0MiFKJ_bo0pm6arIPBa9lqyo6tFYHk-LP4mRg1TeGjBqvawOvROtG067ajpPU-Bdt6ZxgNhf_GRkWv16NlNzc8aMmJwtaMDo78Nmh64ZlSPUW8EAz_xLLM25W7sKwD-2UW_eB4G-cz4TEZRwLcGQdZSv77Nqx3FXH1VnEFo49o3DIUuWxDc7gJJDKkl3LKveQzNKr0E56Hr1XpH");'>
+</div>
+<div class="flex flex-col justify-center gap-1">
+<p class="text-text-main dark:text-white text-lg font-bold leading-tight">Pati Veteriner Kliniği</p>
+<p class="text-text-secondary text-sm font-medium leading-normal">Kadıköy, İstanbul</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-amber-400 text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<p class="text-text-secondary text-sm font-bold">4.8 <span class="font-normal text-xs">(120)</span></p>
+</div>
+</div>
+</div>
+</div>
+<!-- Appointment Details List -->
+<div class="flex flex-col gap-3">
+<h3 class="text-text-main dark:text-white text-lg font-bold">Randevu Özeti</h3>
+<div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0 rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+<!-- Date -->
+<div class="col-span-2 grid grid-cols-subgrid px-4 py-4 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-transparent items-center">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">calendar_month</span>
+</div>
+<p class="text-text-secondary text-sm font-medium">Tarih</p>
+</div>
+<p class="text-text-main dark:text-white text-sm font-bold text-right">14 Ekim 2023, Cmt</p>
+</div>
+<!-- Time -->
+<div class="col-span-2 grid grid-cols-subgrid px-4 py-4 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-transparent items-center">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+</div>
+<p class="text-text-secondary text-sm font-medium">Saat</p>
+</div>
+<p class="text-text-main dark:text-white text-sm font-bold text-right">14:30</p>
+</div>
+<!-- Patient -->
+<div class="col-span-2 grid grid-cols-subgrid px-4 py-4 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-transparent items-center">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">pets</span>
+</div>
+<p class="text-text-secondary text-sm font-medium">Hasta</p>
+</div>
+<div class="flex justify-end items-center gap-2">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-6" data-alt="Golden Retriever dog portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAFEwIzgUpsUqyC020-O_9h8gqw7RAH5R356V6vsF7-tIz7eWdmS1xX4R3Qns5A5exKTmbzsrctoQfvN_NIX8mZk_cSmQbpXEzR9O5Y2u0G50qaLd69I9hQoJ0VDYVlFVVzxWBAOw4BIfDA8JhW1SdhosWlz61HcDXE2J6N2K6blBht8KEeozjYYF5URwHQbeB0qlH7wfv790LiIuc27hIb3VSHryafrzFWjjbggdcJPTTLvr3oRwZRQ9xMV_n-_NQ24eISGzH1vidV");'>
+</div>
+<p class="text-text-main dark:text-white text-sm font-bold">Tarçın</p>
+</div>
+</div>
+<!-- Service -->
+<div class="col-span-2 grid grid-cols-subgrid px-4 py-4 bg-white dark:bg-transparent items-center">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">medical_services</span>
+</div>
+<p class="text-text-secondary text-sm font-medium">Hizmet</p>
+</div>
+<p class="text-text-main dark:text-white text-sm font-bold text-right">Genel Muayene</p>
+</div>
+</div>
+</div>
+<!-- Map Location -->
+<div class="flex flex-col gap-3">
+<div class="flex justify-between items-center">
+<h3 class="text-text-main dark:text-white text-lg font-bold">Konum</h3>
+<a class="text-primary text-sm font-bold flex items-center gap-1" href="#">
+                        Yol Tarifi
+                        <span class="material-symbols-outlined text-[16px]">directions</span>
+</a>
+</div>
+<div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-sm">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover object-cover" data-alt="Map view of Kadikoy Istanbul street" data-location="Kadikoy, Istanbul" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC3ZKiiCxnWPwcaWqCevMcak2KmyOCEeNjlfpEbc3KQF8tVZaCB5eMD-oWOESLkQptft9R_D30gbzu96QMvqsO0oBYPaBJa0-I2oRrGhLPtueXSv_ENiQaRCLPS5VmuggVUvOrXr4Hy34mV0kcTPy1FOJuUFRroVhRKKLz7apv83IggqhgNwh4IX9EhSF7ujUu7kZAEunJ833c9yFL6qkzcf20Jjl3swYFOB7YO4uZYbVkOeZLq0oB-MRekefkujyqCOT1v9PHsn6Zg");'>
+</div>
+<!-- Map Pin Overlay -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[40px] drop-shadow-md filled" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+<p class="text-text-secondary text-sm leading-relaxed">
+                    Caferağa Mah, Neşet Ömer Sk. No:12, 34710 Kadıköy/İstanbul
+                </p>
+</div>
+<!-- Spacing for bottom actions -->
+<div class="h-4"></div>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-3 mt-auto">
+<button class="flex items-center justify-center gap-2 w-full bg-primary hover:bg-[#5a3524] text-white font-bold py-4 rounded-xl transition-colors active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">calendar_add_on</span>
+                    Takvime Ekle
+                </button>
+<button class="flex items-center justify-center gap-2 w-full bg-white dark:bg-white/5 border border-primary text-primary font-bold py-4 rounded-xl transition-colors active:bg-primary/5 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[20px]">edit_calendar</span>
+                    Randevuyu Yeniden Planla
+                </button>
+<button class="flex items-center justify-center gap-2 w-full text-red-500/80 hover:text-red-600 font-medium py-2 text-sm transition-colors mt-2">
+                    Randevuyu İptal Et
+                </button>
+</div>
+</div>
+</div>
+</body></html>

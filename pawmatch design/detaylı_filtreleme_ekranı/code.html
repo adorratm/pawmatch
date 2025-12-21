@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html class="light" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Detaylı Filtreleme Ekranı - Beyaz Tema</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a3f2a",
+                        "background-light": "#ffffff", // Changed to pure white as requested
+                        "background-dark": "#ffffff", // Changed to pure white to remove dark mode for consistency
+                        "stone-custom": "#897261",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "1.5rem", 
+                        "xl": "2rem", 
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-white font-display text-[#181411] antialiased overflow-x-hidden pb-32">
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 px-4 py-3 flex items-center justify-between transition-colors duration-200">
+<button class="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 transition-colors">
+<span class="material-symbols-outlined text-2xl text-[#181411]">close</span>
+</button>
+<h2 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center">Filtreleme</h2>
+<button class="flex items-center justify-end px-2">
+<p class="text-[#897261] text-base font-bold leading-normal tracking-tight hover:text-primary transition-colors">Temizle</p>
+</button>
+</header>
+<main class="flex flex-col gap-8 px-5 pt-6">
+<section>
+<h3 class="text-xl font-bold leading-tight mb-4 tracking-tight">Tür</h3>
+<div class="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+<button class="group flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary pl-5 pr-5 shadow-lg shadow-primary/25 transition-all">
+<span class="material-symbols-outlined text-white text-[20px]">pets</span>
+<p class="text-white text-sm font-semibold leading-normal">Köpek</p>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white border border-gray-200 pl-5 pr-5 transition-all hover:border-primary/50 hover:bg-primary/5">
+<span class="material-symbols-outlined text-[#897261] text-[20px]">cruelty_free</span>
+<p class="text-[#181411] text-sm font-medium leading-normal">Kedi</p>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white border border-gray-200 pl-5 pr-5 transition-all hover:border-primary/50 hover:bg-primary/5">
+<span class="material-symbols-outlined text-[#897261] text-[20px]">flutter_dash</span>
+<p class="text-[#181411] text-sm font-medium leading-normal">Kuş</p>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white border border-gray-200 pl-5 pr-5 transition-all hover:border-primary/50 hover:bg-primary/5">
+<span class="material-symbols-outlined text-[#897261] text-[20px]">more_horiz</span>
+<p class="text-[#181411] text-sm font-medium leading-normal">Diğer</p>
+</button>
+</div>
+</section>
+<section class="flex flex-col gap-5">
+<h3 class="text-xl font-bold leading-tight tracking-tight">Detaylar</h3>
+<div class="space-y-4">
+<label class="block relative group">
+<span class="text-[#897261] text-xs font-bold uppercase tracking-wider ml-1 mb-1.5 block">Cins</span>
+<div class="relative">
+<select class="w-full appearance-none rounded-2xl border-none bg-white py-4 pl-4 pr-12 text-base text-[#181411] shadow-sm ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 transition-shadow">
+<option>Golden Retriever</option>
+<option>Labrador</option>
+<option>Poodle</option>
+<option>Bulldog</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+<span class="material-symbols-outlined text-[#897261]">expand_more</span>
+</div>
+</div>
+</label>
+<label class="block relative group">
+<span class="text-[#897261] text-xs font-bold uppercase tracking-wider ml-1 mb-1.5 block">Konum</span>
+<div class="relative">
+<select class="w-full appearance-none rounded-2xl border-none bg-white py-4 pl-12 pr-12 text-base text-[#181411] shadow-sm ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 transition-shadow">
+<option>İstanbul, Kadıköy</option>
+<option>İstanbul, Beşiktaş</option>
+<option>İzmir, Karşıyaka</option>
+<option>Ankara, Çankaya</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+<span class="material-symbols-outlined text-primary">location_on</span>
+</div>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+<span class="material-symbols-outlined text-[#897261]">expand_more</span>
+</div>
+</div>
+</label>
+</div>
+</section>
+<section>
+<div class="flex justify-between items-end mb-5">
+<h3 class="text-xl font-bold leading-tight tracking-tight">Yaş Aralığı</h3>
+<p class="text-primary text-base font-bold">1 - 3 Yaş</p>
+</div>
+<div class="grid grid-cols-3 gap-3 mb-6">
+<button class="flex h-11 items-center justify-center rounded-2xl bg-white border border-gray-200 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+<span class="text-sm font-bold text-[#181411] group-hover:text-primary transition-colors">0-6 Ay</span>
+</button>
+<button class="flex h-11 items-center justify-center rounded-2xl bg-white border border-gray-200 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+<span class="text-sm font-bold text-[#181411] group-hover:text-primary transition-colors">6-12 Ay</span>
+</button>
+<button class="flex h-11 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/25 border border-primary transition-all">
+<span class="text-sm font-bold text-white">1-3 Yaş</span>
+</button>
+<button class="flex h-11 items-center justify-center rounded-2xl bg-white border border-gray-200 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+<span class="text-sm font-bold text-[#181411] group-hover:text-primary transition-colors">3-7 Yaş</span>
+</button>
+<button class="flex h-11 items-center justify-center rounded-2xl bg-white border border-gray-200 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+<span class="text-sm font-bold text-[#181411] group-hover:text-primary transition-colors">7+ Yaş</span>
+</button>
+<button class="flex h-11 items-center justify-center rounded-2xl bg-white border border-gray-200 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+<span class="text-sm font-bold text-[#181411] group-hover:text-primary transition-colors">Özel</span>
+</button>
+</div>
+<div class="relative h-12 flex items-center px-2">
+<div class="absolute w-full h-2 bg-gray-200 rounded-full left-0 right-0"></div>
+<div class="absolute h-2 bg-primary rounded-full left-[7%] right-[80%]"></div>
+<div class="absolute left-[7%] size-7 bg-white rounded-full border-2 border-primary shadow-md flex items-center justify-center -translate-x-1/2 cursor-pointer z-10 hover:scale-110 transition-transform">
+<div class="size-2 bg-primary rounded-full"></div>
+</div>
+<div class="absolute right-[80%] size-7 bg-white rounded-full border-2 border-primary shadow-md flex items-center justify-center translate-x-1/2 cursor-pointer z-10 hover:scale-110 transition-transform">
+<div class="size-2 bg-primary rounded-full"></div>
+</div>
+<div class="absolute w-full flex justify-between px-1 top-9">
+<span class="text-xs font-medium text-[#897261]">0</span>
+<span class="text-xs font-medium text-[#897261]">5</span>
+<span class="text-xs font-medium text-[#897261]">10</span>
+<span class="text-xs font-medium text-[#897261]">15+</span>
+</div>
+</div>
+</section>
+<section>
+<h3 class="text-xl font-bold leading-tight mb-4 tracking-tight">Cinsiyet</h3>
+<div class="grid grid-cols-2 gap-4">
+<label class="cursor-pointer">
+<input checked="" class="peer sr-only" name="gender" type="radio"/>
+<div class="flex h-14 items-center justify-center rounded-2xl bg-white border border-gray-200 peer-checked:bg-primary/10 peer-checked:border-primary peer-checked:text-primary transition-all">
+<span class="font-bold">Dişi</span>
+<span class="material-symbols-outlined ml-2 text-xl">female</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="gender" type="radio"/>
+<div class="flex h-14 items-center justify-center rounded-2xl bg-white border border-gray-200 peer-checked:bg-primary/10 peer-checked:border-primary peer-checked:text-primary transition-all">
+<span class="font-bold">Erkek</span>
+<span class="material-symbols-outlined ml-2 text-xl">male</span>
+</div>
+</label>
+</div>
+</section>
+<section>
+<h3 class="text-xl font-bold leading-tight mb-4 tracking-tight">Boyut</h3>
+<div class="grid grid-cols-3 gap-3">
+<label class="cursor-pointer">
+<input checked="" class="peer sr-only" name="size" type="radio"/>
+<div class="flex flex-col h-20 items-center justify-center rounded-2xl bg-white border border-gray-200 peer-checked:bg-primary/10 peer-checked:border-primary peer-checked:text-primary transition-all">
+<span class="material-symbols-outlined mb-1">pest_control_rodent</span>
+<span class="text-sm font-bold">Küçük</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="size" type="radio"/>
+<div class="flex flex-col h-20 items-center justify-center rounded-2xl bg-white border border-gray-200 peer-checked:bg-primary/10 peer-checked:border-primary peer-checked:text-primary transition-all">
+<span class="material-symbols-outlined mb-1 text-2xl">pets</span>
+<span class="text-sm font-bold">Orta</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="size" type="radio"/>
+<div class="flex flex-col h-20 items-center justify-center rounded-2xl bg-white border border-gray-200 peer-checked:bg-primary/10 peer-checked:border-primary peer-checked:text-primary transition-all">
+<span class="material-symbols-outlined mb-1 text-3xl">sound_detection_dog_barking</span>
+<span class="text-sm font-bold">Büyük</span>
+</div>
+</label>
+</div>
+</section>
+<section>
+<h3 class="text-xl font-bold leading-tight mb-4 tracking-tight">Karakter ve Sağlık</h3>
+<div class="flex flex-wrap gap-2">
+<button class="flex h-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 text-primary px-4 transition-all">
+<p class="text-sm font-bold leading-normal">Aşıları Tam</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center rounded-xl bg-white border border-gray-200 px-4 transition-all hover:bg-gray-50">
+<p class="text-[#181411] text-sm font-medium leading-normal">Kısırlaştırılmış</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center rounded-xl bg-white border border-gray-200 px-4 transition-all hover:bg-gray-50">
+<p class="text-[#181411] text-sm font-medium leading-normal">Çip Takılı</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center rounded-xl bg-white border border-gray-200 px-4 transition-all hover:bg-gray-50">
+<p class="text-[#181411] text-sm font-medium leading-normal">Çocuk Dostu</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 text-primary px-4 transition-all">
+<p class="text-sm font-bold leading-normal">Oyuncu</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center rounded-xl bg-white border border-gray-200 px-4 transition-all hover:bg-gray-50">
+<p class="text-[#181411] text-sm font-medium leading-normal">Eğitimli</p>
+</button>
+</div>
+</section>
+</main>
+<div class="fixed bottom-0 left-0 w-full p-5 bg-gradient-to-t from-white via-white/95 to-transparent pb-8 pt-12 z-40">
+<button class="w-full h-14 bg-primary hover:bg-primary/90 active:scale-[0.98] transition-all rounded-full shadow-xl shadow-primary/30 flex items-center justify-center gap-2 group">
+<span class="text-white text-lg font-bold tracking-wide">Sonuçları Göster (24)</span>
+<span class="material-symbols-outlined text-white group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+
+</body></html>

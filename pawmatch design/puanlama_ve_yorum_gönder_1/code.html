@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html class="light" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Puanlama ve Yorum Gönder</title>
+<!-- Fonts and Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a3f2a",
+                        "primary-dark": "#543221",
+                        "background-light": "#ffffff",
+                        "background-dark": "#1d1715",
+                        "text-main": "#161413",
+                        "text-secondary": "#80726b",
+                        "surface-light": "#f8f7f6",
+                        "surface-dark": "#2a2422",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom styles for filled icons */
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+        
+        /* Hide scrollbar for cleaner mobile look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-text-main dark:text-white antialiased selection:bg-primary/20">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto shadow-2xl bg-white dark:bg-background-dark">
+<!-- TopAppBar -->
+<header class="flex items-center px-4 py-3 justify-between sticky top-0 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md z-50 border-b border-gray-100 dark:border-gray-800">
+<button class="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-text-main dark:text-white group">
+<span class="material-symbols-outlined text-[24px] group-active:scale-95 transition-transform">close</span>
+</button>
+<h2 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Puanlama</h2>
+<button class="flex h-10 px-2 items-center justify-end rounded-full hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+<p class="text-text-secondary dark:text-gray-400 text-base font-bold leading-normal tracking-[0.015em]">İptal</p>
+</button>
+</header>
+<!-- Main Content Scroll Area -->
+<main class="flex-1 flex flex-col items-center px-6 pt-6 pb-24 w-full">
+<!-- Entity Profile Preview -->
+<div class="flex flex-col items-center gap-5 mb-8 w-full animate-fade-in">
+<div class="relative group cursor-pointer">
+<div class="bg-center bg-no-repeat bg-cover rounded-full h-28 w-28 shadow-lg ring-4 ring-surface-light dark:ring-surface-dark" data-alt="Profile picture of a Golden Retriever dog named Luna smiling outdoors" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDfV5EYkAOAILrmzgOApFE15Y-0seNP8XGez-wgeTa5gV4HjCuO775zXUsPmLmFRJ-6FcKJGOoXWBqV7zudZaIJYscLUNzIYn2iCaoKhgUsDavZvHTgTTtOFX2AOxfUV5KFv2sJLg1i52SOdGII66Z7OSBOE9Ffu-BRLO6s9VmQ3f6fkJJQqhGPVDs50UPMdIwp70jM74BWuHMbS4eGmSLkTWRKgmoY_eltGyEYvZr_yDAyziDBijnbsQu1HtsHMBOa-wzsEryBUW46");'>
+</div>
+<!-- Verified Badge -->
+<div class="absolute bottom-1 right-1 bg-primary text-white p-1 rounded-full border-2 border-white dark:border-background-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-1">
+<h1 class="text-text-main dark:text-white text-2xl font-bold leading-tight tracking-tight text-center">Luna</h1>
+<p class="text-text-secondary dark:text-gray-400 text-sm font-medium leading-normal text-center bg-surface-light dark:bg-surface-dark px-3 py-1 rounded-full">
+                        Köpek • 2 Yaşında
+                    </p>
+</div>
+<p class="text-text-main dark:text-white text-xl font-bold leading-normal text-center mt-2 px-4">
+                    Luna ile deneyimin nasıldı?
+                </p>
+</div>
+<!-- Star Rating Component -->
+<div class="flex flex-col items-center gap-4 mb-10 w-full">
+<div class="flex gap-3 justify-center items-center">
+<!-- Interactive Star Rating (Simulated State: 4/5) -->
+<button class="group p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full">
+<span class="material-symbols-outlined filled text-[36px] text-primary transition-transform group-hover:scale-110 group-active:scale-90">star</span>
+</button>
+<button class="group p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full">
+<span class="material-symbols-outlined filled text-[36px] text-primary transition-transform group-hover:scale-110 group-active:scale-90">star</span>
+</button>
+<button class="group p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full">
+<span class="material-symbols-outlined filled text-[36px] text-primary transition-transform group-hover:scale-110 group-active:scale-90">star</span>
+</button>
+<button class="group p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full">
+<span class="material-symbols-outlined filled text-[36px] text-primary transition-transform group-hover:scale-110 group-active:scale-90">star</span>
+</button>
+<button class="group p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full">
+<span class="material-symbols-outlined text-[36px] text-gray-300 dark:text-gray-600 transition-transform group-hover:text-primary/40 group-hover:scale-110 group-active:scale-90">star</span>
+</button>
+</div>
+<p class="text-primary font-bold text-sm tracking-wide uppercase">Çok İyi</p>
+</div>
+<!-- Guidelines Info Box -->
+<div class="w-full bg-surface-light dark:bg-surface-dark rounded-xl p-4 mb-6 border border-gray-100 dark:border-gray-800 flex gap-3 items-start">
+<div class="bg-primary/10 dark:bg-primary/20 p-1.5 rounded-full shrink-0 text-primary">
+<span class="material-symbols-outlined text-[18px]">lightbulb</span>
+</div>
+<p class="text-text-secondary dark:text-gray-300 text-sm font-medium leading-relaxed pt-0.5">
+                   Yorumların topluluğumuz için çok değerli. Lütfen <span class="text-primary font-bold">saygılı</span> ve <span class="text-primary font-bold">yapıcı</span> olmaya özen göster.
+                 </p>
+</div>
+<!-- Review Input Area -->
+<div class="w-full flex-1 min-h-[160px]">
+<label class="flex flex-col w-full h-full group/input">
+<div class="flex justify-between items-baseline mb-2 px-1">
+<span class="text-text-main dark:text-white text-base font-bold">Yorum Yaz</span>
+<span class="text-text-secondary dark:text-gray-500 text-xs font-medium">İsteğe bağlı</span>
+</div>
+<textarea class="flex w-full min-w-0 resize-none rounded-2xl text-text-main dark:text-white dark:bg-surface-dark focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-gray-200 dark:border-gray-700 focus:border-primary bg-white min-h-[140px] placeholder:text-gray-400 dark:placeholder:text-gray-500 p-4 text-base font-normal leading-normal transition-all shadow-sm group-hover/input:border-gray-300 dark:group-hover/input:border-gray-600" placeholder="Deneyimini burada paylaş... Detaylı yorumlar diğer kullanıcılara daha çok yardımcı olur."></textarea>
+</label>
+</div>
+</main>
+<!-- Sticky Footer Button -->
+<div class="fixed bottom-0 w-full max-w-md bg-white dark:bg-background-dark border-t border-gray-100 dark:border-gray-800 p-4 pb-8 z-40">
+<button class="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-4 text-white text-base font-bold leading-normal tracking-wide shadow-xl shadow-primary/20 hover:bg-primary-dark hover:shadow-primary/30 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+<span>Gönder</span>
+<span class="material-symbols-outlined text-[20px]">send</span>
+</button>
+</div>
+</div>
+</body></html>

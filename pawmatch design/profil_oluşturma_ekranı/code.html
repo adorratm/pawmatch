@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pet Profile Creation</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a3f2a",
+                        "primary-hover": "#543221",
+                        "background-light": "#ffffff",
+                        "background-dark": "#ffffff","surface-light": "#ffffff",
+                        "surface-dark": "#ffffff",
+                        "surface-gray": "#f9f9f9",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-white font-display text-gray-900 transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto bg-white">
+<div class="sticky top-0 z-50 flex items-center bg-white/95 backdrop-blur-sm p-4 pb-2 justify-between border-b border-gray-50">
+<button class="flex size-12 shrink-0 items-center justify-center rounded-full hover:bg-gray-50 transition-colors text-[#6a3f2a]">
+<span class="material-symbols-outlined text-[24px]">arrow_back</span>
+</button>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12 text-gray-900">Create Profile</h2>
+</div>
+<div class="flex w-full flex-row items-center justify-center gap-2 px-6 py-4 bg-white">
+<div class="h-1.5 flex-1 rounded-full bg-[#6a3f2a]"></div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-100"></div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-100"></div>
+</div>
+<div class="flex-1 overflow-y-auto pb-24 bg-white">
+<div class="px-6 pt-2 pb-4">
+<h2 class="tracking-tight text-[28px] font-extrabold leading-tight text-left text-[#6a3f2a]">Who's the good boy/girl?</h2>
+<p class="text-gray-500 text-base font-normal leading-normal pt-2">Add photos and details to find their perfect match.</p>
+</div>
+<div class="px-6 mb-8">
+<div class="grid grid-cols-3 gap-3">
+<div class="col-span-2 row-span-2 relative aspect-square rounded-xl overflow-hidden bg-gray-50 border-2 border-dashed border-[#6a3f2a]/30 group cursor-pointer hover:border-[#6a3f2a] transition-colors">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A cute golden retriever puppy looking at the camera" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCViv1nUidvCZqywPn8kEGLzvtr-arL_XuBHss2pi5ApGrnNsnw3l3lKxPX8WpXZoJWPdoJOPYdraxXxJNn5eQ5F7Vqe7rixgxgZ1fn_gPxrEjMv_8RlYkXFQCnkYT0K0drzyJ7gDU8jk2ZzZ2YVIBaWtZDgI-IXTzGrDvW_uFInuO4fhAdQTvJLdC7YwwCGrGzLz_Ge6yjDqkG-cFNMAfeZ4Tx6k-1g_0TThTTyqPS-vzcEwQkYOm9hKWoVgs_MsM3dssTKYpX_joN');"></div>
+<div class="absolute bottom-2 right-2 bg-[#6a3f2a] text-white text-xs font-bold px-2 py-1 rounded-full shadow-sm">Main</div>
+</div>
+<div class="aspect-square rounded-xl bg-gray-50 flex items-center justify-center border-2 border-dashed border-gray-200 cursor-pointer hover:border-[#6a3f2a]/50 hover:bg-[#6a3f2a]/5 transition-colors">
+<span class="material-symbols-outlined text-[#6a3f2a]/40">add_a_photo</span>
+</div>
+<div class="aspect-square rounded-xl bg-gray-50 flex items-center justify-center border-2 border-dashed border-gray-200 cursor-pointer hover:border-[#6a3f2a]/50 hover:bg-[#6a3f2a]/5 transition-colors">
+<span class="material-symbols-outlined text-[#6a3f2a]/40">add_a_photo</span>
+</div>
+<div class="aspect-square rounded-xl bg-gray-50 flex items-center justify-center border-2 border-dashed border-gray-200 cursor-pointer hover:border-[#6a3f2a]/50 hover:bg-[#6a3f2a]/5 transition-colors">
+<span class="material-symbols-outlined text-[#6a3f2a]/40">add_a_photo</span>
+</div>
+<div class="aspect-square rounded-xl bg-gray-50 flex items-center justify-center border-2 border-dashed border-gray-200 cursor-pointer hover:border-[#6a3f2a]/50 hover:bg-[#6a3f2a]/5 transition-colors">
+<span class="material-symbols-outlined text-[#6a3f2a]/40">add_a_photo</span>
+</div>
+</div>
+<p class="text-xs text-center text-gray-400 mt-2">Drag to reorder • 1/6 uploaded</p>
+</div>
+<div class="px-6 space-y-6">
+<div class="space-y-2">
+<label class="text-sm font-bold text-[#6a3f2a] ml-1">Name</label>
+<input class="w-full bg-white border-none rounded-xl p-4 text-base font-medium shadow-sm ring-1 ring-gray-200 focus:ring-2 focus:ring-[#6a3f2a] placeholder:text-gray-400 text-gray-900 transition-all" placeholder="e.g. Charlie" type="text" value="Buddy"/>
+</div>
+<div class="space-y-3">
+<label class="text-sm font-bold text-[#6a3f2a] ml-1">Species</label>
+<div class="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+<button class="flex items-center gap-2 bg-[#6a3f2a] text-white px-5 py-3 rounded-full font-bold shadow-sm ring-2 ring-[#6a3f2a] transition-transform active:scale-95">
+<span class="text-lg">🐶</span> Dog
+                    </button>
+<button class="flex items-center gap-2 bg-white text-gray-600 px-5 py-3 rounded-full font-medium shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 hover:text-[#6a3f2a] hover:ring-[#6a3f2a]/30 transition-all active:scale-95">
+<span class="text-lg">🐱</span> Cat
+                    </button>
+<button class="flex items-center gap-2 bg-white text-gray-600 px-5 py-3 rounded-full font-medium shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 hover:text-[#6a3f2a] hover:ring-[#6a3f2a]/30 transition-all active:scale-95">
+<span class="text-lg">🐰</span> Other
+                    </button>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="space-y-2 flex-1">
+<label class="text-sm font-bold text-[#6a3f2a] ml-1">Breed</label>
+<input class="w-full bg-white border-none rounded-xl p-4 text-base font-medium shadow-sm ring-1 ring-gray-200 focus:ring-2 focus:ring-[#6a3f2a] placeholder:text-gray-400 text-gray-900 transition-all" placeholder="Golden Retriever" type="text"/>
+</div>
+<div class="space-y-2 w-1/3">
+<label class="text-sm font-bold text-[#6a3f2a] ml-1">Age</label>
+<div class="relative">
+<input class="w-full bg-white border-none rounded-xl p-4 text-base font-medium shadow-sm ring-1 ring-gray-200 focus:ring-2 focus:ring-[#6a3f2a] text-gray-900 transition-all" placeholder="2" type="number"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-medium">yrs</span>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<label class="text-sm font-bold text-[#6a3f2a] ml-1">Gender</label>
+<div class="flex p-1 bg-gray-100 rounded-full">
+<button class="flex-1 py-3 rounded-full bg-[#6a3f2a] text-white font-bold shadow-sm transition-all">Boy</button>
+<button class="flex-1 py-3 rounded-full text-gray-500 font-medium hover:text-[#6a3f2a] transition-all">Girl</button>
+</div>
+</div>
+<div class="space-y-3 pt-2">
+<label class="text-sm font-bold text-[#6a3f2a] ml-1">Temperament (Select up to 3)</label>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 rounded-full bg-[#6a3f2a]/10 text-[#6a3f2a] border border-[#6a3f2a]/20 font-semibold text-sm transition-colors hover:bg-[#6a3f2a]/20">
+                        #Playful
+                    </button>
+<button class="px-4 py-2 rounded-full bg-white text-gray-600 border border-gray-200 font-medium text-sm hover:border-[#6a3f2a]/50 hover:text-[#6a3f2a] transition-colors">
+                        #Calm
+                    </button>
+<button class="px-4 py-2 rounded-full bg-white text-gray-600 border border-gray-200 font-medium text-sm hover:border-[#6a3f2a]/50 hover:text-[#6a3f2a] transition-colors">
+                        #Energetic
+                    </button>
+<button class="px-4 py-2 rounded-full bg-white text-gray-600 border border-gray-200 font-medium text-sm hover:border-[#6a3f2a]/50 hover:text-[#6a3f2a] transition-colors">
+                        #Shy
+                    </button>
+<button class="px-4 py-2 rounded-full bg-white text-gray-600 border border-gray-200 font-medium text-sm hover:border-[#6a3f2a]/50 hover:text-[#6a3f2a] transition-colors">
+                        #Cuddly
+                    </button>
+</div>
+</div>
+<div class="space-y-3 pt-2">
+<label class="text-sm font-bold text-[#6a3f2a] ml-1">Health Status</label>
+<div class="grid grid-cols-1 gap-3">
+<div class="flex items-center justify-between p-3.5 bg-white rounded-2xl ring-1 ring-gray-200 hover:ring-[#6a3f2a]/50 transition-all shadow-sm">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-[#6a3f2a]/10 text-[#6a3f2a]">
+<span class="material-symbols-outlined text-[20px]">medical_services</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-gray-900">Spayed / Neutered</span>
+<span class="text-xs text-gray-500">Is your pet fixed?</span>
+</div>
+</div>
+<label class="relative inline-flex cursor-pointer items-center">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<div class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow-sm after:transition-all after:content-[''] peer-checked:bg-[#6a3f2a] peer-checked:after:translate-x-full peer-focus:outline-none"></div>
+</label>
+</div>
+<div class="flex items-center justify-between p-3.5 bg-white rounded-2xl ring-1 ring-gray-200 hover:ring-[#6a3f2a]/50 transition-all shadow-sm">
+<div class="flex items-center gap-3">
+<div class="flex h-10 w-10 items-center justify-center rounded-full bg-[#6a3f2a]/10 text-[#6a3f2a]">
+<span class="material-symbols-outlined text-[20px]">vaccines</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-gray-900">Vaccinations</span>
+<span class="text-xs text-gray-500">Up to date?</span>
+</div>
+</div>
+<label class="relative inline-flex cursor-pointer items-center">
+<input checked="" class="peer sr-only" type="checkbox"/>
+<div class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow-sm after:transition-all after:content-[''] peer-checked:bg-[#6a3f2a] peer-checked:after:translate-x-full peer-focus:outline-none"></div>
+</label>
+</div>
+</div>
+<div class="space-y-2">
+<input class="w-full bg-white border-none rounded-xl p-4 text-base font-medium shadow-sm ring-1 ring-gray-200 focus:ring-2 focus:ring-[#6a3f2a] placeholder:text-gray-400 text-gray-900 transition-all" placeholder="Special needs or common health issues..." type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-[#6a3f2a] ml-1">Short Bio</label>
+<textarea class="w-full bg-white border-none rounded-xl p-4 text-base font-medium shadow-sm ring-1 ring-gray-200 focus:ring-2 focus:ring-[#6a3f2a] placeholder:text-gray-400 text-gray-900 resize-none transition-all" placeholder="Tell us about their favorite toys, treats, and personality..." rows="4"></textarea>
+<div class="text-right text-xs text-gray-400">0/300</div>
+</div>
+</div>
+<div class="h-10"></div>
+</div>
+<div class="fixed bottom-0 w-full max-w-md bg-white/95 backdrop-blur-md p-4 border-t border-gray-100">
+<button class="w-full bg-[#6a3f2a] hover:bg-[#543221] text-white font-extrabold text-lg py-4 rounded-full shadow-lg shadow-[#6a3f2a]/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+            Continue
+            <span class="material-symbols-outlined text-[20px] font-bold">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>

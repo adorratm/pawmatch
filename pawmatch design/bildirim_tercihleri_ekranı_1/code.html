@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gizlilik Ayarları</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a3f2a",
+                        "background-light": "#ffffff",
+                        "background-dark": "#211911",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body>
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden font-display text-[#171411] dark:text-white">
+<div class="sticky top-0 z-50 flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between border-b border-gray-200 dark:border-white/5 backdrop-blur-md bg-opacity-95 dark:bg-opacity-95">
+<div class="flex size-12 shrink-0 items-center justify-start cursor-pointer text-primary hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" style="font-size: 28px;">arrow_back_ios_new</span>
+</div>
+<h2 class="text-[#171411] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Gizlilik Ayarları</h2>
+</div>
+<div class="flex-1 flex flex-col gap-6 px-4 py-6">
+<div class="flex items-start gap-3 rounded-xl bg-primary/10 p-4 border border-primary/20">
+<span class="material-symbols-outlined text-primary shrink-0 mt-0.5">security</span>
+<div class="flex flex-col gap-1">
+<p class="text-sm font-bold text-[#171411] dark:text-white">Güvenliğin Bizim İçin Önemli</p>
+<p class="text-xs text-[#877564] dark:text-gray-400 leading-relaxed">
+                        Gizlilik ayarlarını dilediğin zaman güncelleyebilirsin. Değişiklikler anında profilinize yansır.
+                    </p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<p class="text-[#877564] dark:text-gray-400 text-xs font-bold tracking-wider uppercase px-2">GÖRÜNÜRLÜK</p>
+<div class="bg-white dark:bg-[#2C241B] rounded-xl shadow-sm border border-gray-100 dark:border-white/5 overflow-hidden">
+<div class="flex items-center gap-4 px-4 py-3.5 justify-between border-b border-gray-100 dark:border-white/5 last:border-0 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/10 dark:bg-white/10 shrink-0 size-10">
+<span class="material-symbols-outlined">visibility</span>
+</div>
+<div class="flex flex-col">
+<p class="text-[#171411] dark:text-white text-base font-medium leading-normal flex-1 truncate">Profilimi Göster</p>
+<p class="text-xs text-[#877564] dark:text-gray-400">Diğer kullanıcılar kartlarda seni görebilir</p>
+</div>
+</div>
+<div class="shrink-0">
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-[#E0E0E0] dark:bg-white/20 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-all duration-300">
+<div class="h-[27px] w-[27px] rounded-full bg-white shadow-sm transition-all"></div>
+<input checked="" class="invisible absolute" type="checkbox"/>
+</label>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4 py-3.5 justify-between border-b border-gray-100 dark:border-white/5 last:border-0 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/10 dark:bg-white/10 shrink-0 size-10">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+<div class="flex flex-col">
+<p class="text-[#171411] dark:text-white text-base font-medium leading-normal flex-1 truncate">Aktivite Durumu</p>
+<p class="text-xs text-[#877564] dark:text-gray-400">Son görülme zamanını göster</p>
+</div>
+</div>
+<div class="shrink-0">
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-[#E0E0E0] dark:bg-white/20 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-all duration-300">
+<div class="h-[27px] w-[27px] rounded-full bg-white shadow-sm transition-all"></div>
+<input checked="" class="invisible absolute" type="checkbox"/>
+</label>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<p class="text-[#877564] dark:text-gray-400 text-xs font-bold tracking-wider uppercase px-2">KONUM VE MESAFE</p>
+<div class="bg-white dark:bg-[#2C241B] rounded-xl shadow-sm border border-gray-100 dark:border-white/5 overflow-hidden">
+<div class="flex items-center gap-4 px-4 py-3.5 justify-between border-b border-gray-100 dark:border-white/5 last:border-0 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/10 dark:bg-white/10 shrink-0 size-10">
+<span class="material-symbols-outlined">location_on</span>
+</div>
+<div class="flex flex-col">
+<p class="text-[#171411] dark:text-white text-base font-medium leading-normal flex-1 truncate">Konumumu Paylaş</p>
+<p class="text-xs text-[#877564] dark:text-gray-400">Yakındaki patilerin seni bulmasını sağla</p>
+</div>
+</div>
+<div class="shrink-0">
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-[#E0E0E0] dark:bg-white/20 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-all duration-300">
+<div class="h-[27px] w-[27px] rounded-full bg-white shadow-sm transition-all"></div>
+<input checked="" class="invisible absolute" type="checkbox"/>
+</label>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4 py-3.5 justify-between border-b border-gray-100 dark:border-white/5 last:border-0 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/10 dark:bg-white/10 shrink-0 size-10">
+<span class="material-symbols-outlined">map</span>
+</div>
+<p class="text-[#171411] dark:text-white text-base font-medium leading-normal flex-1 truncate">Mesafe Bilgisini Göster</p>
+</div>
+<div class="shrink-0">
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-[#E0E0E0] dark:bg-white/20 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-all duration-300">
+<div class="h-[27px] w-[27px] rounded-full bg-white shadow-sm transition-all"></div>
+<input checked="" class="invisible absolute" type="checkbox"/>
+</label>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2 mb-8">
+<p class="text-[#877564] dark:text-gray-400 text-xs font-bold tracking-wider uppercase px-2">ENGELLEME VE VERİ</p>
+<div class="bg-white dark:bg-[#2C241B] rounded-xl shadow-sm border border-gray-100 dark:border-white/5 overflow-hidden">
+<div class="flex items-center gap-4 px-4 py-3.5 justify-between border-b border-gray-100 dark:border-white/5 last:border-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group/item">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/10 dark:bg-white/10 shrink-0 size-10">
+<span class="material-symbols-outlined">block</span>
+</div>
+<div class="flex flex-col">
+<p class="text-[#171411] dark:text-white text-base font-medium leading-normal flex-1 truncate">Engellenen Kullanıcılar</p>
+</div>
+</div>
+<div class="flex items-center gap-2 text-[#877564] dark:text-gray-400 group-hover/item:text-primary transition-colors">
+<span class="text-sm font-medium">12 Kişi</span>
+<span class="material-symbols-outlined text-xl">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4 py-3.5 justify-between border-b border-gray-100 dark:border-white/5 last:border-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group/item">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/10 dark:bg-white/10 shrink-0 size-10">
+<span class="material-symbols-outlined">contacts</span>
+</div>
+<div class="flex flex-col">
+<p class="text-[#171411] dark:text-white text-base font-medium leading-normal flex-1 truncate">Kişilerimi Engelle</p>
+<p class="text-xs text-[#877564] dark:text-gray-400">Rehberindeki kişileri görme</p>
+</div>
+</div>
+<div class="flex items-center gap-2 text-[#877564] dark:text-gray-400 group-hover/item:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4 py-3.5 justify-between border-b border-gray-100 dark:border-white/5 last:border-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group/item">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/10 dark:bg-white/10 shrink-0 size-10">
+<span class="material-symbols-outlined">download</span>
+</div>
+<p class="text-[#171411] dark:text-white text-base font-medium leading-normal flex-1 truncate">Verilerimi İndir</p>
+</div>
+<div class="flex items-center gap-2 text-[#877564] dark:text-gray-400 group-hover/item:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</body></html>

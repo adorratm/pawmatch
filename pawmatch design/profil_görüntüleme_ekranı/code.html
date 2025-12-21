@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pet Profile</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a3f2a",
+                        "primary-dark": "#4a2c1d",
+                        "primary-light": "#C4A484",
+                        "background-light": "#ffffff",
+                        "background-dark": "#2C2520",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#3D342E",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }.no-scrollbar {
+            -ms-overflow-style: none;scrollbar-width: none;}
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-stone-900 dark:text-stone-100 antialiased selection:bg-primary selection:text-white">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto bg-background-light dark:bg-background-dark shadow-2xl">
+<div class="absolute top-0 left-0 w-full z-30 p-4 pt-12 flex justify-between items-center pointer-events-none">
+<button class="pointer-events-auto flex items-center justify-center size-10 rounded-full bg-white/20 backdrop-blur-md shadow-sm border border-white/20 text-white hover:bg-white/30 transition-colors">
+<span class="material-symbols-outlined text-[20px]">arrow_back_ios_new</span>
+</button>
+<button class="pointer-events-auto flex items-center justify-center size-10 rounded-full bg-white/20 backdrop-blur-md shadow-sm border border-white/20 text-white hover:bg-white/30 transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<div class="relative w-full group">
+<div class="flex overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth">
+<div class="snap-center shrink-0 w-full relative aspect-[4/5]">
+<div class="absolute inset-0 bg-cover bg-center rounded-b-xl" data-alt="Golden Retriever dog looking happy in a park" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCiVJpBMkTCTl_4nDWT5vBi3XpKm4yESGbn7_YWMKQlIjTARmzwW_O1cPBsjYikf53bq7U073zI6iKluDX1xP6WX2njVFfnSEbbLXk4C_JDzcCPKx56fhN_KJTsh7FrizmjKxNeWStWQhsQ7VdeYCjV-xEps3wCUzk40duXsKlfwHpIVPxQmC0PCaRNKwDf_0A-scLxiEkQq5hibniRILIKB5ZIekhr-5y5Ir9H64MHNtbGj0etBMt0t54OMs6yUbAUlqq9b7Nli2DK');">
+<div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 rounded-b-xl"></div>
+</div>
+</div>
+<div class="snap-center shrink-0 w-full relative aspect-[4/5]">
+<div class="absolute inset-0 bg-cover bg-center rounded-b-xl" data-alt="Golden Retriever playing fetch with a ball" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBLrdqMsB1oHnqY55RFu_B2-Fd-MhpxUkj75q58VWYxHvcRxtn1hRgiSGAk1Cc8GXatU8jj9LhXjksfPgfkCOQNrmlzlAXtuVkHIH_RIi3qaXMDEleuSNAJrYQErMflGzXqzdmA1Y_blnuTS85H0Sst9Xtl6BzqoKNA9ZgbUCll0pXmnceFVufWHWi7iPkyx1u6V9opkd6VieuIKKbGKsJLmxJQJE0jM5Hike-8sosXNYTu2fmP15Y_Gl7vPnYBDRBN08G_nLJ_bUc_');">
+<div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 rounded-b-xl"></div>
+</div>
+</div>
+<div class="snap-center shrink-0 w-full relative aspect-[4/5]">
+<div class="absolute inset-0 bg-cover bg-center rounded-b-xl" data-alt="Golden Retriever sleeping comfortably" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuANCUuNRErcKSFH4bkzGJ2FqUhwBayqPJjrfTNr9Z9SlRbHZSIC2st3wmohy-PvAk0oZZITrVXkjeyyqfLe4oC0WnIrN4LJXKJMDwAOkZQB4dH1Kd8TUuVG-3BUkTSj8fNDop1kqq8il1wncwKIV-H4geSzASTMBcC0Q1SFc9gwHWD1T9g0JLgbEIpegBvsiR2i46SRERcgkIy6-Z3nafnRSX4NGSj3exaZDki8iJ8vHKMM58hAwvOANaIyRhyHahmyhy1HNDGGOvFS');">
+<div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 rounded-b-xl"></div>
+</div>
+</div>
+<div class="snap-center shrink-0 w-full relative aspect-[4/5]">
+<div class="absolute inset-0 bg-cover bg-center rounded-b-xl" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCiVJpBMkTCTl_4nDWT5vBi3XpKm4yESGbn7_YWMKQlIjTARmzwW_O1cPBsjYikf53bq7U073zI6iKluDX1xP6WX2njVFfnSEbbLXk4C_JDzcCPKx56fhN_KJTsh7FrizmjKxNeWStWQhsQ7VdeYCjV-xEps3wCUzk40duXsKlfwHpIVPxQmC0PCaRNKwDf_0A-scLxiEkQq5hibniRILIKB5ZIekhr-5y5Ir9H64MHNtbGj0etBMt0t54OMs6yUbAUlqq9b7Nli2DK');">
+<div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 rounded-b-xl"></div>
+</div>
+</div>
+<div class="snap-center shrink-0 w-full relative aspect-[4/5]">
+<div class="absolute inset-0 bg-cover bg-center rounded-b-xl" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBLrdqMsB1oHnqY55RFu_B2-Fd-MhpxUkj75q58VWYxHvcRxtn1hRgiSGAk1Cc8GXatU8jj9LhXjksfPgfkCOQNrmlzlAXtuVkHIH_RIi3qaXMDEleuSNAJrYQErMflGzXqzdmA1Y_blnuTS85H0Sst9Xtl6BzqoKNA9ZgbUCll0pXmnceFVufWHWi7iPkyx1u6V9opkd6VieuIKKbGKsJLmxJQJE0jM5Hike-8sosXNYTu2fmP15Y_Gl7vPnYBDRBN08G_nLJ_bUc_');">
+<div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 rounded-b-xl"></div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-0 w-full p-6 flex items-end justify-between z-20 pointer-events-none">
+<div class="flex gap-1.5 mb-1">
+<div class="h-1.5 w-6 rounded-full bg-white shadow-sm transition-all duration-300"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-white/50 shadow-sm transition-all duration-300"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-white/50 shadow-sm transition-all duration-300"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-white/50 shadow-sm transition-all duration-300"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-white/50 shadow-sm transition-all duration-300"></div>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/30 backdrop-blur-md border border-white/10 shadow-lg group-hover:bg-black/40 transition-colors">
+<span class="material-symbols-outlined text-white text-[16px]">photo_library</span>
+<span class="text-xs font-bold text-white tracking-wide">1/5</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col px-5 pt-6 pb-32 gap-6">
+<div class="flex flex-col gap-1">
+<div class="flex items-end justify-between">
+<h1 class="text-3xl font-extrabold text-stone-900 dark:text-white tracking-tight leading-none">Buddy, 3</h1>
+<div class="flex items-center justify-center p-2 bg-primary/10 dark:bg-primary/20 rounded-full text-primary-dark dark:text-primary-light">
+<span class="material-symbols-outlined text-[20px]">male</span>
+</div>
+</div>
+<div class="flex items-center text-stone-500 dark:text-stone-400 gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary">location_on</span>
+<p class="text-sm font-medium">5km away • Istanbul, TR</p>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<div class="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl bg-surface-light dark:bg-surface-dark border border-stone-200 dark:border-stone-800 shadow-sm">
+<div class="size-10 rounded-full bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600 dark:text-orange-400">
+<span class="material-symbols-outlined">pets</span>
+</div>
+<div class="text-center">
+<p class="text-xs text-stone-500 dark:text-stone-400 font-medium">Breed</p>
+<p class="text-sm font-bold text-stone-900 dark:text-white">Golden</p>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl bg-surface-light dark:bg-surface-dark border border-stone-200 dark:border-stone-800 shadow-sm">
+<div class="size-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-green-600 dark:text-green-400">
+<span class="material-symbols-outlined">scale</span>
+</div>
+<div class="text-center">
+<p class="text-xs text-stone-500 dark:text-stone-400 font-medium">Weight</p>
+<p class="text-sm font-bold text-stone-900 dark:text-white">32 kg</p>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl bg-surface-light dark:bg-surface-dark border border-stone-200 dark:border-stone-800 shadow-sm">
+<div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-yellow-700 dark:text-yellow-400">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div class="text-center">
+<p class="text-xs text-stone-500 dark:text-stone-400 font-medium">Energy</p>
+<p class="text-sm font-bold text-stone-900 dark:text-white">High</p>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-2">
+<div class="flex items-center px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark border border-stone-200 dark:border-stone-700">
+<span class="text-sm font-semibold text-stone-700 dark:text-stone-200">Friendly 🎾</span>
+</div>
+<div class="flex items-center px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark border border-stone-200 dark:border-stone-700">
+<span class="text-sm font-semibold text-stone-700 dark:text-stone-200">House Trained 🏠</span>
+</div>
+<div class="flex items-center px-4 py-2 rounded-full bg-surface-light dark:bg-surface-dark border border-stone-200 dark:border-stone-700">
+<span class="text-sm font-semibold text-stone-700 dark:text-stone-200">Playful 🦴</span>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<h2 class="text-lg font-bold text-stone-900 dark:text-white">Health Status</h2>
+<div class="flex items-center gap-1 px-2 py-1 rounded-lg bg-green-50 dark:bg-green-900/20">
+<span class="material-symbols-outlined text-[14px] text-green-600 dark:text-green-400">verified_user</span>
+<span class="text-xs font-bold text-green-700 dark:text-green-300">Vet Checked</span>
+</div>
+</div>
+<div class="flex flex-col bg-surface-light dark:bg-surface-dark border border-stone-200 dark:border-stone-800 rounded-2xl shadow-sm overflow-hidden">
+<div class="flex items-center p-4 border-b border-stone-200 dark:border-stone-800">
+<div class="size-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary-dark dark:text-primary-light shrink-0 mr-4">
+<span class="material-symbols-outlined">vaccines</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-stone-900 dark:text-white">Vaccinations</p>
+<p class="text-xs text-stone-500 dark:text-stone-400">Up to date, next due Nov 24</p>
+</div>
+<div class="flex items-center justify-center size-6 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<div class="flex items-center p-4 border-b border-stone-200 dark:border-stone-800">
+<div class="size-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary-dark dark:text-primary-light shrink-0 mr-4">
+<span class="material-symbols-outlined">healing</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-stone-900 dark:text-white">Spayed / Neutered</p>
+<p class="text-xs text-stone-500 dark:text-stone-400">Completed at 6 months</p>
+</div>
+<div class="flex items-center justify-center size-6 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<div class="flex items-start p-4">
+<div class="size-10 rounded-full bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-orange-600 dark:text-orange-400 shrink-0 mr-4">
+<span class="material-symbols-outlined">medical_services</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold text-stone-900 dark:text-white mb-1">Medical Notes</p>
+<p class="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
+                    Sensitive stomach requires hypoallergenic diet. No other known chronic issues.
+                </p>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<h2 class="text-lg font-bold text-stone-900 dark:text-white">About Buddy</h2>
+<p class="text-stone-600 dark:text-stone-300 leading-relaxed text-[15px]">
+                Hi! I'm Buddy, the happiest Golden Retriever you'll ever meet. I love long walks on the beach, chasing tennis balls until I can't breathe, and stealing socks when no one is looking. Looking for a playdate or a forever home! 🐾
+            </p>
+</div>
+<div class="flex items-center justify-between p-4 rounded-2xl bg-surface-light dark:bg-surface-dark border border-stone-200 dark:border-stone-800 shadow-sm mt-2">
+<div class="flex items-center gap-3">
+<div class="size-12 rounded-full bg-cover bg-center" data-alt="Portrait of a woman smiling" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCFCz3PCZBFiiLdpFU9FKylusatJB1USmAJ-okQzANX8xu4xFgglFhE03HRs_3fK1Ct2_fQXdIzW8gPRrevSLATv1qdM150zB3RTdKdEprWCT_mFHGmVWui__IQyDwWKYYDk6qWsWlt_tQXMz4dIfcPDH0xx_Ugo1lwsbEgrpJKcNJ7gHEDdETLJeeWQfNOlNYFeAAcEU1WNpIOMp28H5ZCRlWpztE3JTwRVkscCfYAi-N7RCD0MGONhczLZb7K5pIV8lLJ_sxoLmV6')"></div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1">
+<span class="font-bold text-stone-900 dark:text-white">Sarah Jenkins</span>
+<span class="material-symbols-outlined text-[16px] text-blue-500" title="Verified">verified</span>
+</div>
+<span class="text-xs text-stone-500 dark:text-stone-400">Owner</span>
+</div>
+</div>
+<button class="size-10 flex items-center justify-center rounded-full bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-white hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors">
+<span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+</button>
+</div>
+</div>
+<div class="fixed bottom-0 left-0 w-full p-4 flex justify-center items-center gap-6 bg-gradient-to-t from-background-light via-background-light/95 to-transparent dark:from-[#2C2520] dark:via-[#2C2520]/95 pb-8 pt-12 max-w-md mx-auto z-30 pointer-events-none">
+<button class="pointer-events-auto group flex items-center justify-center size-16 rounded-full bg-white dark:bg-surface-dark shadow-[0_8px_20px_rgb(0,0,0,0.08)] border border-stone-200 dark:border-stone-800 text-stone-400 hover:text-red-500 hover:scale-105 transition-all duration-200">
+<span class="material-symbols-outlined text-[32px] group-hover:text-red-500 transition-colors">close</span>
+</button>
+<button class="pointer-events-auto group flex items-center justify-center size-20 rounded-full bg-primary shadow-[0_8px_25px_rgba(106,63,42,0.4)] text-white hover:scale-105 hover:shadow-[0_12px_30px_rgba(106,63,42,0.5)] transition-all duration-200">
+<span class="material-symbols-outlined text-[40px] filled group-hover:animate-pulse">favorite</span>
+</button>
+<button class="pointer-events-auto group flex items-center justify-center size-14 rounded-full bg-white dark:bg-surface-dark shadow-[0_8px_20px_rgb(0,0,0,0.08)] border border-stone-200 dark:border-stone-800 text-stone-400 hover:text-blue-500 hover:scale-105 transition-all duration-200">
+<span class="material-symbols-outlined text-[24px] group-hover:text-blue-500 transition-colors">star</span>
+</button>
+</div>
+</div>
+</body></html>

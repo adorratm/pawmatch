@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Favoriler Ekranı - Beyaz Arka Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#6a3f2a",
+              "background-light": "#ffffff",
+              "background-dark": "#221e10",
+              "surface-light": "#ffffff",
+              "surface-dark": "#2c281b",
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "1rem", 
+              "lg": "2rem", 
+              "xl": "3rem", 
+              "full": "9999px"
+            },
+            boxShadow: {
+              'card': '0 10px 40px -10px rgba(0,0,0,0.1)',
+              'float': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            }
+          },
+        },
+      }
+    </script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<div class="relative flex h-full max-h-[900px] w-full max-w-[430px] flex-col bg-background-light dark:bg-background-dark overflow-hidden shadow-2xl sm:rounded-[2.5rem] border border-gray-200 dark:border-gray-800">
+<header class="flex items-center justify-between px-6 pt-8 pb-4 shrink-0 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md sticky top-0">
+<div class="flex items-center justify-center p-1 rounded-full border-2 border-primary cursor-pointer hover:opacity-80 transition">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCG3B8xe_3c4vII4DM0h6bfLId7eOc8O3pVJtHKhJXQpNP05XDFgW4FI8XycNBFd0MeKsZUzfHjpDWF6RONaYYJCUvxC0k54YFJliAYlAfR0f7VZGmEaZsdUFS9uFTjuPygy9LAEBjBatQ0Twnsr4nZwGcm8SeOgMMgroiLDvR7UoItHV_-7nCqPD7tIkw8_Cing7Ed-B_ZnydmhSKwgDZEgaeDBS3iZTJVAzBZBJLQVJ1b-7NBSzD1Sw8AQUn6f3RzkJ3jC4nMPBt8");'>
+</div>
+</div>
+<div class="flex flex-col items-center">
+<h1 class="text-[#181611] dark:text-white text-xl font-extrabold tracking-tight">Favorites</h1>
+<span class="text-xs text-primary font-bold tracking-wider uppercase">6 Saved Pets</span>
+</div>
+<button class="flex items-center justify-center size-12 rounded-full bg-gray-50 dark:bg-surface-dark text-[#181611] dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition shadow-sm cursor-pointer border border-gray-100 dark:border-gray-800">
+<span class="material-symbols-outlined" style="font-size: 24px;">search</span>
+</button>
+</header>
+<main class="flex-1 w-full overflow-y-auto no-scrollbar px-4 pb-4">
+<div class="grid grid-cols-2 gap-4">
+<div class="relative aspect-[3/4] group rounded-2xl overflow-hidden shadow-sm cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD6JqyeFfKbzIV96d7Ss8Z8VIbXK_ip3_tgj65pp7VYE2Y51FBPgWJ7GO_67BusF0qB8PRHHPK2om8_D7FJt8_AgzuYQX5oiEwYaSKsy_eIoDazBt5KIy9iKhxGIRXFU9DiL4Ql-7Iy-qeAzoJm18tZsNFTP72l8duZlbVwVBNSyx_UcrKs54Ow6lIO6LVRb9_AFpT_AU2FXoYm5QhKhzYzfDdSRyXaP-Jxqj5Nt0DYG8lNbEXf-9ksglCDsYHvZpI7QH5092r7MQdB");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+<button class="absolute top-2 right-2 size-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-primary hover:bg-white hover:text-red-500 transition-all shadow-sm z-10">
+<span class="material-symbols-outlined" style="font-size: 18px; font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<div class="absolute bottom-0 left-0 right-0 p-3">
+<div class="flex justify-between items-end">
+<div>
+<h3 class="text-white font-bold text-lg leading-tight">Barney, 2</h3>
+<p class="text-gray-300 text-xs font-medium">Golden Retriever</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative aspect-[3/4] group rounded-2xl overflow-hidden shadow-sm cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBYTXTCbMi2R0s7dwR16MYRdpTDEU8f0IPP8o08B8ULpPUYM7IuGALgB39tG7t8yXlBBs7HHGADWTuSo8Jol0m-y1IyaIXcXCcEjAgTyj7tPVE6oDU3JBwHArepA2_p-vYgq18n9scV6DzI4_ztJqK8fqF7xjJsB8JvlcQbqwtbLboF1oMWNGiDX036bPCKzdrP3yFlL0-C8MYwj7mBNxtRaydKuTyOCTV3JV69BoZING-diZexfF_-pTKWQ5-k_WyCVaR3oB6-UGeD");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+<button class="absolute top-2 right-2 size-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-primary hover:bg-white hover:text-red-500 transition-all shadow-sm z-10">
+<span class="material-symbols-outlined" style="font-size: 18px; font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<div class="absolute bottom-0 left-0 right-0 p-3">
+<div class="flex justify-between items-end">
+<div>
+<h3 class="text-white font-bold text-lg leading-tight">Milo, 1</h3>
+<p class="text-gray-300 text-xs font-medium">Tabby Cat</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative aspect-[3/4] group rounded-2xl overflow-hidden shadow-sm cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBzxJAf-IPzS_Owa9TJOFbyj9SS_b-PmNmFa5He2HEx-MtyBP_9VxYpibYz_cwkAZQJFNE07oPorkAv4BpSpJvrCuSK8qIKdUb2-PP9dvp7RBOgfB77AVDGNGMB-rnqC8qs8bS8AjoxmSScl1l4kCS9irXacZFPP3XYWvborCcfLzL8FSkd3oOJhHLx-pTWmqodXJoQcUI5CTkAiz0gBEjK4ozu6PyMf096tbdIwLNKmwIcX_QKjYigggASHsOwtAB1rpRvXSNySdN8");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+<button class="absolute top-2 right-2 size-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-primary hover:bg-white hover:text-red-500 transition-all shadow-sm z-10">
+<span class="material-symbols-outlined" style="font-size: 18px; font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<div class="absolute bottom-0 left-0 right-0 p-3">
+<div class="flex justify-between items-end">
+<div>
+<h3 class="text-white font-bold text-lg leading-tight">Bella, 4</h3>
+<p class="text-gray-300 text-xs font-medium">Beagle</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative aspect-[3/4] group rounded-2xl overflow-hidden shadow-sm cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDpVRvygadCgLVW_Ryt0oXq5iTaYDMVvuopA_idAE7l8HMDbaXToSryGPuJGbxOsHPMmOGWtBpxYHnfo81WFsAI7M0K6BPDE1aoWd_-Zqd7AeTcdU6yzUGBEl8wWk262u3jFfIiCr4bBT9NBl2KVFGcJ056Sgj-vpHp4rFjlu6eEqeTORbAk4kpmLvcfQ81N3Hc5Lao7bQAW3swVvesKg4yzvrmGzLLuvG-ApAobfObzJvlWsBUzX0QPX5g1YjPE-r2Qsx9n_cEfI1a");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+<button class="absolute top-2 right-2 size-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-primary hover:bg-white hover:text-red-500 transition-all shadow-sm z-10">
+<span class="material-symbols-outlined" style="font-size: 18px; font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<div class="absolute bottom-0 left-0 right-0 p-3">
+<div class="flex justify-between items-end">
+<div>
+<h3 class="text-white font-bold text-lg leading-tight">Rocky, 3</h3>
+<p class="text-gray-300 text-xs font-medium">Bulldog</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative aspect-[3/4] group rounded-2xl overflow-hidden shadow-sm cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDo9SaZZvu8DNPqbkciXEHNAIX-HOS0EvfcHK_zkUo3HNxEsmcwLrHlTOL7ORYHNEW8ADbgDMIaKEyyV0T7QMhMtjVEwwl-ju_ItKpdyF8iW9fkklT9raLDtb-rRgh6pS8oLnqBZAbcYhI4-Ar1Bo29hJMm_NMdfwgerzzpA9hS7rTdzpzZoE0J5OZYpUnk2ftVgUQ76xJj0BiuBJFF-u3m8BHbxwxAcD-i42SeiX_ISA-dnk_z1AiyvtBviPzZPMlVKKtA8GIL6XIz");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+<button class="absolute top-2 right-2 size-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-primary hover:bg-white hover:text-red-500 transition-all shadow-sm z-10">
+<span class="material-symbols-outlined" style="font-size: 18px; font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<div class="absolute bottom-0 left-0 right-0 p-3">
+<div class="flex justify-between items-end">
+<div>
+<h3 class="text-white font-bold text-lg leading-tight">Luna, 1</h3>
+<p class="text-gray-300 text-xs font-medium">Rabbit</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative aspect-[3/4] group rounded-2xl overflow-hidden shadow-sm cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuARxv1Ndo68qFWWURQr6RsY10a9KJnL0vzlpRM9Jo1al-CCznLZfVx7OIeZQ8ivGq_5Uzwiyw8vJy3d56NLhmi0bYDUEcmMnS6qU5bTjvvTyRqA-w121WU1suwdIZXWOmnneyluQtKvU61ZEeFOrhiFL95w4lgUHjLv8ILN06-OCYGUEpWD2fpIoNiViwade5jGu2kqlMb0nu5MD4stdXod9g-zaSLCMMBzGzNiDwk4MtHMmQiMzR9RjOgo2v0qFJz4oqfpkwUTb5um");'></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+<button class="absolute top-2 right-2 size-8 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-primary hover:bg-white hover:text-red-500 transition-all shadow-sm z-10">
+<span class="material-symbols-outlined" style="font-size: 18px; font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<div class="absolute bottom-0 left-0 right-0 p-3">
+<div class="flex justify-between items-end">
+<div>
+<h3 class="text-white font-bold text-lg leading-tight">Charlie, 5</h3>
+<p class="text-gray-300 text-xs font-medium">Parrot</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative aspect-[3/4] rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 flex flex-col items-center justify-center text-gray-400 dark:text-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined mb-2" style="font-size: 32px;">add_circle</span>
+<span class="text-sm font-bold">Discover More</span>
+</div>
+</div>
+</main>
+<nav class="flex justify-around items-center border-t border-gray-100 dark:border-gray-800 bg-surface-light dark:bg-surface-dark px-6 pb-6 pt-3 shrink-0 z-30">
+<a class="flex flex-col items-center justify-end gap-1 group" href="#">
+<div class="flex size-10 items-center justify-center rounded-xl text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 26px;">style</span>
+</div>
+</a>
+<a class="flex flex-col items-center justify-end gap-1 group" href="#">
+<div class="flex size-10 items-center justify-center rounded-xl bg-primary/20 text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 26px; font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<span class="w-1 h-1 rounded-full bg-primary mt-0.5"></span>
+</a>
+<a class="flex flex-col items-center justify-end gap-1 group" href="#">
+<div class="flex size-10 items-center justify-center rounded-xl text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 26px;">chat_bubble</span>
+</div>
+</a>
+<a class="flex flex-col items-center justify-end gap-1 group" href="#">
+<div class="flex size-10 items-center justify-center rounded-xl text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 26px;">person</span>
+</div>
+</a>
+</nav>
+<div class="h-2 w-full bg-surface-light dark:bg-surface-dark"></div>
+</div>
+</body></html>

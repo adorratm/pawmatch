@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html class="light" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profil Düzenle Ekranı</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a3f2a",
+                        "primary-dark": "#543221",
+                        "background-light": "#ffffff",
+                        "background-dark": "#211d11",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#2c281b",
+                        "text-main": "#171611",
+                        "text-muted": "#877e64",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }.no-scrollbar {
+            -ms-overflow-style: none;scrollbar-width: none;}input:focus, textarea:focus, select:focus {
+            outline: none;
+            box-shadow: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-white transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-hidden">
+<header class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
+<div class="flex items-center p-4 pb-3 justify-between">
+<div class="flex w-20 items-center justify-start">
+<button class="text-text-muted hover:text-text-main dark:text-gray-400 dark:hover:text-white font-medium text-base transition-colors flex items-center">
+<span class="material-symbols-outlined text-2xl -ml-1">chevron_left</span>
+                        Ayarlar
+                    </button>
+</div>
+<h2 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] text-center">Profil Düzenle</h2>
+<div class="flex w-20 items-center justify-end">
+<button class="text-primary hover:text-primary-dark font-bold text-base transition-colors">Kaydet</button>
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto no-scrollbar pb-10">
+<section class="p-4 pt-6">
+<div class="flex items-center justify-between mb-3 px-1">
+<h3 class="text-text-muted dark:text-gray-400 text-xs font-bold uppercase tracking-wider">Fotoğraflar</h3>
+<span class="text-primary text-xs font-bold cursor-pointer">Sıralamayı Düzenle</span>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<div class="relative aspect-[3/4] group">
+<div class="absolute inset-0 bg-cover bg-center rounded-xl shadow-sm border border-gray-200 dark:border-gray-800" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDqjPjOvygxmoZnqYgFg2PWqPMPYrKSPY3pvvupZoMwRxmml8Iv0i59EGG9-VTaGbIfF0n9w9mP7ROvHopS0ggmN0LSitxNURrI-dWPg8r8QeJG79ls5soOqj3BGCqi-EY_tQoortT2QNZhRp8uATOiLi_Ac7IM6QqmnhajfpmfwhoiIdCkYTQI_Q8SHMrh3iyn-ztNjVkL7gbv0nzgWnCm8w1i_R-dNVaIWM7xO8GBAs_BBSY5xsAer_KkNsJTkCdGXTQ_tcfxbKBT");'></div>
+<div class="absolute bottom-0 right-0 p-1 translate-x-1/4 translate-y-1/4">
+<button class="bg-white dark:bg-surface-dark text-red-500 rounded-full p-1 shadow-md border border-gray-100 dark:border-gray-700 hover:scale-110 transition-transform flex items-center justify-center h-7 w-7">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<div class="absolute top-2 left-2 bg-primary/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm">
+                            ANA FOTO
+                        </div>
+</div>
+<div class="relative aspect-[3/4] rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-surface-dark/50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-surface-dark transition-colors group">
+<div class="bg-primary/20 group-hover:bg-primary/30 text-primary rounded-full p-2 mb-1 transition-colors">
+<span class="material-symbols-outlined text-xl font-bold">add</span>
+</div>
+</div>
+<div class="relative aspect-[3/4] rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-surface-dark/50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-surface-dark transition-colors group">
+<div class="bg-primary/20 group-hover:bg-primary/30 text-primary rounded-full p-2 mb-1 transition-colors">
+<span class="material-symbols-outlined text-xl font-bold">add</span>
+</div>
+</div>
+<div class="relative aspect-[3/4] rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-surface-dark/50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-surface-dark transition-colors group">
+<div class="bg-primary/20 group-hover:bg-primary/30 text-primary rounded-full p-2 mb-1 transition-colors">
+<span class="material-symbols-outlined text-xl font-bold">add</span>
+</div>
+</div>
+<div class="relative aspect-[3/4] rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-surface-dark/50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-surface-dark transition-colors group">
+<div class="bg-primary/20 group-hover:bg-primary/30 text-primary rounded-full p-2 mb-1 transition-colors">
+<span class="material-symbols-outlined text-xl font-bold">add</span>
+</div>
+</div>
+<div class="relative aspect-[3/4] rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-surface-dark/50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-surface-dark transition-colors group">
+<div class="bg-primary/20 group-hover:bg-primary/30 text-primary rounded-full p-2 mb-1 transition-colors">
+<span class="material-symbols-outlined text-xl font-bold">add</span>
+</div>
+</div>
+</div>
+<p class="text-xs text-text-muted/60 dark:text-gray-500 mt-2 px-1">Profilinde en az 2 fotoğraf olması daha fazla eşleşme şansı sağlar.</p>
+</section>
+<section class="mt-4">
+<h3 class="px-5 text-xs font-bold text-text-muted dark:text-gray-400 uppercase tracking-wider mb-2">Hakkımda</h3>
+<div class="bg-surface-light dark:bg-surface-dark border-y border-gray-100 dark:border-gray-800">
+<textarea class="w-full bg-transparent border-0 px-5 py-3 text-text-main dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:ring-0 resize-none leading-relaxed" placeholder="Boncuk nelerden hoşlanır? Karakteri nasıldır? Buraya yazabilirsin..." rows="4">Enerjik, oyuncu ve top yakalamayı çok seven bir Golden. Parklarda koşmayı ve yeni arkadaşlar edinmeyi çok severim. 🎾🐕</textarea>
+<div class="px-5 pb-2 text-right">
+<span class="text-[10px] text-gray-400">124/500</span>
+</div>
+</div>
+</section>
+<section class="mt-6">
+<h3 class="px-5 text-xs font-bold text-text-muted dark:text-gray-400 uppercase tracking-wider mb-2">Temel Bilgiler</h3>
+<div class="bg-surface-light dark:bg-surface-dark border-y border-gray-100 dark:border-gray-800 divide-y divide-gray-100 dark:divide-gray-800 pl-5">
+<div class="flex items-center justify-between py-3 pr-5">
+<label class="text-base font-medium text-text-main dark:text-white">İsim</label>
+<input class="text-right bg-transparent border-0 p-0 text-text-muted dark:text-gray-300 focus:ring-0 placeholder-gray-400 w-1/2" type="text" value="Boncuk"/>
+</div>
+<div class="flex items-center justify-between py-3 pr-5">
+<label class="text-base font-medium text-text-main dark:text-white">Yaş</label>
+<div class="flex items-center gap-2">
+<input class="text-right bg-transparent border-0 p-0 text-text-muted dark:text-gray-300 focus:ring-0 placeholder-gray-400 w-12" type="number" value="3"/>
+<span class="text-text-muted dark:text-gray-500 text-sm">Yaşında</span>
+</div>
+</div>
+<div class="flex items-center justify-between py-3 pr-5 cursor-pointer">
+<label class="text-base font-medium text-text-main dark:text-white">Irk</label>
+<div class="flex items-center gap-2">
+<span class="text-text-muted dark:text-gray-300">Golden Retriever</span>
+<span class="material-symbols-outlined text-gray-300 text-lg">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center justify-between py-3 pr-5">
+<label class="text-base font-medium text-text-main dark:text-white">Cinsiyet</label>
+<div class="flex bg-gray-100 dark:bg-black/20 rounded-lg p-1">
+<button class="px-4 py-1 rounded-md text-sm font-medium bg-white dark:bg-surface-dark shadow-sm text-text-main dark:text-white transition-all">Erkek</button>
+<button class="px-4 py-1 rounded-md text-sm font-medium text-text-muted dark:text-gray-400 hover:text-text-main transition-all">Dişi</button>
+</div>
+</div>
+<div class="flex items-center justify-between py-3 pr-5 cursor-pointer">
+<label class="text-base font-medium text-text-main dark:text-white">Boyut</label>
+<div class="flex items-center gap-2">
+<span class="text-text-muted dark:text-gray-300">Büyük Irk (25-45kg)</span>
+<span class="material-symbols-outlined text-gray-300 text-lg">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+<section class="mt-6">
+<h3 class="px-5 text-xs font-bold text-text-muted dark:text-gray-400 uppercase tracking-wider mb-2">Karakter Özellikleri</h3>
+<div class="px-5 flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-full bg-primary/20 border border-primary text-primary-dark text-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-base">sentiment_satisfied</span>
+                        Oyuncu
+                        <span class="material-symbols-outlined text-sm ml-1">close</span>
+</button>
+<button class="px-3 py-1.5 rounded-full bg-primary/20 border border-primary text-primary-dark text-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-base">bolt</span>
+                        Enerjik
+                        <span class="material-symbols-outlined text-sm ml-1">close</span>
+</button>
+<button class="px-3 py-1.5 rounded-full bg-primary/20 border border-primary text-primary-dark text-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-base">pets</span>
+                        Dost Canlısı
+                        <span class="material-symbols-outlined text-sm ml-1">close</span>
+</button>
+<button class="px-3 py-1.5 rounded-full bg-surface-light dark:bg-surface-dark border border-gray-300 dark:border-gray-700 text-text-muted dark:text-gray-400 text-sm font-medium hover:border-primary hover:text-primary transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-base">add</span>
+                        Ekle
+                    </button>
+</div>
+</section>
+<section class="mt-8 mb-8">
+<h3 class="px-5 text-xs font-bold text-text-muted dark:text-gray-400 uppercase tracking-wider mb-2">Bağlı Hesap</h3>
+<div class="bg-surface-light dark:bg-surface-dark border-y border-gray-100 dark:border-gray-800 px-5 py-3 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-text-main dark:text-white font-medium">Ahmet Yılmaz</span>
+<span class="text-xs text-text-muted dark:text-gray-500">Sahibi</span>
+</div>
+<span class="material-symbols-outlined text-gray-300">lock</span>
+</div>
+<p class="text-[10px] text-text-muted/50 dark:text-gray-600 mt-2 px-5">Sahip bilgileri Hesap Ayarlarından değiştirilebilir.</p>
+</section>
+</main>
+</div>
+
+</body></html>

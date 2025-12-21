@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Yakın Veterinerler</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a3f2a", // Dark pastel brown as accent
+                        "primary-light": "#8c5e45",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#42362f",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }@keyframes pulse-ring {
+            0% { transform: scale(0.33); opacity: 0.8; }
+            80%, 100% { transform: scale(1.5); opacity: 0; }
+        }
+        .pulse-ring::before {
+            content: '';
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            border-radius: 50%;
+            background-color: #6a3f2a;
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-white text-slate-900 font-display overflow-hidden h-screen w-full relative selection:bg-primary selection:text-white">
+<div class="absolute inset-0 z-0 w-full h-full">
+<div class="w-full h-full bg-[#f2f0eb] relative overflow-hidden">
+<img alt="Map background" class="w-full h-full object-cover opacity-60 mix-blend-multiply grayscale-[0.2]" data-alt="Dark styled map background of city streets" data-location="Istanbul, Turkey" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFMP41wlp90So0DT3hOJvi9elgCvbZ6sPNYfxw67CMhAv-aYoLJcR-g-e2DZuOz-JA7kBV-iArrGb__56ZpnqZUR3RE0Pw0uJd4NkfvrxV5ryZLzhd_v8713EqL9RLp9FCD6sYO-9QY56bUwCXaU7AnwKMEpRnzkFfjyj0YoPk9iuI_wJMDtwKIGeevratVW-0Y37gZ7Z0QACu1OduvRDy-ILB0w_biOuoMre2RNGQ80g9dfdSKISIGsnDwKVoiE82y5mEbYNpMZau" style="filter: invert(1) hue-rotate(180deg) brightness(1.1);"/>
+<div class="absolute inset-0 bg-white/20 pointer-events-none"></div>
+<div class="absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 pulse-ring">
+<div class="w-3 h-3 bg-primary border-2 border-white rounded-full shadow-lg z-10"></div>
+</div>
+<div class="absolute top-[30%] left-[20%] flex flex-col items-center group cursor-pointer z-10">
+<div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-lg transform transition group-hover:scale-110 border-2 border-white">
+<span class="material-symbols-outlined text-white text-[20px]">pets</span>
+</div>
+<div class="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-primary -mt-0.5"></div>
+</div>
+<div class="absolute top-[45%] left-[75%] flex flex-col items-center group cursor-pointer">
+<div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg transform transition group-hover:scale-110 border-2 border-slate-200">
+<span class="material-symbols-outlined text-slate-600 text-[20px]">medical_services</span>
+</div>
+<div class="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-white -mt-0.5 drop-shadow-sm"></div>
+</div>
+<div class="absolute top-[25%] left-[60%] flex flex-col items-center group cursor-pointer z-20">
+<div class="bg-white px-3 py-1 rounded-lg mb-1 shadow-md border border-slate-100">
+<span class="text-xs font-bold text-primary whitespace-nowrap">Pati Dostu</span>
+</div>
+<div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-xl transform scale-110 border-[3px] border-white">
+<span class="material-symbols-outlined text-white text-[24px]">local_hospital</span>
+</div>
+<div class="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[10px] border-t-primary -mt-0.5"></div>
+</div>
+</div>
+</div>
+<div class="absolute top-0 left-0 w-full z-20 flex flex-col bg-gradient-to-b from-white/95 via-white/80 to-transparent pb-8 pt-safe">
+<div class="h-10 w-full"></div>
+<div class="flex items-center justify-between px-4 pb-4">
+<button class="flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur-md text-slate-800 border border-slate-200 shadow-sm hover:bg-white transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="text-slate-900 text-lg font-bold leading-tight tracking-tight flex-1 text-center">Yakın Veterinerler</h2>
+<button class="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white shadow-lg shadow-primary/30 hover:bg-primary-light transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+<div class="px-4 pb-3">
+<label class="flex flex-col w-full h-12 shadow-lg shadow-slate-200/50">
+<div class="flex w-full flex-1 items-stretch rounded-xl h-full bg-white border border-slate-200 overflow-hidden focus-within:border-primary/50 transition-colors">
+<div class="text-slate-400 flex items-center justify-center pl-4 pr-2">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="flex w-full min-w-0 flex-1 bg-transparent text-slate-800 focus:outline-0 placeholder:text-slate-400 px-2 text-base font-medium leading-normal h-full border-none focus:ring-0" placeholder="Klinik veya semt ara..." value=""/>
+<div class="flex items-center justify-center pr-2">
+<button class="text-primary p-2 hover:bg-slate-50 rounded-full">
+<span class="material-symbols-outlined text-[20px]">near_me</span>
+</button>
+</div>
+</div>
+</label>
+</div>
+<div class="flex items-center gap-3 px-4 overflow-x-auto hide-scrollbar pb-2">
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary text-white pl-4 pr-4 shadow-md shadow-primary/20 border border-primary/50 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[18px]">near_me</span>
+<span class="text-sm font-bold">Mesafeye Göre</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white text-slate-600 pl-4 pr-4 border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-[18px]">sort</span>
+<span class="text-sm font-medium">Puana Göre</span>
+</button>
+<div class="w-px h-6 bg-slate-300 shrink-0 mx-1"></div>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white text-slate-600 pl-4 pr-4 border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-[18px] text-green-600">check_circle</span>
+<span class="text-sm font-medium">Şimdi Açık</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white text-slate-600 pl-4 pr-4 border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-[18px] text-red-500">emergency</span>
+<span class="text-sm font-medium">7/24 Acil</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white text-slate-600 pl-4 pr-4 border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-[18px] text-yellow-500">star</span>
+<span class="text-sm font-medium">Yüksek Puanlı</span>
+</button>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 w-full z-30 flex flex-col h-[55vh] transition-transform duration-300 ease-out transform translate-y-0">
+<div class="flex-1 flex flex-col bg-white rounded-t-[2rem] shadow-[0_-8px_30px_rgba(0,0,0,0.1)] border-t border-slate-100 relative overflow-hidden">
+<div class="w-full flex justify-center pt-3 pb-1 shrink-0" id="sheet-handle">
+<div class="h-1.5 w-12 rounded-full bg-slate-200"></div>
+</div>
+<div class="px-5 py-3 flex justify-between items-end shrink-0">
+<div>
+<p class="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Senin için bulunan</p>
+<h3 class="text-slate-900 text-xl font-bold">4 Veteriner Kliniği</h3>
+</div>
+<button class="text-primary text-sm font-bold flex items-center gap-1 hover:text-primary-light transition-colors">
+                Haritada gör <span class="material-symbols-outlined text-[16px]">map</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto px-4 pb-6 hide-scrollbar space-y-3">
+<div class="bg-[#fffbf9] p-3 rounded-2xl flex gap-4 border border-primary/20 relative group overflow-hidden shadow-sm">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+<div class="relative w-24 h-24 shrink-0 rounded-xl overflow-hidden bg-slate-200">
+<img alt="Modern clinic interior with equipment" class="w-full h-full object-cover" data-alt="Interior view of a modern veterinary clinic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo7UlBy2zsjzNr5cWKcUwgAxTrSyc64fT6aetIjOX6h9m9HYS_ouNsCqVQPh8F02VC1-vgGrke70MctqbxMOX9BJF0EDuu_q6K0HsKmPyKNVDvwtcho2uGXsH6irhN7Ug3jK_vyWRVZV_3ZrPdgc3elLxC_JSZa2t07iiCECoZd5NQY3YTOOh8wLO7s-nirt1Giy6a5VHwJGFSOq_jZH2E-195MpECmcc-SIJohIL6Hk6ZlVbHMyVkYZE0xAfpY9T1lUCwwMqixU3S"/>
+<div class="absolute bottom-0 left-0 w-full bg-black/50 backdrop-blur-[2px] py-1 flex justify-center">
+<span class="text-[10px] font-bold text-white flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Açık
+                        </span>
+</div>
+</div>
+<div class="flex-1 flex flex-col justify-between py-1">
+<div>
+<div class="flex justify-between items-start">
+<h4 class="text-slate-900 font-bold text-lg leading-tight">Pati Dostu Klinik</h4>
+<div class="flex items-center gap-1 bg-white border border-slate-100 px-1.5 py-0.5 rounded-md shadow-sm">
+<span class="material-symbols-outlined text-yellow-400 text-[14px] fill-current">star</span>
+<span class="text-slate-700 text-xs font-bold">4.9</span>
+</div>
+</div>
+<p class="text-slate-500 text-xs mt-1 line-clamp-1">Atatürk Mah, Ataşehir • 0.8 km</p>
+</div>
+<div class="flex items-center gap-3 mt-3">
+<button class="flex-1 h-9 rounded-lg bg-primary text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-primary-light transition-colors shadow-md shadow-primary/20">
+<span class="material-symbols-outlined text-[18px]">directions</span>
+                            Yol Tarifi
+                        </button>
+<button class="h-9 w-9 rounded-lg border border-slate-200 text-primary flex items-center justify-center hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-[20px]">call</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-white p-3 rounded-2xl flex gap-4 border border-slate-100 shadow-sm hover:border-primary/20 transition-colors">
+<div class="relative w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-slate-200">
+<img alt="Veterinarian examining a cat" class="w-full h-full object-cover" data-alt="Veterinarian holding a cat" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHDaCWu_ow1Rw2cctK0GF5WXGHg-HpYl5lzz2Vq-3BnoC7fw8JuTHaxiStJ-GmME-tDrHPm2Pyf3puwp6vLwehCllE6bXWWwDprYi_I70-Cg5F_QjsgytrmCgRKKUOeap4DU1__U0W0zyUcgiNXO7qyagjfFTJZjSG7ifCDJokZQ0cgineqy4B9I8oyF3onDg4j_sqxqOOarJzAmuZ3WFd5UGgl2TpuEfJ3t-o8pKIcEWXKpV-GQjnwLNiYXaE2A5miWsb1lwlrmcD"/>
+</div>
+<div class="flex-1 flex flex-col justify-center gap-1">
+<div class="flex justify-between items-start">
+<h4 class="text-slate-900 font-bold text-base">City Vet Kadıköy</h4>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-[14px]">star</span>
+<span class="text-slate-600 text-xs font-medium">4.5</span>
+</div>
+</div>
+<p class="text-slate-500 text-xs">Caferağa, Kadıköy • 2.4 km</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="text-red-500 text-xs font-medium bg-red-50 px-2 py-0.5 rounded-md">Kapalı</span>
+<span class="text-slate-400 text-xs">• 09:00'da açılacak</span>
+</div>
+</div>
+<div class="flex flex-col justify-center gap-2">
+<button class="h-8 w-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-slate-100 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="bg-white p-3 rounded-2xl flex gap-4 border border-slate-100 shadow-sm hover:border-primary/20 transition-colors">
+<div class="relative w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-slate-200">
+<img alt="Dog waiting in clinic" class="w-full h-full object-cover grayscale" data-alt="Dog sitting in veterinary waiting room" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPyxA3PyuLT4Ofwu6sgztZqUQfgt5DvDhi6v3blHcPoNGL04Cu0gn72UhXvHCYwdxGScx7ZOzhyaWil35_YRWPtAUwpiZYhkirKQDtZybOOX5PFkz_txXJmae_sCeVTbF9WmaM2a5oG6fI_3XrWYwca35KrEuTptElXuehykfCmuGyTyWDJh-wlQflLaq0M4Yq9P1bUqTff8vQQLLg9m8gShEGvX6UplaB_vda2Dv4bHv31j2NWXLT0WyulfEdNKLH1y8lN9PeGyqB"/>
+</div>
+<div class="flex-1 flex flex-col justify-center gap-1">
+<div class="flex justify-between items-start">
+<h4 class="text-slate-500 font-bold text-base">Anadolu Pet</h4>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 text-[14px]">star</span>
+<span class="text-slate-400 text-xs font-medium">4.2</span>
+</div>
+</div>
+<p class="text-slate-400 text-xs">Üsküdar Merkez • 5.1 km</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="text-green-600 text-xs font-medium bg-green-50 px-2 py-0.5 rounded-md">7/24 Acil</span>
+</div>
+</div>
+<div class="flex flex-col justify-center gap-2">
+<button class="h-8 w-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-slate-100 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="h-8"></div>
+</div>
+</div>
+</div>
+</body></html>

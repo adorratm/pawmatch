@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Veterinarian Detail Screen</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a3f2a",
+                        "primary-light": "#8c5d45",
+                        "background-light": "#FFFFFF",
+                        "background-dark": "#1d1715",
+                        "surface": "#f8f7f6",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding for horizontal scrolling */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-[#161413] font-display antialiased">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-24">
+<!-- Top Navigation Bar -->
+<div class="sticky top-0 z-50 flex items-center bg-white/95 backdrop-blur-sm p-4 justify-between border-b border-gray-100">
+<button class="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface hover:bg-gray-200 transition-colors">
+<span class="material-symbols-outlined text-primary text-[24px]">arrow_back</span>
+</button>
+<h2 class="text-[#161413] text-lg font-bold leading-tight tracking-tight flex-1 text-center truncate px-4">
+                Detail
+            </h2>
+<button class="flex size-10 items-center justify-center rounded-full bg-surface hover:bg-gray-200 transition-colors">
+<span class="material-symbols-outlined text-primary text-[24px]">favorite</span>
+</button>
+</div>
+<!-- Hero Carousel -->
+<div class="w-full mt-2">
+<div class="flex overflow-x-auto hide-scrollbar snap-x snap-mandatory px-4 pb-4 gap-3">
+<div class="snap-center shrink-0 w-[85vw] sm:w-[300px] flex flex-col gap-4 rounded-xl overflow-hidden shadow-sm">
+<div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover flex flex-col" data-alt="Modern veterinary clinic waiting room with warm lighting and comfortable seating" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBtWQ3EUKA27WC2zAFz8nRWFpP2ifT8bhxP1m-nip6cZXa_Kwifi6Yb8zJkOb0N6rdLy32j89WnVO0chnuThoCAJcp4qAMZCeNwMQkb6IIJ2YTGbuT-y3AkQ_zpAYjejypgbqmhkplFMLaRgL0AXeKzLEH1Sfo3oGe67x-IpebssXdBNf08u8VmN1eCE6a0_WoSBo3cY3pkSIDq1vBCnDfuvbiXFdQN5UIpDY6m6WbtGTc2xLAJjAntR32guLpnSa6uCHMTjguQIjRS");'>
+</div>
+</div>
+<div class="snap-center shrink-0 w-[85vw] sm:w-[300px] flex flex-col gap-4 rounded-xl overflow-hidden shadow-sm">
+<div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover flex flex-col" data-alt="Veterinarian examining a golden retriever puppy on an examination table" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCKJvdtBTtG294MuD1UUMaWgDLwGIceUov2w529X42n_QXxOAQ6nkiePLROJdaaf971nUpwxjsSGZUBI55KtbH1KE_4Kx2W0QEqm3a5q5R1H3E2rGgjsm2x7znDlQD-Bg0FJRThuxeEkfa39TIR6UBLfj5l09F-4o2y5RwZtao8mcvEfukEcD7kr16S2cLCz-oHbM800zuOoKz8y3esQP5JkZupZmbvz6qHA-vOEamhhnyoSLaaNAuPz5IG-jqzQlcxnZG0ISQq4HXz");'>
+</div>
+</div>
+<div class="snap-center shrink-0 w-[85vw] sm:w-[300px] flex flex-col gap-4 rounded-xl overflow-hidden shadow-sm">
+<div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover flex flex-col" data-alt="Clean and sterile surgery room in a veterinary clinic" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCGDXxx7UETzlS1Mv3XszIvjm03OvIIEITl1TePq6EAlzx-56pwBMXVryrK4BDC1qS0FgPS_bRi6WzlFIkuXjIa0c6f_fHPMR2G213YBFqyNocmNlokEx6lJjeICGee_gf3uQeEH2FGSM9ZjsbWGCavh6LwVdA0nXzRm9EtLg6Wbd8BlWD4x1z4seJld54BJN1SXPpVnFtEAj5FPK0JmcGAIdt4wPwZKY2C9n_SBQrwkUZZvikthBd71gD2_tP6ftUnMISnd5WIM-J6");'>
+</div>
+</div>
+</div>
+</div>
+<!-- Clinic Header Info -->
+<div class="px-4 pt-2">
+<h1 class="text-primary text-2xl font-extrabold leading-tight">Paws &amp; Claws Veterinary Clinic</h1>
+<div class="flex items-center gap-2 mt-2">
+<div class="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-md border border-yellow-100">
+<span class="material-symbols-outlined text-yellow-500 text-[18px] fill-1">star</span>
+<span class="text-[#161413] text-sm font-bold">4.8</span>
+</div>
+<span class="text-gray-400 text-sm">•</span>
+<span class="text-gray-500 text-sm font-medium underline decoration-gray-300 underline-offset-2">120 Reviews</span>
+<span class="text-gray-400 text-sm">•</span>
+<span class="text-green-700 bg-green-50 px-2 py-1 rounded-md text-xs font-bold border border-green-100">OPEN NOW</span>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="py-6 px-4">
+<div class="grid grid-cols-4 gap-2">
+<button class="flex flex-col items-center gap-2 group">
+<div class="rounded-full bg-surface group-active:bg-primary/10 p-3.5 transition-colors border border-gray-100 shadow-sm">
+<span class="material-symbols-outlined text-primary text-[24px]">call</span>
+</div>
+<span class="text-[#161413] text-xs font-semibold">Call</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="rounded-full bg-surface group-active:bg-primary/10 p-3.5 transition-colors border border-gray-100 shadow-sm">
+<span class="material-symbols-outlined text-primary text-[24px]">near_me</span>
+</div>
+<span class="text-[#161413] text-xs font-semibold">Route</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="rounded-full bg-surface group-active:bg-primary/10 p-3.5 transition-colors border border-gray-100 shadow-sm">
+<span class="material-symbols-outlined text-primary text-[24px]">language</span>
+</div>
+<span class="text-[#161413] text-xs font-semibold">Website</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="rounded-full bg-surface group-active:bg-primary/10 p-3.5 transition-colors border border-gray-100 shadow-sm">
+<span class="material-symbols-outlined text-primary text-[24px]">share</span>
+</div>
+<span class="text-[#161413] text-xs font-semibold">Share</span>
+</button>
+</div>
+</div>
+<!-- Divider -->
+<div class="h-2 w-full bg-surface"></div>
+<!-- Location & Hours Section -->
+<div class="px-4 py-6">
+<h3 class="text-lg font-bold text-[#161413] mb-4">Location &amp; Hours</h3>
+<!-- Address Row -->
+<div class="flex items-start gap-3 mb-4">
+<span class="material-symbols-outlined text-gray-400 mt-0.5">location_on</span>
+<div class="flex-1">
+<p class="text-[#161413] text-base font-medium">123 Pet Lane, Kadıköy</p>
+<p class="text-gray-500 text-sm">Istanbul, Turkey</p>
+</div>
+</div>
+<!-- Map Preview -->
+<div class="w-full h-32 rounded-xl overflow-hidden relative mb-5 border border-gray-200">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Map view showing the location of the veterinary clinic in Istanbul" data-location="Istanbul" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBZ3AK0SNpz4AHOUr36dgCOsg0MgQNCToiBNPdMKake_KrPqC45nQ9__T7SIppaHg7e0Sui7HtuqE_2asXXM8MCwcxFj8hY1-8mwVTxnsoKaBjJwTsvUUMltbni4skFYxJKeXQfWZXp2AVhB1PvICYYOwLyd25a65GqKTlo5UxwSefyoWXSCu13cDCo6vzqsQidfhcTmdmsrfdkiK5kZJVodmh8PLtdH0lpiosXQevDUeXrPYGJ0ScoGO7pLQYZ4YIHUjlGahrl2K8P'); opacity: 0.8;"></div>
+<div class="absolute inset-0 flex items-center justify-center bg-black/10">
+<button class="bg-white/90 backdrop-blur text-xs font-bold px-4 py-2 rounded-full shadow-md text-primary flex items-center gap-1">
+                        View on Map
+                    </button>
+</div>
+</div>
+<!-- Hours Row -->
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-gray-400 mt-0.5">schedule</span>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<p class="text-green-700 font-bold text-sm">Open until 7:00 PM</p>
+<span class="material-symbols-outlined text-gray-400 text-sm transform rotate-90">chevron_right</span>
+</div>
+<p class="text-gray-500 text-sm">Monday - Saturday: 09:00 - 19:00</p>
+<p class="text-gray-500 text-sm">Sunday: Closed</p>
+</div>
+</div>
+</div>
+<!-- Divider -->
+<div class="h-2 w-full bg-surface"></div>
+<!-- Services Section -->
+<div class="px-4 py-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold text-[#161413]">Services</h3>
+<a class="text-primary text-sm font-semibold" href="#">View all</a>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/5 text-primary text-sm font-semibold border border-primary/10">
+<span class="material-symbols-outlined text-[18px]">vaccines</span>
+                    Vaccination
+                </span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/5 text-primary text-sm font-semibold border border-primary/10">
+<span class="material-symbols-outlined text-[18px]">medical_services</span>
+                    Surgery
+                </span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/5 text-primary text-sm font-semibold border border-primary/10">
+<span class="material-symbols-outlined text-[18px]">dentistry</span>
+                    Dental Care
+                </span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/5 text-primary text-sm font-semibold border border-primary/10">
+<span class="material-symbols-outlined text-[18px]">emergency</span>
+                    Emergency
+                </span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/5 text-primary text-sm font-semibold border border-primary/10">
+<span class="material-symbols-outlined text-[18px]">content_cut</span>
+                    Grooming
+                </span>
+</div>
+</div>
+<!-- Divider -->
+<div class="h-2 w-full bg-surface"></div>
+<!-- Reviews Section -->
+<div class="px-4 py-6 mb-8">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold text-[#161413]">Reviews</h3>
+<a class="text-primary text-sm font-semibold" href="#">See all 120</a>
+</div>
+<!-- Single Review Card -->
+<div class="flex flex-col gap-4">
+<div class="p-4 rounded-xl border border-gray-100 bg-white shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-gray-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a smiling woman reviewer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLwcnCCMiGJ5IpMaqiRsMuadV5difHL-5Q8rFsWCONUK59tTyVtsbDHAboJ-dKxPlXT30V4QBbDUOkci7fpMpvx2E2xFRqmQNoUIM0p5RPHaWnMJOJy00YF25bTkOxwN3x6Y3fCdifiFBOj5dTd4VHSG4NlffgPaF3DId0weuo4TNFF3cpvI2Nl77ZL_FjGhi-KOgcShZMsdlHMhebTpRNYOkis4HhlDtmmeF9bfMQKb4te4l11tOrqijqPRAylGtDGe7LjGAxx48x"/>
+</div>
+<div>
+<p class="text-sm font-bold text-[#161413]">Elif Yılmaz</p>
+<div class="flex text-yellow-500">
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+</div>
+</div>
+</div>
+<span class="text-xs text-gray-400">2d ago</span>
+</div>
+<p class="text-gray-600 text-sm leading-relaxed">
+                        Fantastic clinic! Dr. Ahmet was so gentle with my cat. The facility is clean and the staff is very friendly. Highly recommended!
+                    </p>
+</div>
+<div class="p-4 rounded-xl border border-gray-100 bg-white shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                                M
+                            </div>
+<div>
+<p class="text-sm font-bold text-[#161413]">Murat K.</p>
+<div class="flex text-yellow-500">
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-[14px] fill-1">star</span>
+<span class="material-symbols-outlined text-gray-300 text-[14px] fill-1">star</span>
+</div>
+</div>
+</div>
+<span class="text-xs text-gray-400">1w ago</span>
+</div>
+<p class="text-gray-600 text-sm leading-relaxed">
+                        Very professional service but a bit pricey. However, for the level of care provided, it is worth it.
+                    </p>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Action -->
+<div class="fixed bottom-0 left-0 w-full p-4 bg-white/80 backdrop-blur-md border-t border-gray-100 z-40">
+<button class="w-full h-14 bg-primary text-white rounded-xl font-bold text-lg shadow-lg shadow-primary/30 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">calendar_month</span>
+                Book Appointment
+            </button>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="light" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Randevu Alma Ekranı</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a3f2a",
+                        "primary-light": "#8c5d45",
+                        "background-light": "#FFFFFF",
+                        "background-dark": "#1d1715",
+                        "surface": "#f8f7f6",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>.hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }.calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            text-align: center;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-[#161413] font-display antialiased">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-24">
+<div class="sticky top-0 z-50 flex items-center bg-white/95 backdrop-blur-sm p-4 justify-between border-b border-gray-100">
+<button class="flex size-10 shrink-0 items-center justify-center rounded-full bg-surface hover:bg-gray-200 transition-colors">
+<span class="material-symbols-outlined text-primary text-[24px]">arrow_back</span>
+</button>
+<h2 class="text-[#161413] text-lg font-bold leading-tight tracking-tight flex-1 text-center truncate px-4">
+                Randevu Al
+            </h2>
+<div class="size-10 shrink-0"></div> 
+</div>
+<div class="px-4 py-6">
+<h3 class="text-lg font-bold text-[#161413] mb-4">Evcil Hayvan Seçimi</h3>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+<button class="flex flex-col items-center gap-2 min-w-[80px] group">
+<div class="relative size-16">
+<div class="size-16 rounded-full border-2 border-primary p-0.5 overflow-hidden">
+<img class="w-full h-full object-cover rounded-full bg-gray-200" data-alt="Golden Retriever Dog" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_fEkG5Q6D8uVuz5TWZuvvQ5SymWKOg7CZ90wRKvnuPtkrzcWlCx2EpXZ6JRShlpPDrx_B17r5mEiHIj45c4BuDKteyRkvT9yNToQuEM2DuM6ITefpMB05aGssqAK_Qu8Ku6nq_8CGYnpUm_Lmlakb3rFNhQs8PbVxP-wO0xJHUIQvXODxiYL3ycxRljB1JiPmBi6Cz4B_zeWuz0-Vvs3AXnid-VyTLhc6zR9ZbrwKO97Zt0FvadcieSt6c82nF8T8W7TO39UM9DJS" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDw3xlGrfXhcMpPsHnXGgFKutH66kmP5q76zB6lxcGwDpjoBY9eEbDK7Iy3NGWYNW6zivP03Cw5BIKr7PW4xqcndBPJ5dNzLeqSrgA8TWxWJl5HYIkWstxgo7eigzCWBeloM9oUUxC6JgQvv_wsgT89CC-MYJBc3hVncNwVycyivOHBvXOe5yoSqh97Dy-SMBWdEJu1BpvUIVMhiPYSw-oJEl2IeeKuJmlInVxb_GiAmKKIjlFCfXJYHzDia03ZKkCcZynJ9VGwRXmp"); background-size: cover;'/>
+</div>
+<div class="absolute bottom-0 right-0 bg-primary text-white rounded-full p-0.5 border-2 border-white">
+<span class="material-symbols-outlined text-[14px] block">check</span>
+</div>
+</div>
+<span class="font-bold text-primary text-sm">Tarçın</span>
+</button>
+<button class="flex flex-col items-center gap-2 min-w-[80px] group opacity-60 hover:opacity-100 transition-opacity">
+<div class="size-16 rounded-full border-2 border-transparent bg-surface overflow-hidden">
+<img class="w-full h-full object-cover bg-gray-200" data-alt="Siamese Cat" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzy7h8GFTOWjbXEJcOUzex4wllJofsxe4etCb8BSKeYo4vqcYp0mKj1pONoQ7x851MwUVrmW45ReYAPXoCW9Q08a13tiWVgbOOs3pks00qDYqxZuDOpKYYnOU4N_0o8dI5CpiOC4N1lrX6p3Kmj90aa4Cszz4oHOlcTBn856CHoWgzMHo60chZIF59u98l_sbatULVOgsm49ubCsByiqiROYuMjuCK1ApDlItcw3xmXqKuKiJo1lVDvZ96DdBWfLR_EwL0zyinCMQ3" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDKPQv1Xfz5Wb2zZ1mOkBRqbqdv1OXe_R0rfY-jSSKNlY4m5qWSuKmWH6xDuNdLTSAvo-z_82ows3NrZO_3ukwm3spdJJ1jHSsXI_yDimd2eVwXmF5ylw50d9O5e5RCIxiAUFGnXkIOWuF1MUQmByc-M_-7tsvTl9i0KMTzHZyGZK2th86ATvkB6HiFyLFpHKIQhuMhLLwpTLejuYaRj4qVHvuA-4EvmVML3jJYX6JxS4-PyDcj65RKEn37y7-kxt2708BRbANfceFb"); background-size: cover;'/>
+</div>
+<span class="font-medium text-[#161413] text-sm">Pamuk</span>
+</button>
+<button class="flex flex-col items-center gap-2 min-w-[80px] group">
+<div class="size-16 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center bg-surface group-hover:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-primary">add</span>
+</div>
+<span class="font-medium text-gray-500 text-sm">Yeni Ekle</span>
+</button>
+</div>
+</div>
+<div class="h-2 w-full bg-surface"></div>
+<div class="px-4 py-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold text-[#161413]">Tarih Seçin</h3>
+<div class="flex items-center gap-2 text-sm font-bold text-[#161413]">
+<span>Ekim 2023</span>
+<div class="flex gap-1">
+<button class="size-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<button class="size-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+<div class="calendar-grid mb-2">
+<span class="text-xs font-bold text-gray-400">Pzt</span>
+<span class="text-xs font-bold text-gray-400">Sal</span>
+<span class="text-xs font-bold text-gray-400">Çar</span>
+<span class="text-xs font-bold text-gray-400">Per</span>
+<span class="text-xs font-bold text-gray-400">Cum</span>
+<span class="text-xs font-bold text-gray-400">Cmt</span>
+<span class="text-xs font-bold text-gray-400">Paz</span>
+</div>
+<div class="calendar-grid">
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-gray-300 pointer-events-none">28</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-gray-300 pointer-events-none">29</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-gray-300 pointer-events-none">30</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">1</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">2</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">3</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">4</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">5</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">6</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">7</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">8</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">9</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">10</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm font-bold bg-primary text-white shadow-md shadow-primary/30">11</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">12</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">13</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">14</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">15</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">16</button>
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-gray-300 line-through decoration-gray-300 cursor-not-allowed">17</button> 
+<button class="h-10 w-full flex items-center justify-center rounded-full text-sm text-[#161413] hover:bg-gray-100">18</button>
+</div>
+</div>
+</div>
+<div class="px-4 pb-6">
+<h3 class="text-lg font-bold text-[#161413] mb-4">Saat Seçin</h3>
+<div class="grid grid-cols-4 gap-3">
+<button class="py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:border-primary hover:text-primary transition-colors bg-white">09:00</button>
+<button class="py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-300 bg-gray-50 cursor-not-allowed">09:30</button>
+<button class="py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:border-primary hover:text-primary transition-colors bg-white">10:00</button>
+<button class="py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:border-primary hover:text-primary transition-colors bg-white">10:30</button>
+<button class="py-2.5 rounded-xl border-primary bg-primary text-white text-sm font-bold shadow-md shadow-primary/20">11:00</button>
+<button class="py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:border-primary hover:text-primary transition-colors bg-white">11:30</button>
+<button class="py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-300 bg-gray-50 cursor-not-allowed">13:00</button>
+<button class="py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:border-primary hover:text-primary transition-colors bg-white">13:30</button>
+<button class="py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:border-primary hover:text-primary transition-colors bg-white">14:00</button>
+<button class="py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:border-primary hover:text-primary transition-colors bg-white">14:30</button>
+</div>
+</div>
+<div class="h-2 w-full bg-surface"></div>
+<div class="px-4 py-6 mb-8">
+<h3 class="text-lg font-bold text-[#161413] mb-4">Ziyaret Nedeni</h3>
+<div class="relative">
+<textarea class="w-full h-32 rounded-xl border-gray-200 bg-surface p-4 text-sm text-[#161413] focus:border-primary focus:ring-primary/20 resize-none placeholder:text-gray-400" placeholder="Lütfen ziyaret nedeninizi kısaca belirtiniz (örn: Yıllık aşı, halsizlik, kontrol...)"></textarea>
+<div class="absolute bottom-3 right-3 text-xs text-gray-400">0/200</div>
+</div>
+<div class="mt-4 flex gap-3 bg-blue-50 p-3 rounded-lg border border-blue-100">
+<span class="material-symbols-outlined text-blue-600 shrink-0 mt-0.5">info</span>
+<p class="text-xs text-blue-800 leading-relaxed">
+                    Randevu saatinden 15 dakika önce klinikte olmanız önerilir. Acil durumlar için lütfen doğrudan kliniği arayınız.
+                </p>
+</div>
+</div>
+<div class="fixed bottom-0 left-0 w-full p-4 bg-white/80 backdrop-blur-md border-t border-gray-100 z-40">
+<div class="flex items-center justify-between mb-3 px-1">
+<div class="flex flex-col">
+<span class="text-xs text-gray-500 font-medium">Toplam Tutar</span>
+<span class="text-lg font-extrabold text-[#161413]">₺450.00</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xs text-gray-500 font-medium">Tarih</span>
+<span class="text-sm font-bold text-primary">11 Ekim, 11:00</span>
+</div>
+</div>
+<button class="w-full h-14 bg-primary text-white rounded-xl font-bold text-lg shadow-lg shadow-primary/30 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">check_circle</span>
+                Randevu Oluştur
+            </button>
+</div>
+</div>
+
+</body></html>

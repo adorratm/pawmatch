@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html class="light" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ayarlar Ekranı</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#6a3f2a", // Updated accent color
+                        "primary-dark": "#523120", // Darker shade for hover states
+                        "background-light": "#ffffff", // Pure white background
+                        "background-dark": "#1a1a1a",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#2c2c2c",
+                        "text-main": "#171611",
+                        "text-muted": "#877e64",
+                        "section-bg": "#f9f9f9", // Light gray for background separation if needed, though request asked for white bg theme
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }.no-scrollbar {
+            -ms-overflow-style: none;scrollbar-width: none;}
+    </style>
+<style>
+        body {
+          min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-white transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-hidden pb-20">
+<header class="sticky top-0 z-50 bg-background-light dark:bg-background-dark backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
+<div class="flex items-center p-4 pb-2 justify-between">
+<div class="w-12"></div> 
+<h2 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] text-center">Ayarlar</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="text-primary hover:text-primary-dark dark:text-gray-400 font-bold text-base transition-colors">Bitti</button>
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto no-scrollbar">
+<section class="mt-4 px-4">
+<div class="flex items-center gap-4 bg-surface-light dark:bg-surface-dark px-4 py-4 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 dark:border-gray-800 cursor-pointer group">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-16 w-16 border-2 border-primary" data-alt="Golden Retriever dog smiling at camera in a park" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDqjPjOvygxmoZnqYgFg2PWqPMPYrKSPY3pvvupZoMwRxmml8Iv0i59EGG9-VTaGbIfF0n9w9mP7ROvHopS0ggmN0LSitxNURrI-dWPg8r8QeJG79ls5soOqj3BGCqi-EY_tQoortT2QNZhRp8uATOiLi_Ac7IM6QqmnhajfpmfwhoiIdCkYTQI_Q8SHMrh3iyn-ztNjVkL7gbv0nzgWnCm8w1i_R-dNVaIWM7xO8GBAs_BBSY5xsAer_KkNsJTkCdGXTQ_tcfxbKBT");'>
+</div>
+<div class="absolute bottom-0 right-0 bg-primary text-white p-1 rounded-full border-2 border-white dark:border-surface-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-[12px] font-bold">edit</span>
+</div>
+</div>
+<div class="flex flex-col justify-center flex-1">
+<h3 class="text-text-main dark:text-white text-lg font-bold leading-tight">Boncuk, 3</h3>
+<p class="text-text-muted dark:text-gray-400 text-sm font-medium">Profili Düzenle</p>
+</div>
+<div class="shrink-0 text-gray-300 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+</section>
+<section class="px-4 mt-6">
+<div class="flex flex-col items-start justify-between gap-4 rounded-xl border border-primary/20 bg-gradient-to-r from-white to-primary/5 dark:from-surface-dark dark:to-primary/5 p-5 shadow-sm">
+<div class="flex items-start gap-3">
+<div class="bg-primary/10 p-2 rounded-full text-primary shrink-0">
+<span class="material-symbols-outlined filled">verified</span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="text-text-main dark:text-white text-base font-bold leading-tight">Pati Gold'a Geç</p>
+<p class="text-text-muted dark:text-gray-300 text-sm font-normal leading-relaxed">Sınırsız beğeni hakkı kazan ve seni kimlerin beğendiğini anında gör.</p>
+</div>
+</div>
+<button class="w-full mt-2 cursor-pointer flex items-center justify-center rounded-lg h-10 px-4 bg-primary hover:bg-primary-dark transition-colors text-white font-bold text-sm shadow-sm">
+<span>Pati Gold'u Keşfet</span>
+</button>
+</div>
+</section>
+<section class="mt-8">
+<h3 class="text-text-muted dark:text-gray-400 text-xs font-bold uppercase tracking-wider px-6 pb-2">Keşif Ayarları</h3>
+<div class="bg-surface-light dark:bg-surface-dark mx-4 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 dark:border-gray-800 overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
+<div class="p-4 flex flex-col gap-3">
+<div class="flex w-full items-center justify-between">
+<p class="text-text-main dark:text-white text-base font-medium">Mesafe (km)</p>
+<p class="text-primary dark:text-gray-400 text-sm font-bold">15km</p>
+</div>
+<div class="flex h-6 w-full items-center">
+<div class="relative flex h-1.5 w-full rounded-full bg-gray-100 dark:bg-gray-700">
+<div class="absolute h-full w-[32%] rounded-full bg-primary"></div>
+<div class="absolute left-[32%] -translate-x-1/2 -top-1.5 h-4 w-4 rounded-full border border-gray-100 bg-white shadow-md cursor-pointer hover:scale-110 transition-transform"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+<span class="text-text-main dark:text-white text-base font-medium">Kimi Arıyorsun?</span>
+<div class="flex items-center gap-2">
+<span class="text-primary dark:text-gray-400 text-sm font-medium">Oyun Arkadaşı</span>
+<span class="material-symbols-outlined text-gray-300 text-xl">chevron_right</span>
+</div>
+</div>
+<div class="p-4 flex flex-col gap-3">
+<div class="flex w-full items-center justify-between">
+<p class="text-text-main dark:text-white text-base font-medium">Yaş Aralığı</p>
+<p class="text-primary dark:text-gray-400 text-sm font-bold">1 - 5</p>
+</div>
+<div class="flex h-6 w-full items-center">
+<div class="relative flex h-1.5 w-full rounded-full bg-gray-100 dark:bg-gray-700">
+<div class="absolute left-[10%] w-[40%] h-full rounded-full bg-primary"></div>
+<div class="absolute left-[10%] -translate-x-1/2 -top-1.5 h-4 w-4 rounded-full border border-gray-100 bg-white shadow-md cursor-pointer hover:scale-110 transition-transform"></div>
+<div class="absolute left-[50%] -translate-x-1/2 -top-1.5 h-4 w-4 rounded-full border border-gray-100 bg-white shadow-md cursor-pointer hover:scale-110 transition-transform"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="mt-8">
+<h3 class="text-text-muted dark:text-gray-400 text-xs font-bold uppercase tracking-wider px-6 pb-2">Uygulama Ayarları</h3>
+<div class="bg-surface-light dark:bg-surface-dark mx-4 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 dark:border-gray-800 overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
+<div class="flex items-center justify-between p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/30 flex items-center justify-center text-red-500">
+<span class="material-symbols-outlined text-lg">notifications</span>
+</div>
+<span class="text-text-main dark:text-white text-base font-medium">Bildirimler</span>
+</div>
+<button class="relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-primary transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+<span class="sr-only">Use setting</span>
+<span aria-hidden="true" class="pointer-events-none inline-block h-6 w-6 translate-x-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+<div class="flex items-center justify-between p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-500">
+<span class="material-symbols-outlined text-lg">mail</span>
+</div>
+<span class="text-text-main dark:text-white text-base font-medium">E-posta</span>
+</div>
+<button class="relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 dark:bg-gray-700 transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+<span class="sr-only">Use setting</span>
+<span aria-hidden="true" class="pointer-events-none inline-block h-6 w-6 translate-x-0 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+<div class="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-500">
+<span class="material-symbols-outlined text-lg">language</span>
+</div>
+<span class="text-text-main dark:text-white text-base font-medium">Dil Seçimi</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-text-muted dark:text-gray-400 text-sm">Türkçe</span>
+<span class="material-symbols-outlined text-gray-300 text-xl">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+<section class="mt-8">
+<h3 class="text-text-muted dark:text-gray-400 text-xs font-bold uppercase tracking-wider px-6 pb-2">Destek</h3>
+<div class="bg-surface-light dark:bg-surface-dark mx-4 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 dark:border-gray-800 overflow-hidden divide-y divide-gray-100 dark:divide-gray-800">
+<div class="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+<span class="text-text-main dark:text-white text-base font-medium">Yardım Merkezi</span>
+<span class="material-symbols-outlined text-gray-300 text-xl">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+<span class="text-text-main dark:text-white text-base font-medium">Gizlilik Politikası</span>
+<span class="material-symbols-outlined text-gray-300 text-xl">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+<span class="text-text-main dark:text-white text-base font-medium">Kullanım Koşulları</span>
+<span class="material-symbols-outlined text-gray-300 text-xl">chevron_right</span>
+</div>
+</div>
+</section>
+<section class="mt-8 mb-8 px-4 flex flex-col items-center gap-4">
+<button class="w-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white font-semibold py-3 rounded-xl shadow-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                Çıkış Yap
+            </button>
+<button class="text-gray-400 dark:text-gray-500 text-sm font-medium hover:text-red-500 transition-colors">
+                Hesabı Sil
+            </button>
+<div class="flex flex-col items-center mt-2">
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-primary text-sm">pets</span>
+</div>
+<p class="text-gray-400 dark:text-gray-600 text-xs">Pati App v2.4.0</p>
+</div>
+</section>
+</main>
+<nav class="fixed bottom-0 left-0 w-full bg-surface-light dark:bg-surface-dark border-t border-gray-100 dark:border-gray-800 pb-safe pt-2 px-6 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+<div class="flex items-center justify-between h-14">
+<a class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">style</span>
+<span class="text-[10px] font-medium">Keşfet</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">favorite</span>
+<span class="text-[10px] font-medium">Beğeniler</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">chat_bubble</span>
+<span class="text-[10px] font-medium">Mesajlar</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary dark:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl filled">person</span>
+<span class="text-[10px] font-medium">Profil</span>
+</a>
+</div>
+<div class="h-4 w-full"></div>
+</nav>
+</div>
+
+</body></html>
