@@ -26,3 +26,4 @@ export class Temperament {
   petTemperaments: PetTemperament[];
 }
 
+

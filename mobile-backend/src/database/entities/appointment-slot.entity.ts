@@ -36,3 +36,4 @@ export class AppointmentSlot {
   clinic: VeterinarianClinic;
 }
 
+

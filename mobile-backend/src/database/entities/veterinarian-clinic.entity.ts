@@ -75,3 +75,4 @@ export class VeterinarianClinic {
   appointments: Appointment[];
 }
 
+

@@ -106,3 +106,4 @@ const styles = StyleSheet.create({
   infoLink: { fontSize: 12, color: COLORS.primary, textDecorationLine: 'underline' },
 });
 
+

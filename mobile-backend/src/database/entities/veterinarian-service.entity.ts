@@ -39,3 +39,4 @@ export class VeterinarianService {
   clinic: VeterinarianClinic;
 }
 
+

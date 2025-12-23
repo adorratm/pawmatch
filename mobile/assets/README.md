@@ -13,3 +13,4 @@ Bu klasör uygulama icon'ları ve splash screen görsellerini içerir.
 
 Şimdilik bu dosyalar placeholder olarak kullanılabilir. Production için gerçek görseller eklenmelidir.
 
+

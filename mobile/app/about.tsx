@@ -85,3 +85,4 @@ const styles = StyleSheet.create({
   footerText: { fontSize: 12, color: COLORS.textMuted, textAlign: 'center' },
 });
 
+
