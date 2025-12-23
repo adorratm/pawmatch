@@ -98,3 +98,4 @@ const styles = StyleSheet.create({
   sendButtonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
 });
 
+

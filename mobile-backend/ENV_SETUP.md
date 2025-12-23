@@ -143,3 +143,4 @@ CORS_ORIGIN=http://localhost:3000,http://localhost:19006,http://localhost:8081
 - Production'da mutlaka güçlü JWT secret key'ler kullanın
 - `.env` dosyasını git'e commit etmeyin (zaten .gitignore'da)
 
+

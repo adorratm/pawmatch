@@ -51,3 +51,4 @@ Gerçek icon'ları ekledikten sonra `app.json` dosyasını güncelleyin:
 3. PNG formatında kaydedin
 4. `assets` klasörüne ekleyin
 
+
