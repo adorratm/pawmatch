@@ -24,9 +24,41 @@ export default function RootLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="discover-map" options={{ presentation: 'modal' }} />
-      <Stack.Screen name="new-match-notification" options={{ presentation: 'modal' }} />
-      <Stack.Screen name="filter" options={{ presentation: 'modal' }} />
+      <Stack.Screen 
+        name="discover-map" 
+        options={{ 
+          presentation: 'modal' as const,
+          headerShown: false 
+        }} 
+      />
+      <Stack.Screen 
+        name="suggest-meeting-point" 
+        options={{ 
+          presentation: 'modal' as const,
+          headerShown: false 
+        }} 
+      />
+      <Stack.Screen 
+        name="veterinarians-map" 
+        options={{ 
+          presentation: 'modal' as const,
+          headerShown: false 
+        }} 
+      />
+      <Stack.Screen 
+        name="new-match-notification" 
+        options={{ 
+          presentation: 'modal' as const,
+          headerShown: false 
+        }} 
+      />
+      <Stack.Screen 
+        name="filter" 
+        options={{ 
+          presentation: 'modal' as const,
+          headerShown: false 
+        }} 
+      />
     </Stack>
   );
 }

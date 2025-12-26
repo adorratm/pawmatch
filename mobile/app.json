@@ -24,7 +24,18 @@
     },
     "scheme": "pawmatch",
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "react-native-maps",
+        {
+          "ios": {
+            "mapsStyle": "standard"
+          },
+          "android": {
+            "mapsStyle": "standard"
+          }
+        }
+      ]
     ]
   }
 }
