@@ -1,16 +1,108 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Switch } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  Switch,
+  Modal,
+  TextInput,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 import { useAuthStore } from '../src/stores/authStore';
+import { useUserStore } from '../src/stores/userStore';
+import { usersService } from '../src/services/users.service';
 import { COLORS } from '../src/constants/config';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function SettingsScreen1() {
   const router = useRouter();
   const { user } = useAuthStore();
+  const { profile, loadProfile, updateProfile } = useUserStore();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [locationEnabled, setLocationEnabled] = useState(true);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editFirstName, setEditFirstName] = useState('');
+  const [editLastName, setEditLastName] = useState('');
+  const [editBio, setEditBio] = useState('');
+  const [editAvatar, setEditAvatar] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  useEffect(() => {
+    if (profile) {
+      setEditFirstName(profile.firstName || '');
+      setEditLastName(profile.lastName || '');
+      setEditBio(profile.profile?.bio || '');
+      setEditAvatar(profile.profile?.avatar || null);
+    }
+  }, [profile]);
+
+  const handlePickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      Alert.alert('İzin Gerekli', 'Fotoğraf seçmek için galeri erişim izni gereklidir.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      setEditAvatar(result.assets[0].uri);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    setLoading(true);
+    try {
+      let avatarUrl = editAvatar;
+      
+      // If avatar is a local URI, upload it first
+      if (editAvatar && editAvatar.startsWith('file://')) {
+        const filename = editAvatar.split('/').pop() || 'avatar.jpg';
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : 'image/jpeg';
+
+        const formData = new FormData();
+        formData.append('file', {
+          uri: editAvatar,
+          name: filename,
+          type,
+        } as any);
+
+        const uploadResult = await usersService.uploadAvatar(formData);
+        avatarUrl = uploadResult.avatar;
+      }
+
+      await updateProfile({
+        firstName: editFirstName.trim(),
+        lastName: editLastName.trim(),
+        bio: editBio.trim() || undefined,
+        avatar: avatarUrl || undefined,
+      });
+      setShowEditModal(false);
+      Alert.alert('Başarılı', 'Profil güncellendi!');
+    } catch (error: any) {
+      console.error('Error updating profile:', error);
+      Alert.alert('Hata', error?.response?.data?.message || 'Profil güncellenemedi.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,15 +116,25 @@ export default function SettingsScreen1() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.profileSection}>
-          <TouchableOpacity style={styles.profileCard}>
+          <TouchableOpacity
+            style={styles.profileCard}
+            onPress={() => setShowEditModal(true)}
+          >
             <View style={styles.profileImageContainer}>
-              <Image source={{ uri: 'https://i.pravatar.cc/150?img=1' }} style={styles.profileImage} />
+              <Image
+                source={{
+                  uri: profile?.profile?.avatar || 'https://i.pravatar.cc/150?img=1',
+                }}
+                style={styles.profileImage}
+              />
               <View style={styles.editBadge}>
                 <Ionicons name="create" size={12} color="#fff" />
               </View>
             </View>
             <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>Boncuk, 3</Text>
+              <Text style={styles.profileName}>
+                {profile?.firstName || user?.firstName} {profile?.lastName || user?.lastName}
+              </Text>
               <Text style={styles.profileSubtext}>Profili Düzenle</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
@@ -135,6 +237,80 @@ export default function SettingsScreen1() {
           </View>
         </View>
       </ScrollView>
+
+      <Modal
+        visible={showEditModal}
+        animationType="slide"
+        onRequestClose={() => setShowEditModal(false)}
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <TouchableOpacity onPress={() => setShowEditModal(false)}>
+              <Text style={styles.modalCancelText}>İptal</Text>
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>Profili Düzenle</Text>
+            <TouchableOpacity onPress={handleSaveProfile} disabled={loading}>
+              {loading ? (
+                <ActivityIndicator color={COLORS.primary} />
+              ) : (
+                <Text style={styles.modalSaveText}>Kaydet</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView style={styles.modalContent}>
+            <View style={styles.avatarSection}>
+              <TouchableOpacity onPress={handlePickImage}>
+                <Image
+                  source={{
+                    uri: editAvatar || profile?.profile?.avatar || 'https://i.pravatar.cc/150?img=1',
+                  }}
+                  style={styles.editAvatar}
+                />
+                <View style={styles.avatarEditBadge}>
+                  <Ionicons name="camera" size={20} color="#fff" />
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.formSection}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Ad</Text>
+                <TextInput
+                  style={styles.input}
+                  value={editFirstName}
+                  onChangeText={setEditFirstName}
+                  placeholder="Adınız"
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Soyad</Text>
+                <TextInput
+                  style={styles.input}
+                  value={editLastName}
+                  onChangeText={setEditLastName}
+                  placeholder="Soyadınız"
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Biyografi</Text>
+                <TextInput
+                  style={[styles.input, styles.textArea]}
+                  value={editBio}
+                  onChangeText={setEditBio}
+                  placeholder="Kendiniz hakkında bir şeyler yazın..."
+                  multiline
+                  numberOfLines={4}
+                  maxLength={300}
+                />
+                <Text style={styles.charCount}>{editBio.length}/300</Text>
+              </View>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -169,6 +345,69 @@ const styles = StyleSheet.create({
   settingInfo: { flex: 1, marginLeft: 12 },
   settingTitle: { fontSize: 16, fontWeight: '600', color: COLORS.text, flex: 1, marginLeft: 12 },
   settingSubtitle: { fontSize: 12, color: COLORS.textMuted, marginTop: 4 },
+  modalContainer: { flex: 1, backgroundColor: COLORS.background },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e5e5',
+  },
+  modalCancelText: { fontSize: 16, color: COLORS.textMuted },
+  modalTitle: { fontSize: 18, fontWeight: '700', color: COLORS.text },
+  modalSaveText: { fontSize: 16, fontWeight: '700', color: COLORS.primary },
+  modalContent: { flex: 1, padding: 24 },
+  avatarSection: { alignItems: 'center', marginBottom: 32 },
+  editAvatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 3,
+    borderColor: COLORS.primary,
+  },
+  avatarEditBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: COLORS.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: COLORS.background,
+  },
+  formSection: { gap: 24 },
+  inputGroup: { marginBottom: 16 },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.primary,
+    marginBottom: 8,
+    marginLeft: 4,
+  },
+  input: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
+    color: COLORS.text,
+    borderWidth: 1,
+    borderColor: '#e5e5e5',
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: 'top',
+  },
+  charCount: {
+    fontSize: 12,
+    color: COLORS.textMuted,
+    textAlign: 'right',
+    marginTop: 4,
+  },
 });
 
 

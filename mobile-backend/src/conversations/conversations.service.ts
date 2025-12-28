@@ -31,14 +31,19 @@ export class ConversationsService {
 
     const userPetIds = userPets.map((p) => p.id);
 
-    const conversations = await this.conversationRepository.find({
-      where: [
-        { pet1Id: userPetIds[0], isActive: true },
-        { pet2Id: userPetIds[0], isActive: true },
-      ],
-      relations: ['pet1', 'pet2', 'pet1.photos', 'pet2.photos'],
-      order: { lastMessageAt: 'DESC' },
-    });
+    const conversations = await this.conversationRepository
+      .createQueryBuilder('conversation')
+      .leftJoinAndSelect('conversation.pet1', 'pet1')
+      .leftJoinAndSelect('conversation.pet2', 'pet2')
+      .leftJoinAndSelect('pet1.photos', 'pet1Photos')
+      .leftJoinAndSelect('pet2.photos', 'pet2Photos')
+      .where('conversation.isActive = :isActive', { isActive: true })
+      .andWhere(
+        '(conversation.pet1Id IN (:...userPetIds) OR conversation.pet2Id IN (:...userPetIds))',
+        { userPetIds },
+      )
+      .orderBy('conversation.lastMessageAt', 'DESC')
+      .getMany();
 
     const conversationsWithLastMessage = await Promise.all(
       conversations.map(async (conv) => {
@@ -80,11 +85,16 @@ export class ConversationsService {
   async getConversation(conversationId: number, userId: number) {
     const conversation = await this.conversationRepository.findOne({
       where: { id: conversationId },
-      relations: ['pet1', 'pet2', 'pet1.owner', 'pet2.owner'],
+      relations: ['pet1', 'pet2', 'pet1.owner', 'pet2.owner', 'match'],
     });
 
     if (!conversation) {
       throw new NotFoundException('Conversation not found');
+    }
+
+    // Check if conversation has a match (only matched users can chat)
+    if (!conversation.matchId || !conversation.match) {
+      throw new ForbiddenException('Conversation is not associated with a match');
     }
 
     // Check if user owns one of the pets
@@ -103,12 +113,21 @@ export class ConversationsService {
     const otherPet =
       conversation.pet1Id === userPetIds[0] ? conversation.pet2 : conversation.pet1;
 
-    const messages = await this.messageRepository.find({
+    // Get messages with pagination
+    const page = 1; // Can be passed as parameter
+    const limit = 50;
+    const skip = 0; // (page - 1) * limit;
+
+    const [messages, total] = await this.messageRepository.findAndCount({
       where: { conversationId },
       relations: ['sender'],
-      order: { createdAt: 'ASC' },
-      take: 50,
+      order: { createdAt: 'DESC' },
+      take: limit,
+      skip,
     });
+
+    // Reverse to show oldest first
+    messages.reverse();
 
     return {
       id: conversation.id,
@@ -124,17 +143,37 @@ export class ConversationsService {
         sentAt: msg.createdAt,
         isRead: msg.isRead,
       })),
-      hasMore: false,
+      hasMore: total > limit,
+      total,
     };
   }
 
   async sendMessage(conversationId: number, userId: number, createMessageDto: CreateMessageDto) {
     const conversation = await this.conversationRepository.findOne({
       where: { id: conversationId },
+      relations: ['match'],
     });
 
     if (!conversation) {
       throw new NotFoundException('Conversation not found');
+    }
+
+    // Check if conversation has a match
+    if (!conversation.matchId || !conversation.match) {
+      throw new ForbiddenException('Conversation is not associated with a match');
+    }
+
+    // Check if user owns one of the pets
+    const userPets = await this.petRepository.find({
+      where: { ownerId: userId },
+    });
+    const userPetIds = userPets.map((p) => p.id);
+
+    if (
+      !userPetIds.includes(conversation.pet1Id) &&
+      !userPetIds.includes(conversation.pet2Id)
+    ) {
+      throw new ForbiddenException('You do not have access to this conversation');
     }
 
     const message = this.messageRepository.create({

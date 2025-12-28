@@ -1,6 +1,11 @@
 import api from './api';
 
 export const petsService = {
+  async getMyPets() {
+    const response = await api.get('/pets/my-pets');
+    return response.data;
+  },
+
   async getPet(id: number) {
     const response = await api.get(`/pets/${id}`);
     return response.data;

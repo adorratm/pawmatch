@@ -10,6 +10,10 @@ class SocketService {
     const token = await AsyncStorage.getItem('accessToken');
     if (!token) return;
 
+    if (this.socket?.connected) {
+      return; // Already connected
+    }
+
     this.socket = io(SOCKET_URL + '/chat', {
       auth: { token },
       transports: ['websocket'],
@@ -28,8 +32,22 @@ class SocketService {
       console.log('New match:', data);
     });
 
+    this.socket.on('typing:start', (data: any) => {
+      // Handle typing indicator
+      console.log('User typing:', data);
+    });
+
+    this.socket.on('typing:stop', (data: any) => {
+      // Handle typing stop
+      console.log('User stopped typing:', data);
+    });
+
     this.socket.on('disconnect', () => {
       console.log('Socket disconnected');
+    });
+
+    this.socket.on('error', (error: any) => {
+      console.error('Socket error:', error);
     });
   }
 
@@ -40,20 +58,32 @@ class SocketService {
     }
   }
 
+  joinConversation(conversationId: number) {
+    if (this.socket && this.socket.connected) {
+      this.socket.emit('conversation:join', { conversationId });
+    }
+  }
+
+  leaveConversation(conversationId: number) {
+    if (this.socket && this.socket.connected) {
+      this.socket.leave(`conversation:${conversationId}`);
+    }
+  }
+
   sendMessage(conversationId: number, content: string) {
-    if (this.socket) {
+    if (this.socket && this.socket.connected) {
       this.socket.emit('message:send', { conversationId, content });
     }
   }
 
   startTyping(conversationId: number) {
-    if (this.socket) {
+    if (this.socket && this.socket.connected) {
       this.socket.emit('typing:start', { conversationId });
     }
   }
 
   stopTyping(conversationId: number) {
-    if (this.socket) {
+    if (this.socket && this.socket.connected) {
       this.socket.emit('typing:stop', { conversationId });
     }
   }

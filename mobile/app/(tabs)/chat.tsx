@@ -7,30 +7,29 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
+import { useChatStore } from '../../src/stores/chatStore';
 import { COLORS } from '../../src/constants/config';
 import { Ionicons } from '@expo/vector-icons';
-import api from '../../src/services/api';
 
 export default function ConversationsScreen() {
   const router = useRouter();
-  const [conversations, setConversations] = useState<any[]>([]);
+  const { conversations, loading, loadConversations } = useChatStore();
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    loadConversations();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadConversations();
+    }, [])
+  );
 
-  const loadConversations = async () => {
-    try {
-      const response = await api.get('/conversations');
-      setConversations(response.data.conversations || []);
-    } catch (error) {
-      console.error('Error loading conversations:', error);
-    }
-  };
+  const filteredConversations = conversations.filter((conv) =>
+    conv.pet.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const renderConversation = ({ item }: { item: any }) => (
     <TouchableOpacity
@@ -93,17 +92,29 @@ export default function ConversationsScreen() {
         />
       </View>
 
-      <FlatList
-        data={conversations}
-        renderItem={renderConversation}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.listContent}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Henüz mesajınız yok</Text>
-          </View>
-        }
-      />
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        </View>
+      ) : (
+        <FlatList
+          data={filteredConversations}
+          renderItem={renderConversation}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContent}
+          refreshing={loading}
+          onRefresh={loadConversations}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons name="chatbubbles-outline" size={64} color={COLORS.textMuted} />
+              <Text style={styles.emptyText}>Henüz mesajınız yok</Text>
+              <Text style={styles.emptySubtext}>
+                Eşleştiğiniz hayvanlarla sohbet edebilirsiniz
+              </Text>
+            </View>
+          }
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -220,6 +231,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.textMuted,
   },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
@@ -228,7 +244,16 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginTop: 16,
+  },
+  emptySubtext: {
+    fontSize: 14,
     color: COLORS.textMuted,
+    marginTop: 8,
+    textAlign: 'center',
+    paddingHorizontal: 32,
   },
 });
 

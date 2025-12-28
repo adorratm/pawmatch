@@ -11,11 +11,15 @@ export class VeterinariansController {
 
   @Get('nearby')
   async findNearby(
-    @Query('latitude') latitude: number,
-    @Query('longitude') longitude: number,
-    @Query('radius') radius?: number,
+    @Query('latitude') latitude: string,
+    @Query('longitude') longitude: string,
+    @Query('radius') radius?: string,
   ) {
-    return this.veterinariansService.findNearby(latitude, longitude, radius);
+    return this.veterinariansService.findNearby(
+      parseFloat(latitude),
+      parseFloat(longitude),
+      radius ? parseFloat(radius) : 10,
+    );
   }
 
   @Get(':id')

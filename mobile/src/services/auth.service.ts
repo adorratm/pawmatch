@@ -42,6 +42,27 @@ export const authService = {
     await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
     return response.data;
   },
+
+  async googleLogin(idToken: string) {
+    const response = await api.post('/auth/oauth/google', { idToken });
+    await AsyncStorage.setItem('accessToken', response.data.accessToken);
+    await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
+    return response.data;
+  },
+
+  async facebookLogin(accessToken: string) {
+    const response = await api.post('/auth/oauth/facebook', { accessToken });
+    await AsyncStorage.setItem('accessToken', response.data.accessToken);
+    await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
+    return response.data;
+  },
+
+  async appleLogin(idToken: string, authorizationCode?: string) {
+    const response = await api.post('/auth/oauth/apple', { idToken, authorizationCode });
+    await AsyncStorage.setItem('accessToken', response.data.accessToken);
+    await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
+    return response.data;
+  },
 };
 
 

@@ -24,6 +24,11 @@ import { UpdatePetDto } from './dto/update-pet.dto';
 export class PetsController {
   constructor(private readonly petsService: PetsService) {}
 
+  @Get('my-pets')
+  async getMyPets(@CurrentUser() user: User) {
+    return this.petsService.findByOwner(user.id);
+  }
+
   @Post()
   async create(
     @CurrentUser() user: User,

@@ -7,12 +7,15 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { COLORS } from '../src/constants/config';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { petsService } from '../src/services/pets.service';
 
 export default function CreatePetProfileScreen() {
   const router = useRouter();
@@ -26,17 +29,88 @@ export default function CreatePetProfileScreen() {
   const [isSpayed, setIsSpayed] = useState(false);
   const [isVaccinated, setIsVaccinated] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      Alert.alert('İzin Gerekli', 'Fotoğraf seçmek için galeri erişim izni gereklidir.');
+      return;
+    }
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.8,
     });
 
     if (!result.canceled && result.assets[0]) {
       setPhotos([...photos, result.assets[0].uri]);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!name.trim()) {
+      Alert.alert('Hata', 'Lütfen hayvanın adını girin.');
+      return;
+    }
+
+    if (!age || isNaN(parseInt(age))) {
+      Alert.alert('Hata', 'Lütfen geçerli bir yaş girin.');
+      return;
+    }
+
+    if (photos.length === 0) {
+      Alert.alert('Hata', 'Lütfen en az bir fotoğraf ekleyin.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Create pet
+      const petData = {
+        name: name.trim(),
+        species: species === 'other' ? 'dog' : species, // For now, map other to dog
+        breed: breed.trim() || undefined,
+        age: parseInt(age),
+        gender: gender,
+        bio: bio.trim() || undefined,
+        isSpayed,
+        isVaccinated,
+      };
+
+      const pet = await petsService.createPet(petData);
+
+      // Upload photos
+      for (let i = 0; i < photos.length; i++) {
+        const photoUri = photos[i];
+        const filename = photoUri.split('/').pop() || 'photo.jpg';
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : 'image/jpeg';
+
+        const formData = new FormData();
+        formData.append('file', {
+          uri: photoUri,
+          name: filename,
+          type,
+        } as any);
+        formData.append('isMain', i === 0 ? 'true' : 'false');
+
+        await petsService.uploadPhoto(pet.id, formData, i === 0);
+      }
+
+      Alert.alert('Başarılı', 'Hayvan profili oluşturuldu!', [
+        {
+          text: 'Tamam',
+          onPress: () => router.back(),
+        },
+      ]);
+    } catch (error: any) {
+      console.error('Error creating pet:', error);
+      Alert.alert('Hata', error?.response?.data?.message || 'Hayvan profili oluşturulamadı.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -224,9 +298,19 @@ export default function CreatePetProfileScreen() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.continueButton}>
-          <Text style={styles.continueButtonText}>Continue</Text>
-          <Ionicons name="arrow-forward" size={20} color="#fff" />
+        <TouchableOpacity
+          style={[styles.continueButton, loading && styles.continueButtonDisabled]}
+          onPress={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <Text style={styles.continueButtonText}>Continue</Text>
+              <Ionicons name="arrow-forward" size={20} color="#fff" />
+            </>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -500,6 +584,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
+  },
+  continueButtonDisabled: {
+    opacity: 0.6,
   },
   continueButtonText: {
     color: '#fff',
