@@ -387,3 +387,5 @@ TypeORM migration'ları kullanılacak. Migration dosyaları `mobile-backend/src/
 
 
 
+
+
