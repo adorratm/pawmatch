@@ -17,12 +17,17 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { logout, user } = useAuthStore();
 
+  const handleLogout = async () => {
+    await logout();
+    router.replace('/(auth)/login');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Profil</Text>
-          <TouchableOpacity onPress={logout}>
+          <TouchableOpacity onPress={handleLogout}>
             <Ionicons name="log-out-outline" size={24} color={COLORS.text} />
           </TouchableOpacity>
         </View>
