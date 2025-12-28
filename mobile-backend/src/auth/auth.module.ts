@@ -10,11 +10,12 @@ import { GoogleStrategy } from './strategies/google.strategy';
 import { FacebookStrategy } from './strategies/facebook.strategy';
 import { User } from '../database/entities/user.entity';
 import { UserProfile } from '../database/entities/user-profile.entity';
+import { OAuthAccount } from '../database/entities/oauth-account.entity';
 import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, UserProfile]),
+    TypeOrmModule.forFeature([User, UserProfile, OAuthAccount]),
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

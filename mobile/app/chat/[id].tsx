@@ -26,15 +26,25 @@ export default function ChatScreen() {
   const { messages, loadMessages, sendMessage: sendMessageStore, addMessage } = useChatStore();
   const [inputText, setInputText] = useState('');
   const [conversation, setConversation] = useState<any>(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
   const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
     if (id) {
+      const conversationId = parseInt(id);
       loadConversation();
-      loadMessages(parseInt(id));
-      socketService.connect();
+      loadMessages(conversationId);
+      
+      // Ensure socket is connected
+      socketService.connect().then(() => {
+        // Join conversation room
+        socketService.joinConversation(conversationId);
+      });
+
       return () => {
-        socketService.disconnect();
+        // Leave conversation room but don't disconnect socket
+        socketService.leaveConversation(conversationId);
       };
     }
   }, [id]);
@@ -43,8 +53,36 @@ export default function ChatScreen() {
     try {
       const data = await conversationsService.getConversation(parseInt(id || '0'));
       setConversation(data);
+      // Mark messages as read
+      await conversationsService.markAsRead(parseInt(id || '0'));
     } catch (error) {
       console.error('Error loading conversation:', error);
+    }
+  };
+
+  const handleInputChange = (text: string) => {
+    setInputText(text);
+    
+    // Typing indicator
+    if (text.trim() && id) {
+      socketService.startTyping(parseInt(id));
+      
+      // Clear existing timeout
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
+      
+      // Set new timeout to stop typing
+      const timeout = setTimeout(() => {
+        socketService.stopTyping(parseInt(id));
+      }, 2000);
+      
+      setTypingTimeout(timeout);
+    } else if (id) {
+      socketService.stopTyping(parseInt(id));
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
     }
   };
 
@@ -52,8 +90,19 @@ export default function ChatScreen() {
     if (!inputText.trim() || !id) return;
 
     try {
+      // Stop typing
+      socketService.stopTyping(parseInt(id));
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+        setTypingTimeout(null);
+      }
+
+      // Send via socket (will be added to store via socket event)
       socketService.sendMessage(parseInt(id), inputText);
+      
+      // Also send via API as fallback
       await sendMessageStore(parseInt(id), inputText);
+      
       setInputText('');
       flatListRef.current?.scrollToEnd({ animated: true });
     } catch (error) {
@@ -120,6 +169,13 @@ export default function ChatScreen() {
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.messagesList}
           onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+          ListFooterComponent={
+            isTyping ? (
+              <View style={styles.typingIndicator}>
+                <Text style={styles.typingText}>Yazıyor...</Text>
+              </View>
+            ) : null
+          }
         />
 
         <View style={styles.inputContainer}>
@@ -127,7 +183,7 @@ export default function ChatScreen() {
             style={styles.input}
             placeholder="Mesaj yaz..."
             value={inputText}
-            onChangeText={setInputText}
+            onChangeText={handleInputChange}
             multiline
             maxLength={500}
           />
@@ -251,6 +307,15 @@ const styles = StyleSheet.create({
   },
   sendButtonDisabled: {
     backgroundColor: '#f5f5f5',
+  },
+  typingIndicator: {
+    padding: 8,
+    alignItems: 'flex-start',
+  },
+  typingText: {
+    fontSize: 12,
+    color: COLORS.textMuted,
+    fontStyle: 'italic',
   },
 });
 

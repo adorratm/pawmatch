@@ -7,10 +7,16 @@ import {
   TouchableOpacity,
   ScrollView,
   ImageBackground,
+  Alert,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import * as Google from 'expo-auth-session/providers/google';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import * as Facebook from 'expo-auth-session/providers/facebook';
 import { useAuthStore } from '../../src/stores/authStore';
+import { authService } from '../../src/services/auth.service';
 import { COLORS } from '../../src/constants/config';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -25,6 +31,18 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Google OAuth
+  const [googleRequest, googleResponse, googlePromptAsync] = Google.useAuthRequest({
+    iosClientId: 'YOUR_IOS_CLIENT_ID',
+    androidClientId: 'YOUR_ANDROID_CLIENT_ID',
+    webClientId: 'YOUR_WEB_CLIENT_ID',
+  });
+
+  // Facebook OAuth
+  const [facebookRequest, facebookResponse, facebookPromptAsync] = Facebook.useAuthRequest({
+    clientId: 'YOUR_FACEBOOK_APP_ID',
+  });
+
   const handleSubmit = async () => {
     setLoading(true);
     try {
@@ -37,8 +55,81 @@ export default function LoginScreen() {
       }
     } catch (error) {
       console.error('Auth error:', error);
+      Alert.alert('Hata', 'Giriş yapılamadı. Lütfen bilgilerinizi kontrol edin.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle Google OAuth response
+  React.useEffect(() => {
+    if (googleResponse?.type === 'success') {
+      const { id_token } = googleResponse.params;
+      if (id_token) {
+        handleOAuthLogin(() => authService.googleLogin(id_token));
+      }
+    }
+  }, [googleResponse]);
+
+  // Handle Facebook OAuth response
+  React.useEffect(() => {
+    if (facebookResponse?.type === 'success') {
+      const { access_token } = facebookResponse.params;
+      if (access_token) {
+        handleOAuthLogin(() => authService.facebookLogin(access_token));
+      }
+    }
+  }, [facebookResponse]);
+
+  const handleOAuthLogin = async (loginFn: () => Promise<any>) => {
+    setLoading(true);
+    try {
+      const response = await loginFn();
+      useAuthStore.getState().login({ email: response.user.email, password: '' } as any);
+      router.replace('/(tabs)');
+    } catch (error: any) {
+      console.error('OAuth error:', error);
+      Alert.alert('Hata', error?.response?.data?.message || 'OAuth girişi başarısız oldu.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await googlePromptAsync();
+    } catch (error) {
+      console.error('Google login error:', error);
+    }
+  };
+
+  const handleFacebookLogin = async () => {
+    try {
+      await facebookPromptAsync();
+    } catch (error) {
+      console.error('Facebook login error:', error);
+    }
+  };
+
+  const handleAppleLogin = async () => {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      if (credential.identityToken) {
+        await handleOAuthLogin(() =>
+          authService.appleLogin(credential.identityToken!, credential.authorizationCode || undefined),
+        );
+      }
+    } catch (error: any) {
+      if (error.code !== 'ERR_CANCELED') {
+        console.error('Apple login error:', error);
+        Alert.alert('Hata', 'Apple girişi başarısız oldu.');
+      }
     }
   };
 
@@ -164,13 +255,27 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.socialButtons}>
-            <TouchableOpacity style={styles.socialButton}>
+            <TouchableOpacity
+              style={styles.socialButton}
+              onPress={handleGoogleLogin}
+              disabled={loading || !googleRequest}
+            >
               <Ionicons name="logo-google" size={24} color="#4285F4" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Ionicons name="logo-apple" size={24} color="#000" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
+            {Platform.OS === 'ios' && (
+              <TouchableOpacity
+                style={styles.socialButton}
+                onPress={handleAppleLogin}
+                disabled={loading}
+              >
+                <Ionicons name="logo-apple" size={24} color="#000" />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={styles.socialButton}
+              onPress={handleFacebookLogin}
+              disabled={loading || !facebookRequest}
+            >
               <Ionicons name="logo-facebook" size={24} color="#1877F2" />
             </TouchableOpacity>
           </View>

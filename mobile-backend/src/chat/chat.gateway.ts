@@ -62,6 +62,30 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
+  @SubscribeMessage('conversation:join')
+  async handleJoinConversation(
+    @MessageBody() data: { conversationId: number },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const userId = client.data.userId;
+    
+    if (!userId) {
+      return { error: 'Unauthorized' };
+    }
+
+    try {
+      // Verify user has access to conversation
+      await this.conversationsService.getConversation(data.conversationId, userId);
+      
+      // Join conversation room
+      client.join(`conversation:${data.conversationId}`);
+      
+      return { success: true, conversationId: data.conversationId };
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  }
+
   @SubscribeMessage('message:send')
   async handleMessage(
     @MessageBody() data: { conversationId: number; content: string },
@@ -86,14 +110,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         userId,
       );
 
-      // Emit to both users in the conversation
-      this.server.emit('message:new', {
+      // Emit to conversation room (both users)
+      this.server.to(`conversation:${data.conversationId}`).emit('message:new', {
         ...message,
         conversationId: data.conversationId,
       });
 
       return message;
-    } catch (error) {
+    } catch (error: any) {
       return { error: error.message };
     }
   }
@@ -104,6 +128,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
   ) {
     const userId = client.data.userId;
+    if (!userId) return;
+    
     client.to(`conversation:${data.conversationId}`).emit('typing:start', {
       conversationId: data.conversationId,
       userId,
@@ -116,6 +142,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
   ) {
     const userId = client.data.userId;
+    if (!userId) return;
+    
     client.to(`conversation:${data.conversationId}`).emit('typing:stop', {
       conversationId: data.conversationId,
       userId,

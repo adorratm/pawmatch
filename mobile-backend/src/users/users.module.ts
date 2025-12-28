@@ -5,9 +5,13 @@ import { UsersController } from './users.controller';
 import { User } from '../database/entities/user.entity';
 import { UserProfile } from '../database/entities/user-profile.entity';
 import { UserLocation } from '../database/entities/user-location.entity';
+import { UploadsModule } from '../uploads/uploads.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserProfile, UserLocation])],
+  imports: [
+    TypeOrmModule.forFeature([User, UserProfile, UserLocation]),
+    UploadsModule,
+  ],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],

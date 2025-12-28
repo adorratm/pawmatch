@@ -12,24 +12,26 @@ export class MatchesController {
   @Get('discover')
   async discover(
     @CurrentUser() user: User,
-    @Query('latitude') latitude?: number,
-    @Query('longitude') longitude?: number,
-    @Query('radius') radius?: number,
+    @Query('latitude') latitude?: string,
+    @Query('longitude') longitude?: string,
+    @Query('radius') radius?: string,
     @Query('species') species?: string,
-    @Query('minAge') minAge?: number,
-    @Query('maxAge') maxAge?: number,
+    @Query('minAge') minAge?: string,
+    @Query('maxAge') maxAge?: string,
     @Query('gender') gender?: string,
-    @Query('limit') limit?: number,
+    @Query('mode') mode?: string,
+    @Query('limit') limit?: string,
   ) {
     return this.matchesService.discover(user.id, {
-      latitude,
-      longitude,
-      radius,
+      latitude: latitude ? parseFloat(latitude) : undefined,
+      longitude: longitude ? parseFloat(longitude) : undefined,
+      radius: radius ? parseFloat(radius) : undefined,
       species,
-      minAge,
-      maxAge,
+      minAge: minAge ? parseInt(minAge) : undefined,
+      maxAge: maxAge ? parseInt(maxAge) : undefined,
       gender,
-      limit,
+      mode: mode || 'pawmatch',
+      limit: limit ? parseInt(limit) : undefined,
     });
   }
 

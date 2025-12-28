@@ -56,6 +56,14 @@ export class PetsService {
     return pet;
   }
 
+  async findByOwner(ownerId: number) {
+    return this.petRepository.find({
+      where: { ownerId, isActive: true },
+      relations: ['photos', 'temperaments'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async update(id: number, ownerId: number, updatePetDto: UpdatePetDto) {
     const pet = await this.petRepository.findOne({
       where: { id },

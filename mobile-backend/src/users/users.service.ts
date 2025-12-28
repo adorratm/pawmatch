@@ -6,6 +6,7 @@ import { UserProfile } from '../database/entities/user-profile.entity';
 import { UserLocation } from '../database/entities/user-location.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
+import { UploadsService } from '../uploads/uploads.service';
 
 @Injectable()
 export class UsersService {
@@ -16,6 +17,7 @@ export class UsersService {
     private userProfileRepository: Repository<UserProfile>,
     @InjectRepository(UserLocation)
     private userLocationRepository: Repository<UserLocation>,
+    private uploadsService: UploadsService,
   ) {}
 
   async findById(id: number) {
@@ -99,6 +101,27 @@ export class UsersService {
     await this.userLocationRepository.save(location);
 
     return location;
+  }
+
+  async uploadAvatar(userId: number, file: Express.Multer.File) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['profile'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!user.profile) {
+      user.profile = this.userProfileRepository.create({ userId });
+    }
+
+    const avatarUrl = await this.uploadsService.uploadFile(file);
+    user.profile.avatar = avatarUrl;
+    await this.userProfileRepository.save(user.profile);
+
+    return { avatar: avatarUrl };
   }
 }
 

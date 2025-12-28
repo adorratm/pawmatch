@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { authService, LoginDto, RegisterDto } from '../services/auth.service';
+import { socketService } from '../services/socket.service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface User {
@@ -28,6 +29,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const response = await authService.login(data);
       set({ user: response.user, isAuthenticated: true, isLoading: false });
+      // Connect socket after login
+      await socketService.connect();
     } catch (error) {
       set({ isLoading: false });
       throw error;
@@ -38,6 +41,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const response = await authService.register(data);
       set({ user: response.user, isAuthenticated: true, isLoading: false });
+      // Connect socket after register
+      await socketService.connect();
     } catch (error) {
       set({ isLoading: false });
       throw error;
@@ -46,6 +51,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: async () => {
     await authService.logout();
+    socketService.disconnect();
     set({ user: null, isAuthenticated: false });
   },
 
@@ -56,6 +62,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         // Verify token by getting user info
         // For now, just set authenticated
         set({ isAuthenticated: true, isLoading: false });
+        // Connect socket if authenticated
+        await socketService.connect();
       } else {
         set({ isAuthenticated: false, isLoading: false });
       }

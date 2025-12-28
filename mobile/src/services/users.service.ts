@@ -15,6 +15,17 @@ export const usersService = {
     const response = await api.post('/users/me/location', data);
     return response.data;
   },
+
+  async uploadAvatar(file: any) {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await api.post('/users/me/avatar', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
 };
 
 

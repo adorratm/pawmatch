@@ -50,14 +50,18 @@ export class MatchesService {
       ...userPetIds,
     ];
 
+    // Mode filter (PawMatch vs Adoption)
+    const isAdoptedFilter = filters.mode === 'adoption' ? true : false;
+
     // Build query
     const query = this.petRepository
       .createQueryBuilder('pet')
       .leftJoinAndSelect('pet.photos', 'photos')
       .leftJoinAndSelect('pet.owner', 'owner')
+      .leftJoinAndSelect('owner.locations', 'locations')
       .leftJoinAndSelect('pet.temperaments', 'temperaments')
       .where('pet.isActive = :isActive', { isActive: true })
-      .andWhere('pet.isAdopted = :isAdopted', { isAdopted: false })
+      .andWhere('pet.isAdopted = :isAdopted', { isAdopted: isAdoptedFilter })
       .andWhere('pet.id NOT IN (:...excludedIds)', { excludedIds: excludedPetIds });
 
     if (filters.species) {
@@ -73,23 +77,54 @@ export class MatchesService {
       query.andWhere('pet.gender = :gender', { gender: filters.gender });
     }
 
-    // Location filter (if provided)
-    if (filters.latitude && filters.longitude) {
-      // Simple distance calculation (can be improved with PostGIS)
-      // For now, just return results
-    }
-
     const pets = await query
       .orderBy('pet.createdAt', 'DESC')
       .limit(filters.limit || 20)
       .getMany();
 
+    // Calculate distance if location provided
+    let petsWithDistance = pets.map((pet) => {
+      let distance = null;
+      if (filters.latitude && filters.longitude && pet.owner?.locations?.length > 0) {
+        const ownerLocation = pet.owner.locations.find((loc) => loc.isCurrent) || pet.owner.locations[0];
+        if (ownerLocation) {
+          distance = this.calculateDistance(
+            filters.latitude,
+            filters.longitude,
+            parseFloat(ownerLocation.latitude.toString()),
+            parseFloat(ownerLocation.longitude.toString()),
+          );
+        }
+      }
+      return { ...pet, distance };
+    });
+
+    // Sort by distance if location provided
+    if (filters.latitude && filters.longitude) {
+      petsWithDistance.sort((a, b) => {
+        if (a.distance === null && b.distance === null) return 0;
+        if (a.distance === null) return 1;
+        if (b.distance === null) return -1;
+        return a.distance - b.distance;
+      });
+    }
+
     return {
-      pets: pets.map((pet) => ({
+      pets: petsWithDistance.map((pet: any) => ({
         id: pet.id,
         name: pet.name,
+        breed: pet.breed,
+        age: pet.age,
+        gender: pet.gender,
+        species: pet.species,
+        bio: pet.bio,
         photos: pet.photos,
-        distance: 0, // Calculate distance if needed
+        owner: pet.owner ? {
+          id: pet.owner.id,
+          firstName: pet.owner.firstName,
+          lastName: pet.owner.lastName,
+        } : null,
+        distance: pet.distance ? Math.round(pet.distance * 10) / 10 : null, // Round to 1 decimal
         matchScore: 98, // Calculate match score
       })),
       hasMore: pets.length === (filters.limit || 20),
@@ -242,5 +277,29 @@ export class MatchesService {
         };
       }),
     };
+  }
+
+  // Haversine formula to calculate distance between two coordinates
+  private calculateDistance(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number,
+  ): number {
+    const R = 6371; // Earth's radius in kilometers
+    const dLat = this.toRad(lat2 - lat1);
+    const dLon = this.toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.toRad(lat1)) *
+        Math.cos(this.toRad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in kilometers
+  }
+
+  private toRad(degrees: number): number {
+    return (degrees * Math.PI) / 180;
   }
 }
