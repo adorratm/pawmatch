@@ -22,7 +22,7 @@ import { UpdatePetDto } from './dto/update-pet.dto';
 @Controller('pets')
 @UseGuards(JwtAuthGuard)
 export class PetsController {
-  constructor(private readonly petsService: PetsService) {}
+  constructor(private readonly petsService: PetsService) { }
 
   @Get('my-pets')
   async getMyPets(@CurrentUser() user: User) {
