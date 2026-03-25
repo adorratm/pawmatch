@@ -1,15 +1,15 @@
 internal import Expo
-internal import React
-internal import ReactAppDependencyProvider
+import React
+import ReactAppDependencyProvider
 
-@UIApplicationMain
+@main
 class AppDelegate: ExpoAppDelegate {
   var window: UIWindow?
 
   var reactNativeDelegate: ExpoReactNativeFactoryDelegate?
   var reactNativeFactory: RCTReactNativeFactory?
 
-  override func application(
+  public override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
@@ -19,7 +19,6 @@ class AppDelegate: ExpoAppDelegate {
 
     reactNativeDelegate = delegate
     reactNativeFactory = factory
-    bindReactNativeFactory(factory)
 
 #if os(iOS) || os(tvOS)
     window = UIWindow(frame: UIScreen.main.bounds)
@@ -33,7 +32,7 @@ class AppDelegate: ExpoAppDelegate {
   }
 
   // Linking API
-  override func application(
+  public override func application(
     _ app: UIApplication,
     open url: URL,
     options: [UIApplication.OpenURLOptionsKey: Any] = [:]
@@ -42,7 +41,7 @@ class AppDelegate: ExpoAppDelegate {
   }
 
   // Universal Links
-  override func application(
+  public override func application(
     _ application: UIApplication,
     continue userActivity: NSUserActivity,
     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
