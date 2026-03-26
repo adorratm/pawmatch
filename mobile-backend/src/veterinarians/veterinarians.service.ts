@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { VeterinarianClinic } from '../database/entities/veterinarian-clinic.entity';
 import { Appointment } from '../database/entities/appointment.entity';
 import { AppointmentSlot } from '../database/entities/appointment-slot.entity';
@@ -8,16 +7,11 @@ import { AppointmentSlot } from '../database/entities/appointment-slot.entity';
 @Injectable()
 export class VeterinariansService {
   constructor(
-    @InjectRepository(VeterinarianClinic)
-    private clinicRepository: Repository<VeterinarianClinic>,
-    @InjectRepository(Appointment)
-    private appointmentRepository: Repository<Appointment>,
-    @InjectRepository(AppointmentSlot)
-    private slotRepository: Repository<AppointmentSlot>,
+    private readonly entityManager: EntityManager,
   ) {}
 
   async findNearby(latitude: number, longitude: number, radius: number = 10) {
-    const clinics = await this.clinicRepository.find({
+    const clinics = await this.entityManager.find(VeterinarianClinic, {
       where: { isActive: true },
       relations: ['veterinarian', 'services'],
       take: 50,
@@ -67,7 +61,7 @@ export class VeterinariansService {
   }
 
   async findOne(id: number) {
-    const clinic = await this.clinicRepository.findOne({
+    const clinic = await this.entityManager.findOne(VeterinarianClinic, {
       where: { id },
       relations: ['veterinarian', 'services'],
     });
@@ -80,7 +74,7 @@ export class VeterinariansService {
   }
 
   async getAppointments(userId: number) {
-    return this.appointmentRepository.find({
+    return this.entityManager.find(Appointment, {
       where: { userId },
       relations: ['clinic', 'pet', 'service'],
       order: { appointmentDate: 'DESC' },
@@ -88,12 +82,12 @@ export class VeterinariansService {
   }
 
   async createAppointment(userId: number, createAppointmentDto: any) {
-    const appointment = this.appointmentRepository.create({
+    const appointment = this.entityManager.create(Appointment, {
       ...createAppointmentDto,
       userId,
     });
 
-    return this.appointmentRepository.save(appointment);
+    return this.entityManager.save(appointment);
   }
 }
 

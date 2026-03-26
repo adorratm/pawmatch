@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Not } from 'typeorm';
+import { EntityManager, Not } from 'typeorm';
 import { Conversation } from '../database/entities/conversation.entity';
 import { Message } from '../database/entities/message.entity';
 import { MessageRead } from '../database/entities/message-read.entity';
@@ -10,18 +9,11 @@ import { CreateMessageDto } from './dto/create-message.dto';
 @Injectable()
 export class ConversationsService {
   constructor(
-    @InjectRepository(Conversation)
-    private conversationRepository: Repository<Conversation>,
-    @InjectRepository(Message)
-    private messageRepository: Repository<Message>,
-    @InjectRepository(MessageRead)
-    private messageReadRepository: Repository<MessageRead>,
-    @InjectRepository(Pet)
-    private petRepository: Repository<Pet>,
+    private readonly entityManager: EntityManager,
   ) {}
 
   async getUserConversations(userId: number) {
-    const userPets = await this.petRepository.find({
+    const userPets = await this.entityManager.find(Pet, {
       where: { ownerId: userId },
     });
 
@@ -31,8 +23,8 @@ export class ConversationsService {
 
     const userPetIds = userPets.map((p) => p.id);
 
-    const conversations = await this.conversationRepository
-      .createQueryBuilder('conversation')
+    const conversations = await this.entityManager
+      .createQueryBuilder(Conversation, 'conversation')
       .leftJoinAndSelect('conversation.pet1', 'pet1')
       .leftJoinAndSelect('conversation.pet2', 'pet2')
       .leftJoinAndSelect('pet1.photos', 'pet1Photos')
@@ -48,12 +40,12 @@ export class ConversationsService {
     const conversationsWithLastMessage = await Promise.all(
       conversations.map(async (conv) => {
         const otherPet = conv.pet1Id === userPetIds[0] ? conv.pet2 : conv.pet1;
-        const lastMessage = await this.messageRepository.findOne({
+        const lastMessage = await this.entityManager.findOne(Message, {
           where: { conversationId: conv.id },
           order: { createdAt: 'DESC' },
         });
 
-        const unreadCount = await this.messageRepository.count({
+        const unreadCount = await this.entityManager.count(Message, {
           where: {
             conversationId: conv.id,
             senderId: Not(userId),
@@ -83,7 +75,7 @@ export class ConversationsService {
   }
 
   async getConversation(conversationId: number, userId: number) {
-    const conversation = await this.conversationRepository.findOne({
+    const conversation = await this.entityManager.findOne(Conversation, {
       where: { id: conversationId },
       relations: ['pet1', 'pet2', 'pet1.owner', 'pet2.owner', 'match'],
     });
@@ -98,7 +90,7 @@ export class ConversationsService {
     }
 
     // Check if user owns one of the pets
-    const userPets = await this.petRepository.find({
+    const userPets = await this.entityManager.find(Pet, {
       where: { ownerId: userId },
     });
     const userPetIds = userPets.map((p) => p.id);
@@ -118,7 +110,7 @@ export class ConversationsService {
     const limit = 50;
     const skip = 0; // (page - 1) * limit;
 
-    const [messages, total] = await this.messageRepository.findAndCount({
+    const [messages, total] = await this.entityManager.findAndCount(Message, {
       where: { conversationId },
       relations: ['sender'],
       order: { createdAt: 'DESC' },
@@ -149,56 +141,59 @@ export class ConversationsService {
   }
 
   async sendMessage(conversationId: number, userId: number, createMessageDto: CreateMessageDto) {
-    const conversation = await this.conversationRepository.findOne({
-      where: { id: conversationId },
-      relations: ['match'],
+    return this.entityManager.transaction(async (manager) => {
+      const conversation = await manager.findOne(Conversation, {
+        where: { id: conversationId },
+        relations: ['match'],
+      });
+
+      if (!conversation) {
+        throw new NotFoundException('Conversation not found');
+      }
+
+      // Check if conversation has a match
+      if (!conversation.matchId || !conversation.match) {
+        throw new ForbiddenException('Conversation is not associated with a match');
+      }
+
+      // Check if user owns one of the pets
+      const userPets = await manager.find(Pet, {
+        where: { ownerId: userId },
+      });
+      const userPetIds = userPets.map((p) => p.id);
+
+      if (
+        !userPetIds.includes(conversation.pet1Id) &&
+        !userPetIds.includes(conversation.pet2Id)
+      ) {
+        throw new ForbiddenException('You do not have access to this conversation');
+      }
+
+      const message = manager.create(Message, {
+        conversationId,
+        senderId: userId,
+        content: createMessageDto.content,
+      });
+
+      const savedMessage = await manager.save(message);
+
+      // Update conversation last message time
+      conversation.lastMessageAt = new Date();
+      await manager.save(conversation);
+
+      return {
+        id: savedMessage.id,
+        content: savedMessage.content,
+        senderId: savedMessage.senderId,
+        sentAt: savedMessage.createdAt,
+        isRead: savedMessage.isRead,
+      };
     });
-
-    if (!conversation) {
-      throw new NotFoundException('Conversation not found');
-    }
-
-    // Check if conversation has a match
-    if (!conversation.matchId || !conversation.match) {
-      throw new ForbiddenException('Conversation is not associated with a match');
-    }
-
-    // Check if user owns one of the pets
-    const userPets = await this.petRepository.find({
-      where: { ownerId: userId },
-    });
-    const userPetIds = userPets.map((p) => p.id);
-
-    if (
-      !userPetIds.includes(conversation.pet1Id) &&
-      !userPetIds.includes(conversation.pet2Id)
-    ) {
-      throw new ForbiddenException('You do not have access to this conversation');
-    }
-
-    const message = this.messageRepository.create({
-      conversationId,
-      senderId: userId,
-      content: createMessageDto.content,
-    });
-
-    const savedMessage = await this.messageRepository.save(message);
-
-    // Update conversation last message time
-    conversation.lastMessageAt = new Date();
-    await this.conversationRepository.save(conversation);
-
-    return {
-      id: savedMessage.id,
-      content: savedMessage.content,
-      senderId: savedMessage.senderId,
-      sentAt: savedMessage.createdAt,
-      isRead: savedMessage.isRead,
-    };
   }
 
   async markAsRead(conversationId: number, userId: number) {
-    await this.messageRepository.update(
+    await this.entityManager.update(
+      Message,
       {
         conversationId,
         senderId: Not(userId),

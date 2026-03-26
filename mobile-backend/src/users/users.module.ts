@@ -9,7 +9,6 @@ import { UploadsModule } from '../uploads/uploads.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, UserProfile, UserLocation]),
     UploadsModule,
   ],
   controllers: [UsersController],

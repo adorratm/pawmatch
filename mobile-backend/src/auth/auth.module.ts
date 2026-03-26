@@ -15,7 +15,6 @@ import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, UserProfile, OAuthAccount]),
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

@@ -13,6 +13,8 @@
 - ✅ SETUP_GUIDE.md
 - ✅ DATABASE_SCHEMA.md
 - ✅ IMPLEMENTATION_STATUS.md (bu dosya)
+- ✅ DEVELOPMENT_RULES.md (YENİ)
+- ✅ TODO.md (YENİ)
 
 ### 3. Veritabanı Şeması
 - ✅ Tüm TypeORM entityleri oluşturuldu:
@@ -90,13 +92,15 @@
 
 ## Sonraki Adımlar
 
-1. Mobile app ekranlarını tasarımlardan koda dökmek
-2. Admin panel UI'ını oluşturmak
-3. Admin backend'i tamamlamak
-4. Web backend'i tamamlamak
-5. Web sitesi tanıtım sayfalarını oluşturmak
-6. Test yazmak
-7. Deployment hazırlıkları
+1. Mobile app ekranlarını tasarımlardan koda dökmek ve DDD yapısına geçirmek
+2. Backend tarafını DDD yapısına geçirmek ve Repository'den EntityManager'a geçmek
+3. Performans optimizasyonları yapmak (Mobile & Backend)
+4. Admin panel UI'ını oluşturmak
+5. Admin backend'i tamamlamak
+6. Web backend'i tamamlamak
+7. Web sitesi tanıtım sayfalarını oluşturmak
+8. Test yazmak
+9. Deployment hazırlıkları
 
 
 

@@ -58,3 +58,8 @@ web-build/
 .env.local
 
 
+# iOS
+ios/Pods/
+ios/build/
+*.xcworkspace/xcuserdata/
+DerivedData/

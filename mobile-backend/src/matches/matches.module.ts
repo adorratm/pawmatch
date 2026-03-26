@@ -11,7 +11,6 @@ import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Match, MatchLike, MatchDislike, Pet, Conversation]),
     NotificationsModule,
   ],
   controllers: [MatchesController],
