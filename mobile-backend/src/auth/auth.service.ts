@@ -1,7 +1,6 @@
 import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { OAuth2Client } from 'google-auth-library';
@@ -20,14 +19,9 @@ export class AuthService {
   private googleClient: OAuth2Client;
 
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @InjectRepository(UserProfile)
-    private userProfileRepository: Repository<UserProfile>,
-    @InjectRepository(OAuthAccount)
-    private oauthAccountRepository: Repository<OAuthAccount>,
-    private jwtService: JwtService,
-    private configService: ConfigService,
+    private readonly entityManager: EntityManager,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {
     const googleClientId = this.configService.get('GOOGLE_CLIENT_ID');
     if (googleClientId && googleClientId !== 'your_google_client_id_here') {
@@ -38,53 +32,55 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     const { email, password, firstName, lastName, phone } = registerDto;
 
-    // Check if user exists
-    const existingUser = await this.userRepository.findOne({
-      where: [{ email }, { phone }],
+    return this.entityManager.transaction(async (manager) => {
+      // Check if user exists
+      const existingUser = await manager.findOne(User, {
+        where: [{ email }, { phone }],
+      });
+
+      if (existingUser) {
+        throw new ConflictException('User with this email or phone already exists');
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Create user
+      const user = manager.create(User, {
+        email,
+        password: hashedPassword,
+        phone,
+        firstName,
+        lastName,
+      });
+
+      const savedUser = await manager.save(user);
+
+      // Create user profile
+      const profile = manager.create(UserProfile, {
+        userId: savedUser.id,
+      });
+      await manager.save(profile);
+
+      // Generate tokens
+      const tokens = await this.generateTokens(savedUser);
+
+      return {
+        ...tokens,
+        user: {
+          id: savedUser.id,
+          email: savedUser.email,
+          firstName: savedUser.firstName,
+          lastName: savedUser.lastName,
+        },
+      };
     });
-
-    if (existingUser) {
-      throw new ConflictException('User with this email or phone already exists');
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create user
-    const user = this.userRepository.create({
-      email,
-      password: hashedPassword,
-      phone,
-      firstName,
-      lastName,
-    });
-
-    const savedUser = await this.userRepository.save(user);
-
-    // Create user profile
-    const profile = this.userProfileRepository.create({
-      userId: savedUser.id,
-    });
-    await this.userProfileRepository.save(profile);
-
-    // Generate tokens
-    const tokens = await this.generateTokens(savedUser);
-
-    return {
-      ...tokens,
-      user: {
-        id: savedUser.id,
-        email: savedUser.email,
-        firstName: savedUser.firstName,
-        lastName: savedUser.lastName,
-      },
-    };
   }
 
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
-    const user = await this.userRepository.findOne({
+    const user = await this.entityManager.findOne(User, {
       where: { email },
       relations: ['profile'],
     });
@@ -118,7 +114,7 @@ export class AuthService {
   }
 
   async validateUser(userId: number): Promise<User> {
-    const user = await this.userRepository.findOne({
+    const user = await this.entityManager.findOne(User, {
       where: { id: userId },
       relations: ['profile'],
     });
@@ -183,7 +179,7 @@ export class AuthService {
         payload.email,
         payload.given_name || '',
         payload.family_name || '',
-        payload.picture,
+        payload.picture || null,
       );
     } catch (error) {
       throw new UnauthorizedException('Google authentication failed');
@@ -265,64 +261,66 @@ export class AuthService {
     lastName: string,
     picture: string | null,
   ) {
-    // Check if OAuth account exists
-    let oauthAccount = await this.oauthAccountRepository.findOne({
-      where: { provider, providerId },
-      relations: ['user', 'user.profile'],
-    });
-
-    let user: User;
-
-    if (oauthAccount) {
-      user = oauthAccount.user;
-    } else {
-      // Check if user with email exists
-      user = await this.userRepository.findOne({
-        where: { email },
-        relations: ['profile'],
+    return this.entityManager.transaction(async (manager) => {
+      // Check if OAuth account exists
+      let oauthAccount = await manager.findOne(OAuthAccount, {
+        where: { provider, providerId },
+        relations: ['user', 'user.profile'],
       });
 
-      if (!user) {
-        // Create new user
-        user = this.userRepository.create({
-          email,
-          firstName,
-          lastName,
-          isActive: true,
-        });
-        user = await this.userRepository.save(user);
+      let user: User;
 
-        // Create profile
-        const profile = this.userProfileRepository.create({
-          userId: user.id,
-          avatar: picture,
+      if (oauthAccount) {
+        user = oauthAccount.user;
+      } else {
+        // Check if user with email exists
+        user = await manager.findOne(User, {
+          where: { email },
+          relations: ['profile'],
         });
-        await this.userProfileRepository.save(profile);
-        user.profile = profile;
+
+        if (!user) {
+          // Create new user
+          user = manager.create(User, {
+            email,
+            firstName,
+            lastName,
+            isActive: true,
+          });
+          user = await manager.save(user);
+
+          // Create profile
+          const profile = manager.create(UserProfile, {
+            userId: user.id,
+            avatar: picture,
+          });
+          await manager.save(profile);
+          user.profile = profile;
+        }
+
+        // Create OAuth account
+        oauthAccount = manager.create(OAuthAccount, {
+          userId: user.id,
+          provider,
+          providerId,
+        });
+        await manager.save(oauthAccount);
       }
 
-      // Create OAuth account
-      oauthAccount = this.oauthAccountRepository.create({
-        userId: user.id,
-        provider,
-        providerId,
-      });
-      await this.oauthAccountRepository.save(oauthAccount);
-    }
+      // Generate tokens
+      const tokens = await this.generateTokens(user);
 
-    // Generate tokens
-    const tokens = await this.generateTokens(user);
-
-    return {
-      ...tokens,
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        profile: user.profile,
-      },
-    };
+      return {
+        ...tokens,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          profile: user.profile,
+        },
+      };
+    });
   }
 }
 

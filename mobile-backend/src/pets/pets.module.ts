@@ -10,7 +10,6 @@ import { UploadsModule } from '../uploads/uploads.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Pet, PetPhoto, Temperament, PetTemperament]),
     UploadsModule,
   ],
   controllers: [PetsController],

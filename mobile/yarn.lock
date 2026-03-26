@@ -1385,6 +1385,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@expo-google-fonts/plus-jakarta-sans@npm:^0.4.2":
+  version: 0.4.2
+  resolution: "@expo-google-fonts/plus-jakarta-sans@npm:0.4.2"
+  checksum: 10c0/a2c90e344dd974c6f332b3285173ac28b0de5e37517d5ea959117578ae02550720ab233417d7da42637db7ebbfded86648814198795ca35bd2b49fc164084bb7
+  languageName: node
+  linkType: hard
+
 "@expo/cli@npm:55.0.18":
   version: 55.0.18
   resolution: "@expo/cli@npm:55.0.18"
@@ -1869,6 +1876,40 @@ __metadata:
   bin:
     excpretty: build/cli.js
   checksum: 10c0/23bfd12b54bb296284402a4c547a73874b0ed4fa5f5dea26d5f80525c29befe40edb79df921fb3fd783cf0008779b29b7d4d606f2540cc23f96e39cbdc0b21dd
+  languageName: node
+  linkType: hard
+
+"@gorhom/bottom-sheet@npm:^5.2.8":
+  version: 5.2.8
+  resolution: "@gorhom/bottom-sheet@npm:5.2.8"
+  dependencies:
+    "@gorhom/portal": "npm:1.0.14"
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-native": "*"
+    react: "*"
+    react-native: "*"
+    react-native-gesture-handler: ">=2.16.1"
+    react-native-reanimated: "*"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-native":
+      optional: true
+  checksum: 10c0/9bb71a375cdcaec650e8c84ab5e3e42f55b3ae19d9e08cf90688cf72706588d211f3aeef28b857a37e9e411efa8fdf038429c90a8855167c7ab3dce5c595dfca
+  languageName: node
+  linkType: hard
+
+"@gorhom/portal@npm:1.0.14":
+  version: 1.0.14
+  resolution: "@gorhom/portal@npm:1.0.14"
+  dependencies:
+    nanoid: "npm:^3.3.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/86f33afc2ac2656a86a6f3fd1e41565419839576ede2c38333434a93a0a2fe4fb6fc18ab3360579427f2a1fc3b4564b933cc5ae1793a7e2825c93860a00b215f
   languageName: node
   linkType: hard
 
@@ -4194,7 +4235,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-font@npm:~55.0.4":
+"expo-font@npm:^55.0.4, expo-font@npm:~55.0.4":
   version: 55.0.4
   resolution: "expo-font@npm:55.0.4"
   dependencies:
@@ -4396,6 +4437,17 @@ __metadata:
   version: 55.0.6
   resolution: "expo-server@npm:55.0.6"
   checksum: 10c0/c8918cd5f09d6cbda028b527edcc6dbc8df932e3def085ef5de063678164d8f048e1fdb975c641f9d7ff2552394fb3acb34ffd58ac214f302eb239210c60fdc4
+  languageName: node
+  linkType: hard
+
+"expo-splash-screen@npm:^55.0.12":
+  version: 55.0.12
+  resolution: "expo-splash-screen@npm:55.0.12"
+  dependencies:
+    "@expo/prebuild-config": "npm:^55.0.10"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/a9967585de731fe6a7605be399f159a761ede0d66dc59c84132d7b5fa3b08ff53a0bea06869a6dad8ea9f901b7a52f7bfe0624406a9b2f4de4c2d7df8cbf87a6
   languageName: node
   linkType: hard
 
@@ -5933,7 +5985,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.3.11, nanoid@npm:^3.3.7, nanoid@npm:^3.3.8":
+"nanoid@npm:^3.3.1, nanoid@npm:^3.3.11, nanoid@npm:^3.3.7, nanoid@npm:^3.3.8":
   version: 3.3.11
   resolution: "nanoid@npm:3.3.11"
   bin:
@@ -6226,7 +6278,9 @@ __metadata:
   resolution: "pawmatch-mobile@workspace:."
   dependencies:
     "@babel/core": "npm:^7.29.0"
+    "@expo-google-fonts/plus-jakarta-sans": "npm:^0.4.2"
     "@expo/vector-icons": "npm:^15.1.1"
+    "@gorhom/bottom-sheet": "npm:^5.2.8"
     "@react-native-async-storage/async-storage": "npm:2.2.0"
     "@react-navigation/bottom-tabs": "npm:^7.15.7"
     "@react-navigation/native": "npm:^7.2.0"
@@ -6239,12 +6293,13 @@ __metadata:
     expo-auth-session: "npm:~55.0.9"
     expo-constants: "npm:~55.0.9"
     expo-crypto: "npm:~55.0.10"
-    expo-font: "npm:~55.0.4"
+    expo-font: "npm:^55.0.4"
     expo-image-picker: "npm:~55.0.13"
     expo-linear-gradient: "npm:~55.0.9"
     expo-linking: "npm:~55.0.8"
     expo-location: "npm:~55.1.4"
     expo-router: "npm:^55.0.7"
+    expo-splash-screen: "npm:^55.0.12"
     react: "npm:19.2.0"
     react-dom: "npm:19.2.0"
     react-native: "npm:0.83.2"

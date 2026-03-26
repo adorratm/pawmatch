@@ -8,9 +8,7 @@ import { MessageRead } from '../database/entities/message-read.entity';
 import { Pet } from '../database/entities/pet.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Conversation, Message, MessageRead, Pet]),
-  ],
+  imports: [],
   controllers: [ConversationsController],
   providers: [ConversationsService],
   exports: [ConversationsService],

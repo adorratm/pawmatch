@@ -10,16 +10,7 @@ import { AppointmentSlot } from '../database/entities/appointment-slot.entity';
 import { Pet } from '../database/entities/pet.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      Veterinarian,
-      VeterinarianClinic,
-      VeterinarianService,
-      Appointment,
-      AppointmentSlot,
-      Pet,
-    ]),
-  ],
+  imports: [],
   controllers: [VeterinariansController],
   providers: [VeterinariansService],
 })

@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { User } from '../database/entities/user.entity';
 import { UserProfile } from '../database/entities/user-profile.entity';
 import { UserLocation } from '../database/entities/user-location.entity';
@@ -11,17 +10,12 @@ import { UploadsService } from '../uploads/uploads.service';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @InjectRepository(UserProfile)
-    private userProfileRepository: Repository<UserProfile>,
-    @InjectRepository(UserLocation)
-    private userLocationRepository: Repository<UserLocation>,
-    private uploadsService: UploadsService,
+    private readonly entityManager: EntityManager,
+    private readonly uploadsService: UploadsService,
   ) {}
 
   async findById(id: number) {
-    const user = await this.userRepository.findOne({
+    const user = await this.entityManager.findOne(User, {
       where: { id },
       relations: ['profile', 'locations'],
     });
@@ -44,84 +38,89 @@ export class UsersService {
   }
 
   async updateProfile(userId: number, updateProfileDto: UpdateProfileDto) {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['profile'],
+    return this.entityManager.transaction(async (manager) => {
+      const user = await manager.findOne(User, {
+        where: { id: userId },
+        relations: ['profile'],
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      if (updateProfileDto.firstName) {
+        user.firstName = updateProfileDto.firstName;
+      }
+      if (updateProfileDto.lastName) {
+        user.lastName = updateProfileDto.lastName;
+      }
+
+      await manager.save(user);
+
+      if (!user.profile) {
+        user.profile = manager.create(UserProfile, { userId });
+      }
+
+      if (updateProfileDto.bio !== undefined) {
+        user.profile.bio = updateProfileDto.bio;
+      }
+      if (updateProfileDto.avatar !== undefined) {
+        user.profile.avatar = updateProfileDto.avatar;
+      }
+      if (updateProfileDto.dateOfBirth !== undefined) {
+        user.profile.dateOfBirth = new Date(updateProfileDto.dateOfBirth);
+      }
+      if (updateProfileDto.gender !== undefined) {
+        user.profile.gender = updateProfileDto.gender;
+      }
+
+      await manager.save(user.profile);
+
+      return this.findById(userId);
     });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    if (updateProfileDto.firstName) {
-      user.firstName = updateProfileDto.firstName;
-    }
-    if (updateProfileDto.lastName) {
-      user.lastName = updateProfileDto.lastName;
-    }
-
-    await this.userRepository.save(user);
-
-    if (!user.profile) {
-      user.profile = this.userProfileRepository.create({ userId });
-    }
-
-    if (updateProfileDto.bio !== undefined) {
-      user.profile.bio = updateProfileDto.bio;
-    }
-    if (updateProfileDto.avatar !== undefined) {
-      user.profile.avatar = updateProfileDto.avatar;
-    }
-    if (updateProfileDto.dateOfBirth !== undefined) {
-      user.profile.dateOfBirth = new Date(updateProfileDto.dateOfBirth);
-    }
-    if (updateProfileDto.gender !== undefined) {
-      user.profile.gender = updateProfileDto.gender;
-    }
-
-    await this.userProfileRepository.save(user.profile);
-
-    return this.findById(userId);
   }
 
   async updateLocation(userId: number, updateLocationDto: UpdateLocationDto) {
-    // Mark all existing locations as not current
-    await this.userLocationRepository.update(
-      { userId },
-      { isCurrent: false },
-    );
+    return this.entityManager.transaction(async (manager) => {
+      // Mark all existing locations as not current
+      await manager.update(
+        UserLocation,
+        { userId },
+        { isCurrent: false },
+      );
 
-    // Create new current location
-    const location = this.userLocationRepository.create({
-      userId,
-      ...updateLocationDto,
-      isCurrent: true,
+      // Create new current location
+      const location = manager.create(UserLocation, {
+        userId,
+        ...updateLocationDto,
+        isCurrent: true,
+      });
+
+      return manager.save(location);
     });
-
-    await this.userLocationRepository.save(location);
-
-    return location;
   }
 
   async uploadAvatar(userId: number, file: Express.Multer.File) {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['profile'],
+    return this.entityManager.transaction(async (manager) => {
+      const user = await manager.findOne(User, {
+        where: { id: userId },
+        relations: ['profile'],
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      if (!user.profile) {
+        user.profile = manager.create(UserProfile, { userId });
+      }
+
+      const avatarUrl = await this.uploadsService.uploadFile(file);
+      user.profile.avatar = avatarUrl;
+      await manager.save(user.profile);
+
+      return { avatar: avatarUrl };
     });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    if (!user.profile) {
-      user.profile = this.userProfileRepository.create({ userId });
-    }
-
-    const avatarUrl = await this.uploadsService.uploadFile(file);
-    user.profile.avatar = avatarUrl;
-    await this.userProfileRepository.save(user.profile);
-
-    return { avatar: avatarUrl };
   }
 }
 
