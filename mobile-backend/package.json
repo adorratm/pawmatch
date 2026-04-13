@@ -36,7 +36,7 @@
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/websockets": "^11.1.17",
     "aws-sdk": "^2.1693.0",
-    "axios": "^1.13.6",
+    "axios": "^1.15.0",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.71.1",
     "class-transformer": "^0.5.1",
