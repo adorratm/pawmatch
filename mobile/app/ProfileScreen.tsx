@@ -35,7 +35,11 @@ export default function ProfileScreen() {
         <View style={styles.profileSection}>
           <View style={styles.profileCard}>
             <Image
-              source={{ uri: 'https://i.pravatar.cc/150?img=1' }}
+              source={{
+                uri:
+                  user?.profile?.photoUrl ||
+                  'https://i.pravatar.cc/150?img=1',
+              }}
               style={styles.profileImage}
             />
             <View style={styles.profileInfo}>

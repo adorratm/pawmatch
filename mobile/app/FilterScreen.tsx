@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,13 @@ import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { usePetStore } from '@/application/stores/petStore';
+import { userRepository } from '@/infrastructure/repositories/ApiUserRepository';
+import { mergeAndSavePreferences } from '@/infrastructure/api/userPreferences';
+import {
+  buildDiscoverApiParams,
+  resolveDiscoverCoordinates,
+  type DiscoverFiltersSaved,
+} from '@/infrastructure/api/discoverFilters';
 
 export default function FilterScreen() {
   const navigation = useNavigation();
@@ -25,7 +32,31 @@ export default function FilterScreen() {
   const [onlyVaccinated, setOnlyVaccinated] = useState(false);
   const [onlySpayed, setOnlySpayed] = useState(false);
 
-  const resetAll = () => {
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const u = await userRepository.getCurrentUser();
+        const df = (u?.profile?.preferences as Record<string, unknown> | undefined)
+          ?.discoverFilters as DiscoverFiltersSaved | undefined;
+        if (cancelled || !df || typeof df !== 'object') return;
+        if (typeof df.species === 'string') setSpecies(df.species as typeof species);
+        if (typeof df.gender === 'string') setGender(df.gender as typeof gender);
+        if (typeof df.minAge === 'number') setMinAge(df.minAge);
+        if (typeof df.maxAge === 'number') setMaxAge(df.maxAge);
+        if (typeof df.maxDistance === 'number') setMaxDistance(df.maxDistance);
+        if (typeof df.onlyVaccinated === 'boolean') setOnlyVaccinated(df.onlyVaccinated);
+        if (typeof df.onlySpayed === 'boolean') setOnlySpayed(df.onlySpayed);
+      } catch {
+        /* profil yok veya ağ hatası */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const resetAll = async () => {
     setSpecies('all');
     setGender('all');
     setMinAge(0);
@@ -34,21 +65,25 @@ export default function FilterScreen() {
     setOnlyVaccinated(false);
     setOnlySpayed(false);
     setActiveDiscoverFilters(null);
-    loadPets();
+    await mergeAndSavePreferences({ discoverFilters: null }).catch(() => {});
+    await loadPets();
   };
 
   const applyFilters = async () => {
-    const params: Record<string, unknown> = {
-      latitude: 41.0082,
-      longitude: 28.9784,
-      radius: maxDistance,
+    const coords = await resolveDiscoverCoordinates();
+    const saved: DiscoverFiltersSaved = {
+      species,
+      gender,
       minAge,
       maxAge,
+      maxDistance,
+      onlyVaccinated,
+      onlySpayed,
+      lastLatitude: coords.latitude,
+      lastLongitude: coords.longitude,
     };
-    if (species !== 'all') params.species = species;
-    if (gender !== 'all') params.gender = gender;
-    if (onlyVaccinated) params.isVaccinated = true;
-    if (onlySpayed) params.isSpayed = true;
+    await mergeAndSavePreferences({ discoverFilters: saved }).catch(() => {});
+    const params = buildDiscoverApiParams(saved, coords);
     setActiveDiscoverFilters(params);
     await loadPets(params);
     navigation.goBack();

@@ -39,7 +39,7 @@ export class ConversationsService {
 
     const conversationsWithLastMessage = await Promise.all(
       conversations.map(async (conv) => {
-        const otherPet = conv.pet1Id === userPetIds[0] ? conv.pet2 : conv.pet1;
+        const otherPet = userPetIds.includes(conv.pet1Id) ? conv.pet2 : conv.pet1;
         const lastMessage = await this.entityManager.findOne(Message, {
           where: { conversationId: conv.id },
           order: { createdAt: 'DESC' },

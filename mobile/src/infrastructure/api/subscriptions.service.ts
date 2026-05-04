@@ -11,8 +11,11 @@ export interface SubscriptionStatus {
   productId: string | null;
   expiresAt: string | null;
   userId: number;
-  /** RevenueCat anahtar modu; yalnızca istemci IAP kullanıldığında dolu */
+  /** RevenueCat anahtar modu; yalnızca istemci IAP kullandığında dolu */
   keyMode?: 'production' | 'sandbox';
+  /** Backend /subscriptions/me (Pati Gold süper beğeni kotası) */
+  superlikesRemaining?: number;
+  superlikesWeeklyLimit?: number;
 }
 
 export const subscriptionsService = {
@@ -33,7 +36,12 @@ export const subscriptionsService = {
 
     try {
       const { data } = await api.get<SubscriptionStatus>('/subscriptions/me');
-      return { ...data, keyMode: 'production' };
+      return {
+        ...data,
+        keyMode: 'production',
+        superlikesRemaining: data.superlikesRemaining,
+        superlikesWeeklyLimit: data.superlikesWeeklyLimit,
+      };
     } catch {
       return {
         tier: 'free',

@@ -4,6 +4,11 @@ import { userRepository } from '@/infrastructure/repositories/ApiUserRepository'
 import { LoginDto, RegisterDto } from '@/domain/repositories/IUserRepository';
 import { socketService } from '@/infrastructure/api/socket.service';
 import { revenueCatService } from '@/infrastructure/purchases/revenueCat.service';
+import { syncPatiSubscriptionToBackendProfile } from '@/infrastructure/api/patiSubscriptionSync';
+import {
+  registerPushTokenWithBackend,
+  unregisterPushTokenFromBackend,
+} from '@/infrastructure/push/expoPushRegistration';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface AuthState {
@@ -33,6 +38,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user, isAuthenticated: true, isLoading: false });
       await revenueCatService.logInAppUser(String(user.id));
       await socketService.connect();
+      void syncPatiSubscriptionToBackendProfile();
+      void registerPushTokenWithBackend();
     } catch (error) {
       set({ isLoading: false });
       throw error;
@@ -46,6 +53,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user, isAuthenticated: true, isLoading: false });
       await revenueCatService.logInAppUser(String(user.id));
       await socketService.connect();
+      void syncPatiSubscriptionToBackendProfile();
+      void registerPushTokenWithBackend();
     } catch (error) {
       set({ isLoading: false });
       throw error;
@@ -53,6 +62,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: async () => {
+    await unregisterPushTokenFromBackend();
     await AsyncStorage.removeItem('accessToken');
     await AsyncStorage.removeItem('refreshToken');
     await revenueCatService.logOutAppUser();
@@ -70,6 +80,8 @@ export const useAuthStore = create<AuthState>((set) => ({
           set({ user, isAuthenticated: true, isLoading: false });
           await revenueCatService.logInAppUser(String(user.id));
           await socketService.connect();
+          void syncPatiSubscriptionToBackendProfile();
+          void registerPushTokenWithBackend();
         } else {
           set({ user: null, isAuthenticated: false, isLoading: false });
         }

@@ -91,12 +91,20 @@ export default function MatchesScreen() {
           <Ionicons name="arrow-back" size={24} color="#181611" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Eşleşmelerim</Text>
-        <TouchableOpacity
-          style={styles.headerBtn}
-          onPress={() => (navigation as any).navigate('Filter')}
-        >
-          <Ionicons name="options-outline" size={24} color="#181611" />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', gap: 4 }}>
+          <TouchableOpacity
+            style={styles.headerBtn}
+            onPress={() => (navigation as any).navigate('IncomingLikes')}
+          >
+            <Ionicons name="people-outline" size={22} color="#181611" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.headerBtn}
+            onPress={() => (navigation as any).navigate('Filter')}
+          >
+            <Ionicons name="options-outline" size={24} color="#181611" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>

@@ -13,6 +13,10 @@ import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { userRepository } from '@/infrastructure/repositories/ApiUserRepository';
 import { mergeAndSavePreferences } from '@/infrastructure/api/userPreferences';
+import {
+  registerPushTokenWithBackend,
+  unregisterPushTokenFromBackend,
+} from '@/infrastructure/push/expoPushRegistration';
 
 export default function NotificationPreferencesScreen2() {
   const navigation = useNavigation();
@@ -58,16 +62,27 @@ export default function NotificationPreferencesScreen2() {
   useEffect(() => {
     if (!hydrated) return;
     const t = setTimeout(() => {
-      mergeAndSavePreferences({
-        notifications: {
-          channels: {
-            push: pushNotifications,
-            email: emailNotifications,
-            sms: smsNotifications,
-          },
-          quietHours,
-        },
-      }).catch(() => {});
+      void (async () => {
+        try {
+          await mergeAndSavePreferences({
+            notifications: {
+              channels: {
+                push: pushNotifications,
+                email: emailNotifications,
+                sms: smsNotifications,
+              },
+              quietHours,
+            },
+          });
+          if (pushNotifications) {
+            await registerPushTokenWithBackend();
+          } else {
+            await unregisterPushTokenFromBackend();
+          }
+        } catch {
+          /* ignore */
+        }
+      })();
     }, 500);
     return () => clearTimeout(t);
   }, [hydrated, pushNotifications, emailNotifications, smsNotifications, quietHours]);

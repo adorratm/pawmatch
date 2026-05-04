@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { Notification } from '../database/entities/notification.entity';
+import { PushNotificationService } from './push-notification.service';
 
 @Injectable()
 export class NotificationsService {
   constructor(
     private readonly entityManager: EntityManager,
+    private readonly pushNotificationService: PushNotificationService,
   ) {}
 
   async create(createNotificationDto: {
@@ -16,7 +18,23 @@ export class NotificationsService {
     data?: Record<string, any>;
   }) {
     const notification = this.entityManager.create(Notification, createNotificationDto);
-    return this.entityManager.save(notification);
+    const saved = await this.entityManager.save(notification);
+
+    await this.pushNotificationService.sendExpoToUser(
+      createNotificationDto.userId,
+      {
+        title: createNotificationDto.title,
+        body: createNotificationDto.body,
+        data: {
+          ...(createNotificationDto.data ?? {}),
+          notificationId: saved.id,
+          type: createNotificationDto.type,
+        },
+      },
+      { notificationType: createNotificationDto.type },
+    );
+
+    return saved;
   }
 
   async getUserNotifications(userId: number) {
@@ -36,5 +54,3 @@ export class NotificationsService {
     return { success: true };
   }
 }
-
-

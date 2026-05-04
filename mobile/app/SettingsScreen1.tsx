@@ -140,7 +140,9 @@ export default function SettingsScreen1() {
               <Ionicons name="options" size={24} color={COLORS.text} />
               <View style={styles.settingInfo}>
                 <Text style={styles.settingTitle}>Filtreler</Text>
-                <Text style={styles.settingSubtitle}>Tür, yaş, cinsiyet</Text>
+                <Text style={styles.settingSubtitle}>
+                  Tür, yaş, mesafe — kayıtlı filtreler keşfet ve haritada varsayılan
+                </Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>

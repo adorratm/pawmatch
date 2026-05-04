@@ -20,6 +20,7 @@ import {
   revenueCatIsNativeSupported,
   revenueCatService,
 } from '@/infrastructure/purchases/revenueCat.service';
+import { syncPatiSubscriptionToBackendProfile } from '@/infrastructure/api/patiSubscriptionSync';
 
 const FEATURES = [
   'Sınırsız beğeni',
@@ -88,6 +89,7 @@ export default function InAppPurchasesScreen() {
     try {
       await revenueCatService.purchasePackage(pkg);
       await refreshStatus();
+      await syncPatiSubscriptionToBackendProfile();
       Alert.alert('Teşekkürler', 'Pati Gold aboneliğin aktifleştirildi.');
     } catch (e: unknown) {
       if (isUserCancelled(e)) return;
@@ -104,6 +106,7 @@ export default function InAppPurchasesScreen() {
     try {
       await revenueCatService.restorePurchases();
       await refreshStatus();
+      await syncPatiSubscriptionToBackendProfile();
       Alert.alert('Geri yükleme', 'Satın alımlar senkronize edildi.');
     } catch (e: unknown) {
       const msg = (e as { message?: string })?.message ?? 'Geri yükleme başarısız.';

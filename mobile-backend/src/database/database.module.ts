@@ -27,6 +27,7 @@ import { ShelterPet } from './entities/shelter-pet.entity';
 import { PetFavorite } from './entities/pet-favorite.entity';
 import { ClinicReview } from './entities/clinic-review.entity';
 import { SupportTicket } from './entities/support-ticket.entity';
+import { UserPushToken } from './entities/user-push-token.entity';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { SupportTicket } from './entities/support-ticket.entity';
           PetFavorite,
           ClinicReview,
           SupportTicket,
+          UserPushToken,
         ],
         synchronize: false, // Mevcut veritabanı yapısını korumak için kapalı
         logging: configService.get('NODE_ENV') === 'development',

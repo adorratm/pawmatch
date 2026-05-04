@@ -34,6 +34,7 @@ import HelpSupportScreen from '@app/HelpSupportScreen';
 import InAppPurchasesScreen from '@app/InAppPurchasesScreen';
 import ProfileScreen from '@app/ProfileScreen';
 import FavoritesScreen from '@app/FavoritesScreen';
+import IncomingLikesScreen from '@app/IncomingLikesScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { COLORS } from '@/presentation/styles/config';
@@ -129,6 +130,7 @@ export default function AppNavigator() {
                 <Stack.Screen name="DiscoverMap" component={DiscoverMapScreen} />
                 <Stack.Screen name="PetDetail" component={PetDetailScreen} />
                 <Stack.Screen name="Favorites" component={FavoritesScreen} />
+                <Stack.Screen name="IncomingLikes" component={IncomingLikesScreen} />
                 <Stack.Screen name="CreatePetProfile" component={CreatePetProfileScreen} />
                 <Stack.Screen name="Matches" component={MatchesScreen} />
                 <Stack.Screen name="NewMatchNotification" component={NewMatchNotificationScreen} />

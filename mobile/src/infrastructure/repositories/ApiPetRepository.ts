@@ -21,12 +21,15 @@ export class ApiPetRepository implements IPetRepository {
     return response.data ? Pet.fromJSON(response.data) : null;
   }
 
-  async likePet(id: number): Promise<void> {
-    await api.post(`/matches/${id}/like`);
+  async likePet(
+    id: number,
+    opts?: { isSuperLike?: boolean; likerPetId?: number },
+  ): Promise<void> {
+    await api.post(`/matches/${id}/like`, opts ?? {});
   }
 
-  async dislikePet(id: number): Promise<void> {
-    await api.post(`/matches/${id}/dislike`);
+  async dislikePet(id: number, opts?: { dislikerPetId?: number }): Promise<void> {
+    await api.post(`/matches/${id}/dislike`, opts ?? {});
   }
 }
 

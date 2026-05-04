@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -6,9 +6,9 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
-  Platform,
   ActivityIndicator,
   Alert,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -17,19 +17,81 @@ import { COLORS } from '@/presentation/styles/config';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { usePetStore } from '@/application/stores/petStore';
 import { useAuthStore } from '@/application/stores/authStore';
+import { userRepository } from '@/infrastructure/repositories/ApiUserRepository';
+import {
+  buildDiscoverApiParams,
+  resolveDiscoverCoordinates,
+  type DiscoverFiltersSaved,
+} from '@/infrastructure/api/discoverFilters';
+import { PawmatchAdBanner } from '@/presentation/components/PawmatchAdBanner';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CARD_HORIZONTAL_PADDING = 16;
+const CARD_INNER_WIDTH = SCREEN_WIDTH - CARD_HORIZONTAL_PADDING * 2;
 
 export default function DiscoverScreen() {
   const navigation = useNavigation();
   const { user } = useAuthStore();
-  const { pets, currentIndex, loading, loadPets, likePet, dislikePet } = usePetStore();
+  const {
+    pets,
+    currentIndex,
+    loading,
+    loadPets,
+    likePet,
+    dislikePet,
+    setActiveDiscoverFilters,
+    loadMyPetsForLike,
+    myPetsForLike,
+    likerPetId,
+    setLikerPetId,
+  } = usePetStore();
+  const [photoIndex, setPhotoIndex] = useState(0);
 
   useEffect(() => {
-    loadPets();
+    void loadMyPetsForLike();
+  }, [loadMyPetsForLike]);
+
+  useEffect(() => {
+    setPhotoIndex(0);
+  }, [currentIndex]);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const u = await userRepository.getCurrentUser();
+        const raw = (u?.profile?.preferences as Record<string, unknown> | undefined)
+          ?.discoverFilters as DiscoverFiltersSaved | undefined;
+        const coords = await resolveDiscoverCoordinates(raw ?? undefined);
+        if (!alive) return;
+        if (raw && typeof raw === 'object') {
+          const params = buildDiscoverApiParams(raw, coords);
+          setActiveDiscoverFilters(params);
+          await loadPets(params);
+        } else {
+          await loadPets();
+        }
+      } catch {
+        if (alive) await loadPets();
+      }
+    })();
+    return () => {
+      alive = false;
+    };
   }, []);
 
   const currentPet = pets[currentIndex];
+
+  const galleryPhotos = useMemo(() => {
+    if (!currentPet?.photos?.length) {
+      return [
+        {
+          url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6JqyeFfKbzIV96d7Ss8Z8VIbXK_ip3_tgj65pp7VYE2Y51FBPgWJ7GO_67BusF0qB8PRHHPK2om8_D7FJt8_AgzuYQX5oiEwYaSKsy_eIoDazBt5KIy9iKhxGIRXFU9DiL4Ql-7Iy-qeAzoJm18tZsNFTP72l8duZlbVwVBNSyx_UcrKs54Ow6lIO6LVRb9_AFpT_AU2FXoYm5QhKhzYzfDdSRyXaP-Jxqj5Nt0DYG8lNbEXf-9ksglCDsYHvZpI7QH5092r7MQdB',
+        },
+      ];
+    }
+    return currentPet.photos.map((p: { url: string }) => ({ url: p.url }));
+  }, [currentPet]);
 
   if (loading && pets.length === 0) {
     return (
@@ -67,7 +129,11 @@ export default function DiscoverScreen() {
           onPress={() => (navigation as any).navigate('Profile')}
         >
           <Image
-            source={{ uri: user?.profile?.photoUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCG3B8xe_3c4vII4DM0h6bfLId7eOc8O3pVJtHKhJXQpNP05XDFgW4FI8XycNBFd0MeKsZUzfHjpDWF6RONaYYJCUvxC0k54YFJliAYlAfR0f7VZGmEaZsdUFS9uFTjuPygy9LAEBjBatQ0Twnsr4nZwGcm8SeOgMMgroiLDvR7UoItHV_-7nCqPD7tIkw8_Cing7Ed-B_ZnydmhSKwgDZEgaeDBS3iZTJVAzBZBJLQVJ1b-7NBSzD1Sw8AQUn6f3RzkJ3jC4nMPBt8' }}
+            source={{
+              uri:
+                user?.profile?.photoUrl ||
+                'https://lh3.googleusercontent.com/aida-public/AB6AXuCG3B8xe_3c4vII4DM0h6bfLId7eOc8O3pVJtHKhJXQpNP05XDFgW4FI8XycNBFd0MeKsZUzfHjpDWF6RONaYYJCUvxC0k54YFJliAYlAfR0f7VZGmEaZsdUFS9uFTjuPygy9LAEBjBatQ0Twnsr4nZwGcm8SeOgMMgroiLDvR7UoItHV_-7nCqPD7tIkw8_Cing7Ed-B_ZnydmhSKwgDZEgaeDBS3iZTJVAzBZBJLQVJ1b-7NBSzD1Sw8AQUn6f3RzkJ3jC4nMPBt8',
+            }}
             style={styles.profileImage}
           />
         </TouchableOpacity>
@@ -92,6 +158,12 @@ export default function DiscoverScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.iconButton}
+            onPress={() => (navigation as any).navigate('IncomingLikes')}
+          >
+            <Ionicons name="people-outline" size={22} color={COLORS.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.iconButton}
             onPress={() => (navigation as any).navigate('Favorites')}
           >
             <Ionicons name="heart-outline" size={22} color={COLORS.primary} />
@@ -99,19 +171,67 @@ export default function DiscoverScreen() {
         </View>
       </View>
 
+      {myPetsForLike.length > 1 ? (
+        <View style={styles.likerRow}>
+          <Text style={styles.likerLabel}>Beğenen:</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.likerChips}>
+            {myPetsForLike.map((p) => {
+              const active = likerPetId === p.id;
+              return (
+                <TouchableOpacity
+                  key={p.id}
+                  style={[styles.likerChip, active && styles.likerChipActive]}
+                  onPress={() => void setLikerPetId(p.id)}
+                >
+                  <Text style={[styles.likerChipText, active && styles.likerChipTextActive]} numberOfLines={1}>
+                    {p.name}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      ) : null}
+
       <View style={styles.content}>
-        <TouchableOpacity
-          activeOpacity={0.9}
-          style={styles.cardContainer}
-          onPress={() =>
-            (navigation as any).navigate('PetDetail', { id: String(currentPet.id) })
-          }
-        >
-          <Image
-            source={{ uri: currentPet.photos?.[0]?.url || 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6JqyeFfKbzIV96d7Ss8Z8VIbXK_ip3_tgj65pp7VYE2Y51FBPgWJ7GO_67BusF0qB8PRHHPK2om8_D7FJt8_AgzuYQX5oiEwYaSKsy_eIoDazBt5KIy9iKhxGIRXFU9DiL4Ql-7Iy-qeAzoJm18tZsNFTP72l8duZlbVwVBNSyx_UcrKs54Ow6lIO6LVRb9_AFpT_AU2FXoYm5QhKhzYzfDdSRyXaP-Jxqj5Nt0DYG8lNbEXf-9ksglCDsYHvZpI7QH5092r7MQdB' }}
-            style={styles.cardImage}
-            resizeMode="cover"
-          />
+        <View style={styles.cardContainer}>
+          <View style={styles.cardImageArea}>
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onScroll={(e) => {
+                const x = e.nativeEvent.contentOffset.x;
+                const idx = Math.round(x / CARD_INNER_WIDTH);
+                if (idx !== photoIndex) setPhotoIndex(idx);
+              }}
+              scrollEventThrottle={16}
+            >
+              {galleryPhotos.map((ph, idx) => (
+                <View key={`${currentPet.id}-${idx}`} style={{ width: CARD_INNER_WIDTH, flex: 1 }}>
+                  <Image source={{ uri: ph.url }} style={styles.cardImage} resizeMode="cover" />
+                </View>
+              ))}
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.detailFab}
+              onPress={() =>
+                (navigation as any).navigate('PetDetail', { id: String(currentPet.id) })
+              }
+            >
+              <Ionicons name="expand-outline" size={20} color="#fff" />
+            </TouchableOpacity>
+            {galleryPhotos.length > 1 ? (
+              <View style={styles.photoDots}>
+                {galleryPhotos.map((_, i) => (
+                  <View
+                    key={i}
+                    style={[styles.photoDot, i === photoIndex && styles.photoDotActive]}
+                  />
+                ))}
+              </View>
+            ) : null}
+          </View>
           <View style={styles.cardOverlay}>
             <View style={styles.cardInfoRow}>
               <View style={{ flex: 1 }}>
@@ -139,19 +259,45 @@ export default function DiscoverScreen() {
               <Text style={styles.suggestButtonText}>Detayları Görüntüle</Text>
             </TouchableOpacity>
           </View>
-        </TouchableOpacity>
+        </View>
       </View>
+
+      <PawmatchAdBanner />
 
       <View style={styles.actions}>
         <TouchableOpacity
           style={styles.actionButtonSmall}
-          onPress={() => dislikePet(currentPet.id)}
+          onPress={async () => {
+            try {
+              await dislikePet(currentPet.id);
+            } catch (e: any) {
+              Alert.alert('Hata', e?.response?.data?.message || 'İşlem başarısız.');
+            }
+          }}
         >
           <Ionicons name="close" size={32} color="#888" />
         </TouchableOpacity>
         <TouchableOpacity
+          style={styles.actionButtonSmall}
+          onPress={async () => {
+            try {
+              await likePet(currentPet.id, { isSuperLike: true });
+            } catch (e: any) {
+              Alert.alert('Süper beğeni', e?.response?.data?.message || 'Gönderilemedi.');
+            }
+          }}
+        >
+          <Ionicons name="flash" size={26} color="#f59e0b" />
+        </TouchableOpacity>
+        <TouchableOpacity
           style={styles.actionButtonLarge}
-          onPress={() => likePet(currentPet.id)}
+          onPress={async () => {
+            try {
+              await likePet(currentPet.id);
+            } catch (e: any) {
+              Alert.alert('Beğeni', e?.response?.data?.message || 'İşlem başarısız.');
+            }
+          }}
         >
           <Ionicons name="heart" size={36} color="#fff" />
         </TouchableOpacity>
@@ -231,7 +377,46 @@ const styles = StyleSheet.create({
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 4,
+  },
+  likerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingBottom: 8,
     gap: 8,
+  },
+  likerLabel: {
+    fontSize: 11,
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: COLORS.textMuted,
+  },
+  likerChips: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingRight: 8,
+  },
+  likerChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: '#f0f0f0',
+    borderWidth: 1,
+    borderColor: '#e5e5e5',
+    maxWidth: 120,
+  },
+  likerChipActive: {
+    backgroundColor: 'rgba(106, 63, 42, 0.12)',
+    borderColor: COLORS.primary,
+  },
+  likerChipText: {
+    fontSize: 12,
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#666',
+  },
+  likerChipTextActive: {
+    color: COLORS.primary,
   },
   iconButton: {
     width: 40,
@@ -260,9 +445,43 @@ const styles = StyleSheet.create({
     elevation: 5,
     overflow: 'hidden',
   },
+  cardImageArea: {
+    flex: 1,
+    position: 'relative',
+  },
   cardImage: {
     width: '100%',
     height: '100%',
+  },
+  detailFab: {
+    position: 'absolute',
+    top: 14,
+    right: 14,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoDots: {
+    position: 'absolute',
+    top: 14,
+    left: 0,
+    right: 56,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  photoDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'rgba(255,255,255,0.45)',
+  },
+  photoDotActive: {
+    backgroundColor: '#fff',
+    width: 18,
   },
   cardOverlay: {
     position: 'absolute',
@@ -333,7 +552,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingBottom: 30,
-    gap: 20,
+    gap: 14,
+    flexWrap: 'wrap',
+    paddingHorizontal: 8,
   },
   actionButtonSmall: {
     width: 64,

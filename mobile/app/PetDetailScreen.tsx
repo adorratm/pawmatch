@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
@@ -17,12 +18,16 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { petRepository } from '@/infrastructure/repositories/ApiPetRepository';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Pet } from '@/domain/entities/Pet';
+import { matchesService } from '@/infrastructure/api/matches.service';
+import { favoritesService } from '@/infrastructure/api/favorites.service';
+import { usePetStore } from '@/application/stores/petStore';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const IMAGE_HEIGHT = SCREEN_WIDTH * 1.25;
 
 export default function PetDetailScreen() {
   const navigation = useNavigation();
+  const likerPetId = usePetStore((s) => s.likerPetId);
   const route = useRoute();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ id: string }>();
@@ -31,6 +36,13 @@ export default function PetDetailScreen() {
   const [pet, setPet] = useState<Pet | null>(null);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [hasMatch, setHasMatch] = useState(false);
+
+  const loadMyPetsForLike = usePetStore((s) => s.loadMyPetsForLike);
+
+  useEffect(() => {
+    void loadMyPetsForLike();
+  }, [loadMyPetsForLike]);
 
   useEffect(() => {
     if (id) {
@@ -40,8 +52,16 @@ export default function PetDetailScreen() {
 
   const loadPet = async () => {
     try {
-      const data = await petRepository.findById(parseInt(id));
+      const pid = parseInt(String(id), 10);
+      const data = await petRepository.findById(pid);
       setPet(data);
+      try {
+        const m = await matchesService.getMatches();
+        const list = m?.matches ?? [];
+        setHasMatch(list.some((x: { pet?: { id?: number } }) => x.pet?.id === pid));
+      } catch {
+        setHasMatch(false);
+      }
     } catch (error) {
       console.error('Error loading pet:', error);
     } finally {
@@ -196,10 +216,10 @@ export default function PetDetailScreen() {
 
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Health Status</Text>
-            <div className="verifiedBadge">
+            <View style={styles.verifiedBadge}>
               <MaterialCommunityIcons name="shield-check" size={14} color="#27ae60" style={{ marginRight: 4 }} />
               <Text style={styles.verifiedText}>Vet Checked</Text>
-            </div>
+            </View>
           </View>
 
           <View style={styles.healthCard}>
@@ -236,15 +256,103 @@ export default function PetDetailScreen() {
 
       {/* Footer Actions */}
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 20) }]}>
-        <TouchableOpacity style={styles.actionBtnSmall} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.actionBtnSmall}
+          onPress={async () => {
+            try {
+              await matchesService.dislike(
+                parseInt(String(id), 10),
+                likerPetId != null ? { dislikerPetId: likerPetId } : {},
+              );
+              navigation.goBack();
+            } catch (e: any) {
+              Alert.alert('Hata', e?.response?.data?.message || 'İşlem başarısız.');
+            }
+          }}
+        >
           <Ionicons name="close" size={32} color="#888" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtnLarge}>
+        <TouchableOpacity
+          style={styles.actionBtnSmall}
+          onPress={async () => {
+            try {
+              await matchesService.like(parseInt(String(id), 10), {
+                isSuperLike: true,
+                ...(likerPetId != null ? { likerPetId } : {}),
+              });
+              Alert.alert('Süper beğeni', 'Gönderildi.');
+            } catch (e: any) {
+              Alert.alert('Süper beğeni', e?.response?.data?.message || 'Gönderilemedi.');
+            }
+          }}
+        >
+          <Ionicons name="flash" size={26} color="#f59e0b" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.actionBtnLarge}
+          onPress={async () => {
+            try {
+              const r = await matchesService.like(parseInt(String(id), 10), {
+                ...(likerPetId != null ? { likerPetId } : {}),
+              });
+              if (r?.isMatch && r?.conversationId) {
+                Alert.alert('Eşleşme!', 'Sohbete geçmek ister misin?', [
+                  { text: 'Kapat', style: 'cancel', onPress: () => navigation.goBack() },
+                  {
+                    text: 'Sohbet',
+                    onPress: () =>
+                      (navigation as any).navigate('Chat', { id: String(r.conversationId) }),
+                  },
+                ]);
+              } else {
+                Alert.alert('Beğeni', 'Kaydedildi.');
+              }
+            } catch (e: any) {
+              Alert.alert('Beğeni', e?.response?.data?.message || 'İşlem başarısız.');
+            }
+          }}
+        >
           <Ionicons name="heart" size={40} color="#fff" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtnSmall}>
-          <Ionicons name="star" size={24} color="#888" />
+        <TouchableOpacity
+          style={styles.actionBtnSmall}
+          onPress={async () => {
+            try {
+              await favoritesService.add(parseInt(String(id), 10));
+              Alert.alert('Favoriler', 'Eklendi.');
+            } catch (e: any) {
+              Alert.alert('Hata', e?.response?.data?.message || 'Eklenemedi.');
+            }
+          }}
+        >
+          <Ionicons name="star" size={24} color={COLORS.primary} />
         </TouchableOpacity>
+        {hasMatch ? (
+          <TouchableOpacity
+            style={styles.actionBtnSmall}
+            onPress={() => {
+              Alert.alert('Eşleşmeyi kaldır', 'Bu hayvanla eşleşmen kaldırılacak.', [
+                { text: 'İptal', style: 'cancel' },
+                {
+                  text: 'Kaldır',
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      await matchesService.unmatchByPet(parseInt(String(id), 10));
+                      setHasMatch(false);
+                      Alert.alert('Tamam', 'Eşleşme kaldırıldı.');
+                      navigation.goBack();
+                    } catch (e: any) {
+                      Alert.alert('Hata', e?.response?.data?.message || 'Kaldırılamadı.');
+                    }
+                  },
+                },
+              ]);
+            }}
+          >
+            <Ionicons name="unlink-outline" size={22} color="#b45309" />
+          </TouchableOpacity>
+        ) : null}
       </View>
     </View>
   );
@@ -490,9 +598,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 20,
+    gap: 12,
+    paddingHorizontal: 12,
     paddingTop: 20,
     backgroundColor: 'rgba(255,255,255,0.9)',
   },

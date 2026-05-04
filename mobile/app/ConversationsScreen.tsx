@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import api from '@/infrastructure/api/api';
+import { PawmatchAdBanner } from '@/presentation/components/PawmatchAdBanner';
 
 export default function ConversationsScreen() {
   const navigation = useNavigation();
@@ -95,6 +96,8 @@ export default function ConversationsScreen() {
           placeholderTextColor={COLORS.textMuted}
         />
       </View>
+
+      <PawmatchAdBanner />
 
       <FlatList
         data={conversations}

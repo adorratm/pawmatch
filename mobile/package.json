@@ -25,11 +25,13 @@
     "expo-constants": "~55.0.15",
     "expo-crypto": "~55.0.14",
     "expo-dev-client": "~55.0.30",
+    "expo-device": "^55.0.15",
     "expo-font": "^55.0.6",
     "expo-image-picker": "~55.0.19",
     "expo-linear-gradient": "~55.0.13",
     "expo-linking": "~55.0.14",
     "expo-location": "~55.1.8",
+    "expo-notifications": "^55.0.22",
     "expo-router": "^55.0.13",
     "expo-splash-screen": "^55.0.19",
     "react": "19.2.3",
@@ -49,6 +51,7 @@
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@types/react": "~19.2.14",
+    "eas-cli": "^18.10.0",
     "typescript": "~6.0.3"
   },
   "resolutions": {

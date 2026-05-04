@@ -21,6 +21,9 @@ export class MatchLike {
   @Column()
   likedPetId: number;
 
+  @Column({ name: 'isSuperLike', default: false })
+  isSuperLike: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

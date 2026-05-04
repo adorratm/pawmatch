@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Param, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Param, Query, Body, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { MatchesService } from './matches.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { User } from '../database/entities/user.entity';
+import { LikePetDto } from './dto/like-pet.dto';
+import { DislikePetDto } from './dto/dislike-pet.dto';
 
 @Controller('matches')
 @UseGuards(JwtAuthGuard)
@@ -39,20 +41,35 @@ export class MatchesController {
     });
   }
 
+  @Get('incoming-likes')
+  async incomingLikes(@CurrentUser() user: User) {
+    return this.matchesService.getIncomingLikes(user.id);
+  }
+
+  @Post('unmatch-by-pet/:targetPetId')
+  async unmatchByPet(
+    @Param('targetPetId', ParseIntPipe) targetPetId: number,
+    @CurrentUser() user: User,
+  ) {
+    return this.matchesService.unmatchByTargetPet(targetPetId, user.id);
+  }
+
   @Post(':petId/like')
   async like(
     @Param('petId', ParseIntPipe) petId: number,
     @CurrentUser() user: User,
+    @Body() body: LikePetDto,
   ) {
-    return this.matchesService.like(petId, user.id);
+    return this.matchesService.like(petId, user.id, body);
   }
 
   @Post(':petId/dislike')
   async dislike(
     @Param('petId', ParseIntPipe) petId: number,
     @CurrentUser() user: User,
+    @Body() body: DislikePetDto,
   ) {
-    return this.matchesService.dislike(petId, user.id);
+    return this.matchesService.dislike(petId, user.id, body?.dislikerPetId);
   }
 
   @Get()
