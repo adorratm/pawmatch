@@ -3,6 +3,7 @@ import { User } from '@/domain/entities/User';
 import { userRepository } from '@/infrastructure/repositories/ApiUserRepository';
 import { LoginDto, RegisterDto } from '@/domain/repositories/IUserRepository';
 import { socketService } from '@/infrastructure/api/socket.service';
+import { revenueCatService } from '@/infrastructure/purchases/revenueCat.service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface AuthState {
@@ -30,6 +31,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const { user } = await userRepository.login(credentials);
       set({ user, isAuthenticated: true, isLoading: false });
+      await revenueCatService.logInAppUser(String(user.id));
       await socketService.connect();
     } catch (error) {
       set({ isLoading: false });
@@ -42,6 +44,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const { user } = await userRepository.register(data);
       set({ user, isAuthenticated: true, isLoading: false });
+      await revenueCatService.logInAppUser(String(user.id));
       await socketService.connect();
     } catch (error) {
       set({ isLoading: false });
@@ -52,6 +55,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: async () => {
     await AsyncStorage.removeItem('accessToken');
     await AsyncStorage.removeItem('refreshToken');
+    await revenueCatService.logOutAppUser();
     socketService.disconnect();
     set({ user: null, isAuthenticated: false });
   },
@@ -64,6 +68,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         const user = await userRepository.getCurrentUser();
         if (user) {
           set({ user, isAuthenticated: true, isLoading: false });
+          await revenueCatService.logInAppUser(String(user.id));
           await socketService.connect();
         } else {
           set({ user: null, isAuthenticated: false, isLoading: false });

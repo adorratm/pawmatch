@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsString, IsEnum, IsNumber, IsBoolean, IsOptional, IsArray } from 'class-validator';
 import { PetSpecies, PetGender } from '../../database/entities/pet.entity';
 
@@ -12,6 +13,7 @@ export class CreatePetDto {
   @IsString()
   breed?: string;
 
+  @Type(() => Number)
   @IsNumber()
   age: number;
 

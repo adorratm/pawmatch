@@ -6,17 +6,21 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   Image,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { petsService } from '@/infrastructure/api/pets.service';
 
 export default function CreatePetProfileScreen() {
-  const router = useRouter();
+  const navigation = useNavigation();
   const [step, setStep] = useState(1);
+  const [submitting, setSubmitting] = useState(false);
   const [name, setName] = useState('');
   const [species, setSpecies] = useState<'dog' | 'cat' | 'other'>('dog');
   const [breed, setBreed] = useState('');
@@ -40,10 +44,59 @@ export default function CreatePetProfileScreen() {
     }
   };
 
+  const handleSubmit = async () => {
+    const ageNum = parseInt(age, 10);
+    if (!name.trim()) {
+      Alert.alert('Eksik bilgi', 'Lütfen pet adını gir.');
+      return;
+    }
+    if (Number.isNaN(ageNum) || ageNum < 0) {
+      Alert.alert('Eksik bilgi', 'Geçerli bir yaş gir.');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const pet = await petsService.createPet({
+        name: name.trim(),
+        species,
+        breed: breed.trim() || undefined,
+        age: ageNum,
+        gender,
+        bio: bio.trim() || undefined,
+        isSpayed,
+        isVaccinated,
+      });
+      const petId = pet.id as number;
+      const uris = photos.filter(Boolean);
+      for (let i = 0; i < uris.length; i++) {
+        const uri = uris[i];
+        const mime =
+          uri.toLowerCase().includes('.png') || uri.includes('image/png')
+            ? 'image/png'
+            : 'image/jpeg';
+        const file = { uri, name: `pet-${petId}-${i}.jpg`, type: mime };
+        await petsService.uploadPhoto(petId, file as any, i === 0);
+      }
+      Alert.alert('Tamam', 'Pet profilin oluşturuldu.', [
+        { text: 'Devam', onPress: () => navigation.goBack() },
+      ]);
+    } catch (e: any) {
+      const msg =
+        e?.response?.data?.message ||
+        (Array.isArray(e?.response?.data?.message)
+          ? e.response.data.message.join(', ')
+          : null) ||
+        'Pet oluşturulamadı.';
+      Alert.alert('Hata', typeof msg === 'string' ? msg : 'Pet oluşturulamadı.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Create Profile</Text>
@@ -224,9 +277,19 @@ export default function CreatePetProfileScreen() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.continueButton}>
-          <Text style={styles.continueButtonText}>Continue</Text>
-          <Ionicons name="arrow-forward" size={20} color="#fff" />
+        <TouchableOpacity
+          style={[styles.continueButton, submitting && styles.continueButtonDisabled]}
+          onPress={handleSubmit}
+          disabled={submitting}
+        >
+          {submitting ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <Text style={styles.continueButtonText}>Continue</Text>
+              <Ionicons name="arrow-forward" size={20} color="#fff" />
+            </>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -500,6 +563,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
+  },
+  continueButtonDisabled: {
+    opacity: 0.75,
   },
   continueButtonText: {
     color: '#fff',

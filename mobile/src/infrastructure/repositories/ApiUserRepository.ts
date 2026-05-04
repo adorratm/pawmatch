@@ -5,12 +5,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export class ApiUserRepository implements IUserRepository {
   async getCurrentUser(): Promise<User | null> {
-    const response = await api.get('/auth/me');
+    const response = await api.get('/users/me');
     return response.data ? User.fromJSON(response.data) : null;
   }
 
   async updateProfile(profile: any): Promise<User> {
-    const response = await api.patch('/users/profile', profile);
+    const response = await api.put('/users/me', profile);
     return User.fromJSON(response.data);
   }
 

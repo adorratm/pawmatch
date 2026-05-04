@@ -6,15 +6,15 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-  SafeAreaView,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import api from '@/infrastructure/api/api';
 
 export default function VeterinariansScreen() {
-  const router = useRouter();
+  const navigation = useNavigation();
   const [clinics, setClinics] = useState<any[]>([]);
 
   useEffect(() => {
@@ -33,7 +33,9 @@ export default function VeterinariansScreen() {
   const renderClinic = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={styles.clinicCard}
-      onPress={() => router.push({ pathname: '/veterinarian-detail-1', params: { clinicId: item.id } })}
+      onPress={() =>
+        (navigation as any).navigate('VeterinarianDetail1', { clinicId: item.id })
+      }
     >
       <Image
         source={{ uri: 'https://picsum.photos/400/300?random=' + item.id }}
@@ -62,11 +64,11 @@ export default function VeterinariansScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Yakın Veterinerler</Text>
-        <TouchableOpacity onPress={() => router.push('/veterinarians-map')}>
+        <TouchableOpacity onPress={() => (navigation as any).navigate('VeterinariansMap')}>
           <Ionicons name="map" size={24} color={COLORS.primary} />
         </TouchableOpacity>
       </View>

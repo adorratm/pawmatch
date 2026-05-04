@@ -15,35 +15,28 @@ export class MatchesService {
   ) {}
 
   async discover(userId: number, filters: any) {
-    // Get user's pets
     const userPets = await this.entityManager.find(Pet, {
       where: { ownerId: userId, isActive: true },
     });
 
-    if (userPets.length === 0) {
-      return { pets: [], hasMore: false };
-    }
-
     const userPetIds = userPets.map((p) => p.id);
 
-    // Get already liked/disliked pets
-    const likedPets = await this.entityManager.find(MatchLike, {
-      where: { likerPetId: In(userPetIds) },
-    });
-    const dislikedPets = await this.entityManager.find(MatchDislike, {
-      where: { dislikerPetId: In(userPetIds) },
-    });
+    let excludedPetIds: number[] = [];
+    if (userPetIds.length > 0) {
+      const likedPets = await this.entityManager.find(MatchLike, {
+        where: { likerPetId: In(userPetIds) },
+      });
+      const dislikedPets = await this.entityManager.find(MatchDislike, {
+        where: { dislikerPetId: In(userPetIds) },
+      });
+      excludedPetIds = [
+        ...likedPets.map((l) => l.likedPetId),
+        ...dislikedPets.map((d) => d.dislikedPetId),
+      ];
+    }
 
-    const excludedPetIds = [
-      ...likedPets.map((l) => l.likedPetId),
-      ...dislikedPets.map((d) => d.dislikedPetId),
-      ...userPetIds,
-    ];
-
-    // Mode filter (PawMatch vs Adoption)
     const isAdoptedFilter = filters.mode === 'adoption';
 
-    // Build query
     const query = this.entityManager
       .createQueryBuilder(Pet, 'pet')
       .leftJoinAndSelect('pet.photos', 'photos')
@@ -52,7 +45,11 @@ export class MatchesService {
       .leftJoinAndSelect('pet.temperaments', 'temperaments')
       .where('pet.isActive = :isActive', { isActive: true })
       .andWhere('pet.isAdopted = :isAdopted', { isAdopted: isAdoptedFilter })
-      .andWhere('pet.id NOT IN (:...excludedIds)', { excludedIds: excludedPetIds });
+      .andWhere('pet.ownerId != :discoverUserId', { discoverUserId: userId });
+
+    if (excludedPetIds.length > 0) {
+      query.andWhere('pet.id NOT IN (:...excludedIds)', { excludedIds: excludedPetIds });
+    }
 
     if (filters.species) {
       query.andWhere('pet.species = :species', { species: filters.species });
@@ -65,6 +62,12 @@ export class MatchesService {
     }
     if (filters.gender) {
       query.andWhere('pet.gender = :gender', { gender: filters.gender });
+    }
+    if (filters.isVaccinated) {
+      query.andWhere('pet.isVaccinated = :isVaccinated', { isVaccinated: true });
+    }
+    if (filters.isSpayed) {
+      query.andWhere('pet.isSpayed = :isSpayed', { isSpayed: true });
     }
 
     const pets = await query
@@ -97,6 +100,17 @@ export class MatchesService {
         if (b.distance === null) return -1;
         return a.distance - b.distance;
       });
+    }
+
+    if (
+      filters.latitude != null &&
+      filters.longitude != null &&
+      filters.radius != null &&
+      filters.radius > 0
+    ) {
+      petsWithDistance = petsWithDistance.filter(
+        (pet) => pet.distance !== null && pet.distance <= filters.radius,
+      );
     }
 
     return {

@@ -3,6 +3,7 @@ import { VeterinariansService } from './veterinarians.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { User } from '../database/entities/user.entity';
+import { CreateClinicReviewDto } from './dto/create-clinic-review.dto';
 
 @Controller('veterinarians')
 @UseGuards(JwtAuthGuard)
@@ -22,11 +23,6 @@ export class VeterinariansController {
     );
   }
 
-  @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.veterinariansService.findOne(id);
-  }
-
   @Get('appointments/me')
   async getMyAppointments(@CurrentUser() user: User) {
     return this.veterinariansService.getAppointments(user.id);
@@ -38,6 +34,25 @@ export class VeterinariansController {
     @Body() createAppointmentDto: any,
   ) {
     return this.veterinariansService.createAppointment(user.id, createAppointmentDto);
+  }
+
+  @Get(':id/reviews')
+  async listClinicReviews(@Param('id', ParseIntPipe) id: number) {
+    return this.veterinariansService.listClinicReviews(id);
+  }
+
+  @Post(':id/reviews')
+  async createClinicReview(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+    @Body() dto: CreateClinicReviewDto,
+  ) {
+    return this.veterinariansService.createClinicReview(id, user.id, dto);
+  }
+
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.veterinariansService.findOne(id);
   }
 }
 

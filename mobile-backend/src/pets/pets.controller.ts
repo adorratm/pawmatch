@@ -29,6 +29,27 @@ export class PetsController {
     return this.petsService.findByOwner(user.id);
   }
 
+  @Get('favorites')
+  async listFavorites(@CurrentUser() user: User) {
+    return this.petsService.listFavorites(user.id);
+  }
+
+  @Post('favorites/:petId')
+  async addFavorite(
+    @CurrentUser() user: User,
+    @Param('petId', ParseIntPipe) petId: number,
+  ) {
+    return this.petsService.addFavorite(user.id, petId);
+  }
+
+  @Delete('favorites/:petId')
+  async removeFavorite(
+    @CurrentUser() user: User,
+    @Param('petId', ParseIntPipe) petId: number,
+  ) {
+    return this.petsService.removeFavorite(user.id, petId);
+  }
+
   @Post()
   async create(
     @CurrentUser() user: User,

@@ -6,6 +6,8 @@ interface PetState {
   pets: Pet[];
   currentIndex: number;
   loading: boolean;
+  activeDiscoverFilters: Record<string, unknown> | null;
+  setActiveDiscoverFilters: (f: Record<string, unknown> | null) => void;
   loadPets: (filters?: any) => Promise<void>;
   likePet: (petId: number) => Promise<void>;
   dislikePet: (petId: number) => Promise<void>;
@@ -16,11 +18,16 @@ export const usePetStore = create<PetState>((set, get) => ({
   pets: [],
   currentIndex: 0,
   loading: false,
+  activeDiscoverFilters: null,
+
+  setActiveDiscoverFilters: (f) => set({ activeDiscoverFilters: f }),
 
   loadPets: async (filters) => {
     set({ loading: true });
     try {
-      const pets = await petRepository.findAll(filters);
+      const resolved =
+        filters !== undefined ? filters : get().activeDiscoverFilters || undefined;
+      const pets = await petRepository.findAll(resolved);
       set({ pets: pets || [], currentIndex: 0, loading: false });
     } catch (error) {
       set({ loading: false });

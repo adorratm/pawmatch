@@ -19,6 +19,8 @@ export class MatchesController {
     @Query('minAge') minAge?: string,
     @Query('maxAge') maxAge?: string,
     @Query('gender') gender?: string,
+    @Query('isVaccinated') isVaccinated?: string,
+    @Query('isSpayed') isSpayed?: string,
     @Query('mode') mode?: string,
     @Query('limit') limit?: string,
   ) {
@@ -30,6 +32,8 @@ export class MatchesController {
       minAge: minAge ? parseInt(minAge) : undefined,
       maxAge: maxAge ? parseInt(maxAge) : undefined,
       gender,
+      isVaccinated: isVaccinated === 'true',
+      isSpayed: isSpayed === 'true',
       mode: mode || 'pawmatch',
       limit: limit ? parseInt(limit) : undefined,
     });

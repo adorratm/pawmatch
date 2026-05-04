@@ -30,7 +30,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>pawmatch</string>
-				<string>com.pawmatch.app</string>
+				<string>com.pawmatchmobile.app</string>
 			</array>
 		</dict>
 	</array>

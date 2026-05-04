@@ -14,17 +14,18 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.pawmatch.app"
+      "bundleIdentifier": "com.pawmatchmobile.app"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#6a3f2a"
       },
-      "package": "com.pawmatch.app"
+      "package": "com.pawmatchmobile.app"
     },
     "scheme": "pawmatch",
     "plugins": [
       "expo-router",
+      "expo-dev-client",
       [
         "react-native-maps",
         {

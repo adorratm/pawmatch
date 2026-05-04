@@ -99,8 +99,11 @@ async function seed() {
 
   // Create temperaments
   console.log('Creating temperaments...');
+  // Seed is expected to be re-runnable; avoid unique constraint errors.
   const temperamentEntities = await Promise.all(
-    temperaments.map((name) => {
+    temperaments.map(async (name) => {
+      const existing = await temperamentRepo.findOne({ where: { name } });
+      if (existing) return existing;
       const temp = temperamentRepo.create({ name });
       return temperamentRepo.save(temp);
     }),
@@ -109,7 +112,69 @@ async function seed() {
   // Create users
   console.log('Creating users...');
   const users = [];
-  const hashedPassword = await bcrypt.hash('password123', 10);
+  const hashedPassword123 = await bcrypt.hash('password123', 10);
+  const hashedPasswordTarget = await bcrypt.hash('password123', 10);
+
+  // Ensure the provided demo email can always login.
+  const targetEmail = 'demo@pawmatch.local';
+  const targetFirstName = 'Demo';
+  const targetLastName = 'User';
+  // Keep outside the demo range used by user1..user50 (+905550000001..+905550000050)
+  const targetPhone = '+905550000099';
+
+  const ensureUserProfileAndLocation = async (userId: number) => {
+    // UserProfile
+    let profile = await profileRepo.findOne({ where: { userId } });
+    if (!profile) {
+      profile = profileRepo.create({
+        userId,
+        bio: 'Pet lover',
+        avatar: 'https://i.pravatar.cc/150?img=20',
+        dateOfBirth: new Date(1990, 4, 20),
+        gender: Gender.MALE,
+      });
+      await profileRepo.save(profile);
+    }
+
+    // UserLocation (ensure at least one current location)
+    let location = await locationRepo.findOne({ where: { userId, isCurrent: true } });
+    if (!location) {
+      location = locationRepo.create({
+        userId,
+        latitude: 41.0082,
+        longitude: 28.9784,
+        city: 'Istanbul',
+        district: 'Kadıköy',
+        isCurrent: true,
+      });
+      await locationRepo.save(location);
+    }
+  };
+
+  let targetUser = await userRepo.findOne({ where: { email: targetEmail } });
+  if (!targetUser) {
+    targetUser = userRepo.create({
+      email: targetEmail,
+      password: hashedPasswordTarget,
+      phone: targetPhone,
+      firstName: targetFirstName,
+      lastName: targetLastName,
+      emailVerified: true,
+      phoneVerified: true,
+      isActive: true,
+    });
+    targetUser = await userRepo.save(targetUser);
+  } else {
+    // Update password so the provided credentials always work.
+    targetUser.password = hashedPasswordTarget;
+    targetUser.firstName = targetFirstName;
+    targetUser.lastName = targetLastName;
+    if (!targetUser.phone) targetUser.phone = targetPhone;
+    await userRepo.save(targetUser);
+  }
+
+  await ensureUserProfileAndLocation(targetUser.id);
+  users.push(targetUser);
 
   for (let i = 0; i < 50; i++) {
     const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
@@ -117,38 +182,79 @@ async function seed() {
     const email = `user${i + 1}@pawmatch.com`;
     const phone = `+90555${String(i + 1).padStart(7, '0')}`;
 
-    const user = userRepo.create({
-      email,
-      password: hashedPassword,
-      phone,
-      firstName,
-      lastName,
-      emailVerified: true,
-      phoneVerified: true,
-      isActive: true,
-    });
-    const savedUser = await userRepo.save(user);
+    let user = await userRepo.findOne({ where: { email } });
 
-    const profile = profileRepo.create({
-      userId: savedUser.id,
-      bio: `Pet lover from ${cities[Math.floor(Math.random() * cities.length)]}`,
-      avatar: `https://i.pravatar.cc/150?img=${i + 1}`,
-      dateOfBirth: new Date(1990 + Math.floor(Math.random() * 30), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28)),
-      gender: i % 2 === 0 ? Gender.MALE : Gender.FEMALE,
-    });
-    await profileRepo.save(profile);
+    if (!user) {
+      user = userRepo.create({
+        email,
+        password: hashedPassword123,
+        phone,
+        firstName,
+        lastName,
+        emailVerified: true,
+        phoneVerified: true,
+        isActive: true,
+      });
+      user = await userRepo.save(user);
 
-    const location = locationRepo.create({
-      userId: savedUser.id,
-      latitude: 41.0082 + (Math.random() - 0.5) * 0.1,
-      longitude: 28.9784 + (Math.random() - 0.5) * 0.1,
-      city: cities[Math.floor(Math.random() * cities.length)],
-      district: districts[Math.floor(Math.random() * districts.length)],
-      isCurrent: true,
-    });
-    await locationRepo.save(location);
+      const profile = profileRepo.create({
+        userId: user.id,
+        bio: `Pet lover from ${cities[Math.floor(Math.random() * cities.length)]}`,
+        avatar: `https://i.pravatar.cc/150?img=${i + 1}`,
+        dateOfBirth: new Date(
+          1990 + Math.floor(Math.random() * 30),
+          Math.floor(Math.random() * 12),
+          Math.floor(Math.random() * 28),
+        ),
+        gender: i % 2 === 0 ? Gender.MALE : Gender.FEMALE,
+      });
+      await profileRepo.save(profile);
 
-    users.push(savedUser);
+      const location = locationRepo.create({
+        userId: user.id,
+        latitude: 41.0082 + (Math.random() - 0.5) * 0.1,
+        longitude: 28.9784 + (Math.random() - 0.5) * 0.1,
+        city: cities[Math.floor(Math.random() * cities.length)],
+        district: districts[Math.floor(Math.random() * districts.length)],
+        isCurrent: true,
+      });
+      await locationRepo.save(location);
+    } else {
+      // Ensure demo password works and there is at least a profile/location.
+      user.password = hashedPassword123;
+      await userRepo.save(user);
+
+      let profile = await profileRepo.findOne({ where: { userId: user.id } });
+      if (!profile) {
+        profile = profileRepo.create({
+          userId: user.id,
+          bio: `Pet lover from ${cities[Math.floor(Math.random() * cities.length)]}`,
+          avatar: `https://i.pravatar.cc/150?img=${i + 1}`,
+          dateOfBirth: new Date(
+            1990 + Math.floor(Math.random() * 30),
+            Math.floor(Math.random() * 12),
+            Math.floor(Math.random() * 28),
+          ),
+          gender: i % 2 === 0 ? Gender.MALE : Gender.FEMALE,
+        });
+        await profileRepo.save(profile);
+      }
+
+      let location = await locationRepo.findOne({ where: { userId: user.id, isCurrent: true } });
+      if (!location) {
+        location = locationRepo.create({
+          userId: user.id,
+          latitude: 41.0082 + (Math.random() - 0.5) * 0.1,
+          longitude: 28.9784 + (Math.random() - 0.5) * 0.1,
+          city: cities[Math.floor(Math.random() * cities.length)],
+          district: districts[Math.floor(Math.random() * districts.length)],
+          isCurrent: true,
+        });
+        await locationRepo.save(location);
+      }
+    }
+
+    users.push(user);
   }
 
   // Create pets
@@ -194,6 +300,36 @@ async function seed() {
     await petRepo.save(savedPet);
 
     pets.push(savedPet);
+  }
+
+  // Demo giriş hesabının keşfet/beğeni akışı için en az bir aktif pet'i garanti et
+  const targetPetCount = await petRepo.count({ where: { ownerId: targetUser.id } });
+  if (targetPetCount === 0) {
+    const demoPet = petRepo.create({
+      ownerId: targetUser.id,
+      name: 'Pati',
+      species: PetSpecies.DOG,
+      breed: 'Golden Retriever',
+      age: 3,
+      gender: PetGender.MALE,
+      bio: 'Demo profil — keşfet ve eşleşme için oluşturuldu.',
+      isSpayed: true,
+      isVaccinated: true,
+      isActive: true,
+      isAdopted: false,
+    });
+    const savedDemoPet = await petRepo.save(demoPet);
+    const demoPhoto = photoRepo.create({
+      petId: savedDemoPet.id,
+      url: 'https://picsum.photos/400/600?random=demo-pati',
+      isMain: true,
+      order: 0,
+    });
+    await photoRepo.save(demoPhoto);
+    savedDemoPet.temperaments = temperamentEntities.slice(0, 1);
+    await petRepo.save(savedDemoPet);
+    pets.push(savedDemoPet);
+    console.log('Added demo pet for target user (was missing).');
   }
 
   // Create matches and likes

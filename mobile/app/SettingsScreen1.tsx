@@ -1,24 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   Image,
   Switch,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthStore } from '@/application/stores/authStore';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { userRepository } from '@/infrastructure/repositories/ApiUserRepository';
+import { mergeAndSavePreferences } from '@/infrastructure/api/userPreferences';
+
+const PLACEHOLDER_AVATAR =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuCG3B8xe_3c4vII4DM0h6bfLId7eOc8O3pVJtHKhJXQpNP05XDFgW4FI8XycNBFd0MeKsZUzfHjpDWF6RONaYYJCUvxC0k54YFJliAYlAfR0f7VZGmEaZsdUFS9uFTjuPygy9LAEBjBatQ0Twnsr4nZwGcm8SeOgMMgroiLDvR7UoItHV_-7nCqPD7tIkw8_Cing7Ed-B_ZnydmhSKwgDZEgaeDBS3iZTJVAzBZBJLQVJ1b-7NBSzD1Sw8AQUn6f3RzkJ3jC4nMPBt8';
 
 export default function SettingsScreen1() {
   const navigation = useNavigation();
   const { user } = useAuthStore();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [locationEnabled, setLocationEnabled] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const u = await userRepository.getCurrentUser();
+        if (!u || cancelled) {
+          setHydrated(true);
+          return;
+        }
+        const p = u.profile?.preferences as {
+          notificationsMaster?: boolean;
+          discoveryLocationEnabled?: boolean;
+        };
+        if (p) {
+          if (typeof p.notificationsMaster === 'boolean') {
+            setNotificationsEnabled(p.notificationsMaster);
+          }
+          if (typeof p.discoveryLocationEnabled === 'boolean') {
+            setLocationEnabled(p.discoveryLocationEnabled);
+          }
+        }
+      } finally {
+        if (!cancelled) setHydrated(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const t = setTimeout(() => {
+      mergeAndSavePreferences({
+        notificationsMaster: notificationsEnabled,
+        discoveryLocationEnabled: locationEnabled,
+      }).catch(() => {});
+    }, 500);
+    return () => clearTimeout(t);
+  }, [hydrated, notificationsEnabled, locationEnabled]);
+
+  const avatarUri = user?.profile?.photoUrl || PLACEHOLDER_AVATAR;
+  const displayName = user?.fullName || 'Profil';
 
   return (
     <SafeAreaView style={styles.container}>
@@ -34,16 +84,13 @@ export default function SettingsScreen1() {
         <View style={styles.profileSection}>
           <TouchableOpacity style={styles.profileCard}>
             <View style={styles.profileImageContainer}>
-              <Image
-                source={{ uri: 'https://i.pravatar.cc/150?img=1' }}
-                style={styles.profileImage}
-              />
+              <Image source={{ uri: avatarUri }} style={styles.profileImage} />
               <View style={styles.editBadge}>
                 <Ionicons name="create" size={12} color="#fff" />
               </View>
             </View>
             <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>Boncuk, 3</Text>
+              <Text style={styles.profileName}>{displayName}</Text>
               <Text style={styles.profileSubtext}>Profili Düzenle</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />

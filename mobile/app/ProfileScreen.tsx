@@ -5,26 +5,31 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  SafeAreaView,
   ScrollView,
+  Alert,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { useAuthStore } from '@/application/stores/authStore';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ProfileScreen() {
-  const router = useRouter();
+  const navigation = useNavigation();
   const { logout, user } = useAuthStore();
+  const handleLogout = () => {
+    Alert.alert('Hesaptan Çıkış', 'Çıkış yapmak istediğine emin misin?', [
+      { text: 'İptal', style: 'cancel' },
+      { text: 'Çıkış Yap', style: 'destructive', onPress: () => logout() },
+    ]);
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Profil</Text>
-          <TouchableOpacity onPress={logout}>
-            <Ionicons name="log-out-outline" size={24} color={COLORS.text} />
-          </TouchableOpacity>
+          <View style={styles.headerSpacer} />
         </View>
 
         <View style={styles.profileSection}>
@@ -37,7 +42,7 @@ export default function ProfileScreen() {
               <Text style={styles.profileName}>
                 {user?.firstName} {user?.lastName}
               </Text>
-              <TouchableOpacity onPress={() => router.push('/settings-1')}>
+              <TouchableOpacity onPress={() => (navigation as any).navigate('Settings1')}>
                 <Text style={styles.editProfileText}>Profili Düzenle</Text>
               </TouchableOpacity>
             </View>
@@ -50,7 +55,7 @@ export default function ProfileScreen() {
           <View style={styles.settingsList}>
             <TouchableOpacity
               style={styles.settingItem}
-              onPress={() => router.push('/notification-preferences-1')}
+              onPress={() => (navigation as any).navigate('NotificationPreferences1')}
             >
               <Ionicons name="notifications-outline" size={24} color={COLORS.text} />
               <Text style={styles.settingText}>Bildirimler</Text>
@@ -58,7 +63,7 @@ export default function ProfileScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.settingItem}
-              onPress={() => router.push('/settings-2')}
+              onPress={() => (navigation as any).navigate('Settings2')}
             >
               <Ionicons name="lock-closed-outline" size={24} color={COLORS.text} />
               <Text style={styles.settingText}>Gizlilik</Text>
@@ -66,7 +71,7 @@ export default function ProfileScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.settingItem}
-              onPress={() => router.push('/help-support')}
+              onPress={() => (navigation as any).navigate('HelpSupport')}
             >
               <Ionicons name="help-circle-outline" size={24} color={COLORS.text} />
               <Text style={styles.settingText}>Yardım & Destek</Text>
@@ -74,12 +79,52 @@ export default function ProfileScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.settingItem}
-              onPress={() => router.push('/about')}
+              onPress={() => (navigation as any).navigate('About')}
             >
               <Ionicons name="information-circle-outline" size={24} color={COLORS.text} />
               <Text style={styles.settingText}>Hakkında</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.settingItem}
+              onPress={() => (navigation as any).navigate('InAppPurchases')}
+            >
+              <Ionicons name="diamond-outline" size={24} color={COLORS.text} />
+              <Text style={styles.settingText}>Pati Gold</Text>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.settingItem}
+              onPress={() => (navigation as any).navigate('Veterinarians')}
+            >
+              <Ionicons name="medical-outline" size={24} color={COLORS.text} />
+              <Text style={styles.settingText}>Yakındaki Veterinerler</Text>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.settingItem}
+              onPress={() => (navigation as any).navigate('AppointmentHistory')}
+            >
+              <Ionicons name="calendar-outline" size={24} color={COLORS.text} />
+              <Text style={styles.settingText}>Randevu Geçmişi</Text>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.footerSection}>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Ionicons name="log-out-outline" size={18} color={COLORS.text} />
+            <Text style={styles.logoutText}>Çıkış Yap</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.deleteButton}>
+            <Text style={styles.deleteText}>Hesabı Sil</Text>
+          </TouchableOpacity>
+          <View style={styles.versionWrap}>
+            <View style={styles.versionIcon}>
+              <Ionicons name="paw" size={12} color={COLORS.primary} />
+            </View>
+            <Text style={styles.versionText}>PawMatch v2.4.0</Text>
           </View>
         </View>
       </ScrollView>
@@ -107,6 +152,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '800',
     color: COLORS.text,
+  },
+  headerSpacer: {
+    width: 24,
+    height: 24,
   },
   profileSection: {
     paddingHorizontal: 24,
@@ -148,6 +197,7 @@ const styles = StyleSheet.create({
   },
   section: {
     paddingHorizontal: 24,
+    marginTop: 8,
   },
   sectionTitle: {
     fontSize: 12,
@@ -179,6 +229,55 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.text,
     marginLeft: 12,
+  },
+  footerSection: {
+    paddingHorizontal: 24,
+    marginTop: 24,
+    alignItems: 'center',
+    gap: 12,
+  },
+  logoutButton: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e5e5e5',
+    borderRadius: 14,
+    height: 52,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  logoutText: {
+    color: COLORS.text,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  deleteButton: {
+    paddingVertical: 6,
+  },
+  deleteText: {
+    color: '#9ca3af',
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  versionWrap: {
+    marginTop: 2,
+    alignItems: 'center',
+  },
+  versionIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#6a3f2a1A',
+    marginBottom: 6,
+  },
+  versionText: {
+    color: '#9ca3af',
+    fontSize: 11,
+    fontWeight: '500',
   },
 });
 

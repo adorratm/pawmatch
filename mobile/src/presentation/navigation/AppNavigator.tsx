@@ -33,8 +33,11 @@ import AboutScreen from '@app/AboutScreen';
 import HelpSupportScreen from '@app/HelpSupportScreen';
 import InAppPurchasesScreen from '@app/InAppPurchasesScreen';
 import ProfileScreen from '@app/ProfileScreen';
+import FavoritesScreen from '@app/FavoritesScreen';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { COLORS } from '@/presentation/styles/config';
+import { revenueCatService } from '@/infrastructure/purchases/revenueCat.service';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -89,10 +92,19 @@ function MainTabs() {
 }
 
 export default function AppNavigator() {
-  const { isAuthenticated, isLoading, checkAuth } = useAuthStore();
+  const { isAuthenticated, isLoading } = useAuthStore();
 
   useEffect(() => {
-    checkAuth();
+    let alive = true;
+    void (async () => {
+      await revenueCatService.configure();
+      if (alive) {
+        await useAuthStore.getState().checkAuth();
+      }
+    })();
+    return () => {
+      alive = false;
+    };
   }, []);
 
   if (isLoading) {
@@ -100,46 +112,49 @@ export default function AppNavigator() {
   }
 
   return (
-    <NavigationIndependentTree>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {!isAuthenticated ? (
-            <>
-              <Stack.Screen name="Welcome" component={WelcomeScreen} />
-              <Stack.Screen name="Onboarding1" component={Onboarding1Screen} />
-              <Stack.Screen name="Onboarding2" component={Onboarding2Screen} />
-              <Stack.Screen name="Login" component={LoginScreen} />
-            </>
-          ) : (
-            <>
-              <Stack.Screen name="Main" component={MainTabs} />
-              <Stack.Screen name="DiscoverMap" component={DiscoverMapScreen} />
-              <Stack.Screen name="PetDetail" component={PetDetailScreen} />
-              <Stack.Screen name="CreatePetProfile" component={CreatePetProfileScreen} />
-              <Stack.Screen name="Matches" component={MatchesScreen} />
-              <Stack.Screen name="NewMatchNotification" component={NewMatchNotificationScreen} />
-              <Stack.Screen name="Chat" component={ChatScreen} />
-              <Stack.Screen name="Filter" component={FilterScreen} />
-              <Stack.Screen name="SuggestMeetingPoint" component={SuggestMeetingPointScreen} />
-              <Stack.Screen name="Veterinarians" component={VeterinariansScreen} />
-              <Stack.Screen name="VeterinariansMap" component={VeterinariansMapScreen} />
-              <Stack.Screen name="VeterinarianDetail1" component={VeterinarianDetailScreen1} />
-              <Stack.Screen name="VeterinarianDetail2" component={VeterinarianDetailScreen2} />
-              <Stack.Screen name="AppointmentHistory" component={AppointmentHistoryScreen} />
-              <Stack.Screen name="AppointmentManagement" component={AppointmentManagementScreen} />
-              <Stack.Screen name="Rating1" component={RatingScreen1} />
-              <Stack.Screen name="Rating2" component={RatingScreen2} />
-              <Stack.Screen name="Settings1" component={SettingsScreen1} />
-              <Stack.Screen name="Settings2" component={SettingsScreen2} />
-              <Stack.Screen name="NotificationPreferences1" component={NotificationPreferencesScreen1} />
-              <Stack.Screen name="NotificationPreferences2" component={NotificationPreferencesScreen2} />
-              <Stack.Screen name="About" component={AboutScreen} />
-              <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
-              <Stack.Screen name="InAppPurchases" component={InAppPurchasesScreen} />
-            </>
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </NavigationIndependentTree>
+    <SafeAreaProvider>
+      <NavigationIndependentTree>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {!isAuthenticated ? (
+              <>
+                <Stack.Screen name="Welcome" component={WelcomeScreen} />
+                <Stack.Screen name="Onboarding1" component={Onboarding1Screen} />
+                <Stack.Screen name="Onboarding2" component={Onboarding2Screen} />
+                <Stack.Screen name="Login" component={LoginScreen} />
+              </>
+            ) : (
+              <>
+                <Stack.Screen name="Main" component={MainTabs} />
+                <Stack.Screen name="DiscoverMap" component={DiscoverMapScreen} />
+                <Stack.Screen name="PetDetail" component={PetDetailScreen} />
+                <Stack.Screen name="Favorites" component={FavoritesScreen} />
+                <Stack.Screen name="CreatePetProfile" component={CreatePetProfileScreen} />
+                <Stack.Screen name="Matches" component={MatchesScreen} />
+                <Stack.Screen name="NewMatchNotification" component={NewMatchNotificationScreen} />
+                <Stack.Screen name="Chat" component={ChatScreen} />
+                <Stack.Screen name="Filter" component={FilterScreen} />
+                <Stack.Screen name="SuggestMeetingPoint" component={SuggestMeetingPointScreen} />
+                <Stack.Screen name="Veterinarians" component={VeterinariansScreen} />
+                <Stack.Screen name="VeterinariansMap" component={VeterinariansMapScreen} />
+                <Stack.Screen name="VeterinarianDetail1" component={VeterinarianDetailScreen1} />
+                <Stack.Screen name="VeterinarianDetail2" component={VeterinarianDetailScreen2} />
+                <Stack.Screen name="AppointmentHistory" component={AppointmentHistoryScreen} />
+                <Stack.Screen name="AppointmentManagement" component={AppointmentManagementScreen} />
+                <Stack.Screen name="Rating1" component={RatingScreen1} />
+                <Stack.Screen name="Rating2" component={RatingScreen2} />
+                <Stack.Screen name="Settings1" component={SettingsScreen1} />
+                <Stack.Screen name="Settings2" component={SettingsScreen2} />
+                <Stack.Screen name="NotificationPreferences1" component={NotificationPreferencesScreen1} />
+                <Stack.Screen name="NotificationPreferences2" component={NotificationPreferencesScreen2} />
+                <Stack.Screen name="About" component={AboutScreen} />
+                <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
+                <Stack.Screen name="InAppPurchases" component={InAppPurchasesScreen} />
+              </>
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </NavigationIndependentTree>
+    </SafeAreaProvider>
   );
 }

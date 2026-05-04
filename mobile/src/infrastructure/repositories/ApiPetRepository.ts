@@ -4,8 +4,16 @@ import api from '@/infrastructure/api/api';
 
 export class ApiPetRepository implements IPetRepository {
   async findAll(filters?: any): Promise<Pet[]> {
-    const response = await api.get('/pets', { params: filters });
-    return (response.data || []).map((json: any) => Pet.fromJSON(json));
+    const response = await api.get('/matches/discover', { params: filters });
+    const list = response.data?.pets ?? [];
+    return list.map((json: any) =>
+      Pet.fromJSON({
+        ...json,
+        type: json.type ?? json.species ?? '',
+        breed: json.breed ?? '',
+        bio: json.bio ?? '',
+      }),
+    );
   }
 
   async findById(id: number): Promise<Pet | null> {
@@ -14,11 +22,11 @@ export class ApiPetRepository implements IPetRepository {
   }
 
   async likePet(id: number): Promise<void> {
-    await api.post(`/pets/${id}/like`);
+    await api.post(`/matches/${id}/like`);
   }
 
   async dislikePet(id: number): Promise<void> {
-    await api.post(`/pets/${id}/dislike`);
+    await api.post(`/matches/${id}/dislike`);
   }
 }
 

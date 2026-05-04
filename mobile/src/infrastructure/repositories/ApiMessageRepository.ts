@@ -4,8 +4,11 @@ import api from '@/infrastructure/api/api';
 
 export class ApiMessageRepository implements IMessageRepository {
   async getMessages(conversationId: number): Promise<Message[]> {
-    const response = await api.get(`/conversations/${conversationId}/messages`);
-    return (response.data || []).map((json: any) => Message.fromJSON(json));
+    const response = await api.get(`/conversations/${conversationId}`);
+    const raw = response.data?.messages ?? [];
+    return raw.map((json: any) =>
+      Message.fromJSON({ ...json, conversationId }),
+    );
   }
 
   async sendMessage(conversationId: number, content: string): Promise<Message> {
@@ -14,7 +17,7 @@ export class ApiMessageRepository implements IMessageRepository {
   }
 
   async markAsRead(conversationId: number): Promise<void> {
-    await api.post(`/conversations/${conversationId}/read`);
+    await api.put(`/conversations/${conversationId}/read`);
   }
 }
 

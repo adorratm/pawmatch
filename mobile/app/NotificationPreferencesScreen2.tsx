@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   Switch,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { userRepository } from '@/infrastructure/repositories/ApiUserRepository';
+import { mergeAndSavePreferences } from '@/infrastructure/api/userPreferences';
 
 export default function NotificationPreferencesScreen2() {
   const navigation = useNavigation();
@@ -18,6 +20,57 @@ export default function NotificationPreferencesScreen2() {
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [smsNotifications, setSmsNotifications] = useState(false);
   const [quietHours, setQuietHours] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const u = await userRepository.getCurrentUser();
+        if (!u || cancelled) {
+          setHydrated(true);
+          return;
+        }
+        const n = (u.profile?.preferences as { notifications?: Record<string, unknown> })
+          ?.notifications as
+          | {
+              channels?: { push?: boolean; email?: boolean; sms?: boolean };
+              quietHours?: boolean;
+            }
+          | undefined;
+        if (n?.channels) {
+          setPushNotifications(n.channels.push !== false);
+          setEmailNotifications(n.channels.email === true);
+          setSmsNotifications(n.channels.sms === true);
+        }
+        if (n && 'quietHours' in n) {
+          setQuietHours(n.quietHours === true);
+        }
+      } finally {
+        if (!cancelled) setHydrated(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const t = setTimeout(() => {
+      mergeAndSavePreferences({
+        notifications: {
+          channels: {
+            push: pushNotifications,
+            email: emailNotifications,
+            sms: smsNotifications,
+          },
+          quietHours,
+        },
+      }).catch(() => {});
+    }, 500);
+    return () => clearTimeout(t);
+  }, [hydrated, pushNotifications, emailNotifications, smsNotifications, quietHours]);
 
   return (
     <SafeAreaView style={styles.container}>

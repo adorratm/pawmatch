@@ -2,7 +2,9 @@ export interface UserProfile {
   id: number;
   bio?: string;
   photoUrl?: string;
+  avatar?: string;
   birthDate?: string;
+  preferences?: Record<string, unknown>;
 }
 
 export class User {
@@ -20,12 +22,19 @@ export class User {
   }
 
   static fromJSON(json: any): User {
+    let profile = json.profile;
+    if (profile && typeof profile === 'object') {
+      profile = {
+        ...profile,
+        photoUrl: profile.photoUrl ?? profile.avatar,
+      };
+    }
     return new User(
       json.id,
       json.email,
       json.firstName,
       json.lastName,
-      json.profile,
+      profile,
       json.isVerified,
     );
   }

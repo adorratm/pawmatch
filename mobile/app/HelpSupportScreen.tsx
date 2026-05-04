@@ -5,16 +5,20 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   TextInput,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { supportService } from '@/infrastructure/api/support.service';
 
 export default function HelpSupportScreen() {
   const navigation = useNavigation();
   const [message, setMessage] = useState('');
+  const [sending, setSending] = useState(false);
 
   const faqItems = [
     { id: 1, question: 'Nasıl eşleşme yapabilirim?', answer: 'Keşfet ekranından hayvan profillerini beğenerek eşleşme yapabilirsiniz.' },
@@ -85,8 +89,27 @@ export default function HelpSupportScreen() {
             numberOfLines={6}
             placeholderTextColor={COLORS.textMuted}
           />
-          <TouchableOpacity style={styles.sendButton}>
-            <Text style={styles.sendButtonText}>Gönder</Text>
+          <TouchableOpacity
+            style={[styles.sendButton, (!message.trim() || sending) && styles.sendButtonDisabled]}
+            disabled={!message.trim() || sending}
+            onPress={async () => {
+              setSending(true);
+              try {
+                await supportService.createTicket(message.trim(), 'Yardım talebi');
+                Alert.alert('Gönderildi', 'Mesajın destek ekibimize iletildi.');
+                setMessage('');
+              } catch (e: any) {
+                Alert.alert('Hata', e?.response?.data?.message || 'Gönderilemedi.');
+              } finally {
+                setSending(false);
+              }
+            }}
+          >
+            {sending ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.sendButtonText}>Gönder</Text>
+            )}
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -211,6 +234,9 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  sendButtonDisabled: {
+    opacity: 0.55,
   },
   sendButtonText: {
     color: '#fff',

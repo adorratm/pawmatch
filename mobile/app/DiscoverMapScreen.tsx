@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function DiscoverMapScreen() {
+  const navigation = useNavigation();
   const [region, setRegion] = useState({
     latitude: 41.0082,
     longitude: 28.9784,
@@ -16,11 +18,20 @@ export default function DiscoverMapScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Yakındaki Hayvanlar</Text>
-        <TouchableOpacity style={styles.filterButton}>
+        <TouchableOpacity
+          onPress={() => (navigation as any).navigate('Main', { screen: 'Discover' })}
+          style={{ flex: 1, alignItems: 'center' }}
+        >
+          <Text style={styles.headerTitle}>Harita</Text>
+          <Text style={styles.headerSub}>Listeye geç</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={() => (navigation as any).navigate('Filter')}
+        >
           <Ionicons name="options" size={24} color={COLORS.text} />
         </TouchableOpacity>
       </View>
@@ -85,6 +96,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: COLORS.text,
+  },
+  headerSub: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: COLORS.primary,
+    marginTop: 2,
   },
   filterButton: {
     width: 40,

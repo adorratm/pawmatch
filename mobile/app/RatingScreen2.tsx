@@ -5,12 +5,15 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   TextInput,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import api from '@/infrastructure/api/api';
 
 export default function RatingScreen2() {
   const route = useRoute();
@@ -21,6 +24,7 @@ export default function RatingScreen2() {
   const [service, setService] = useState(0);
   const [value, setValue] = useState(0);
   const [comment, setComment] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const RatingCategory = ({
     title,
@@ -107,9 +111,43 @@ export default function RatingScreen2() {
             styles.submitButton,
             overallRating === 0 && styles.submitButtonDisabled,
           ]}
-          disabled={overallRating === 0}
+          disabled={
+            overallRating === 0 ||
+            cleanliness === 0 ||
+            service === 0 ||
+            value === 0 ||
+            submitting
+          }
+          onPress={async () => {
+            if (!clinicId) return;
+            setSubmitting(true);
+            try {
+              await api.post(`/veterinarians/${clinicId}/reviews`, {
+                overallRating,
+                cleanlinessRating: cleanliness,
+                serviceRating: service,
+                valueRating: value,
+                comment: comment.trim() || undefined,
+              });
+              Alert.alert('Teşekkürler', 'Klinik değerlendirmen kaydedildi.');
+              navigation.goBack();
+            } catch (e: any) {
+              const msg =
+                e?.response?.data?.message ||
+                (Array.isArray(e?.response?.data?.message)
+                  ? e.response.data.message.join(', ')
+                  : null);
+              Alert.alert('Hata', msg || 'Gönderilemedi.');
+            } finally {
+              setSubmitting(false);
+            }
+          }}
         >
-          <Text style={styles.submitButtonText}>Değerlendirmeyi Gönder</Text>
+          {submitting ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.submitButtonText}>Değerlendirmeyi Gönder</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>

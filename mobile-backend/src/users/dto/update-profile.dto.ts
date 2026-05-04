@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsDateString, IsEnum } from 'class-validator';
+import { IsOptional, IsString, IsDateString, IsEnum, IsObject } from 'class-validator';
 import { Gender } from '../../database/entities/user-profile.entity';
 
 export class UpdateProfileDto {
@@ -25,6 +25,10 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsEnum(Gender)
   gender?: Gender;
+
+  @IsOptional()
+  @IsObject()
+  preferences?: Record<string, unknown>;
 }
 
 

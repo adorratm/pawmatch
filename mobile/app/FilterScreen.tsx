@@ -5,15 +5,18 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   Switch,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { usePetStore } from '@/application/stores/petStore';
 
 export default function FilterScreen() {
-  const router = useRouter();
+  const navigation = useNavigation();
+  const loadPets = usePetStore((s) => s.loadPets);
+  const setActiveDiscoverFilters = usePetStore((s) => s.setActiveDiscoverFilters);
   const [species, setSpecies] = useState<'all' | 'dog' | 'cat' | 'other'>('all');
   const [gender, setGender] = useState<'all' | 'male' | 'female'>('all');
   const [minAge, setMinAge] = useState(0);
@@ -22,14 +25,43 @@ export default function FilterScreen() {
   const [onlyVaccinated, setOnlyVaccinated] = useState(false);
   const [onlySpayed, setOnlySpayed] = useState(false);
 
+  const resetAll = () => {
+    setSpecies('all');
+    setGender('all');
+    setMinAge(0);
+    setMaxAge(15);
+    setMaxDistance(50);
+    setOnlyVaccinated(false);
+    setOnlySpayed(false);
+    setActiveDiscoverFilters(null);
+    loadPets();
+  };
+
+  const applyFilters = async () => {
+    const params: Record<string, unknown> = {
+      latitude: 41.0082,
+      longitude: 28.9784,
+      radius: maxDistance,
+      minAge,
+      maxAge,
+    };
+    if (species !== 'all') params.species = species;
+    if (gender !== 'all') params.gender = gender;
+    if (onlyVaccinated) params.isVaccinated = true;
+    if (onlySpayed) params.isSpayed = true;
+    setActiveDiscoverFilters(params);
+    await loadPets(params);
+    navigation.goBack();
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="close" size={24} color={COLORS.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Filtreler</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={resetAll}>
           <Text style={styles.resetText}>Sıfırla</Text>
         </TouchableOpacity>
       </View>
@@ -112,7 +144,7 @@ export default function FilterScreen() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.applyButton}>
+        <TouchableOpacity style={styles.applyButton} onPress={applyFilters}>
           <Text style={styles.applyButtonText}>Filtreleri Uygula</Text>
         </TouchableOpacity>
       </View>

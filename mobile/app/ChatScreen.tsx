@@ -13,7 +13,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useChatStore } from '@/application/stores/chatStore';
@@ -23,9 +24,12 @@ import { socketService } from '@/infrastructure/api/socket.service';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function ChatScreen() {
-  const router = useRouter();
+  const navigation = useNavigation();
+  const route = useRoute();
   const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const expoParams = useLocalSearchParams<{ id: string }>();
+  const navId = (route.params as { id?: string } | undefined)?.id;
+  const id = navId ?? expoParams.id;
   const { user } = useAuthStore();
   const { messages, loadMessages, sendMessage: sendMessageStore, matches } = useChatStore();
   const [inputText, setInputText] = useState('');
@@ -83,7 +87,7 @@ export default function ChatScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Ionicons name="chevron-back" size={24} color="#181611" />
         </TouchableOpacity>
         <View style={styles.headerInfo}>

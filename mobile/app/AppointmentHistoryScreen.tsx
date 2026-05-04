@@ -5,15 +5,15 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  SafeAreaView,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import api from '@/infrastructure/api/api';
 
 export default function AppointmentHistoryScreen() {
-  const router = useRouter();
+  const navigation = useNavigation();
   const [appointments, setAppointments] = useState<any[]>([]);
 
   useEffect(() => {
@@ -101,7 +101,7 @@ export default function AppointmentHistoryScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Randevu Geçmişi</Text>

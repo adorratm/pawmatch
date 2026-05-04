@@ -10,7 +10,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { petRepository } from '@/infrastructure/repositories/ApiPetRepository';
@@ -21,9 +22,12 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const IMAGE_HEIGHT = SCREEN_WIDTH * 1.25;
 
 export default function PetDetailScreen() {
-  const router = useRouter();
+  const navigation = useNavigation();
+  const route = useRoute();
   const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<{ id: string }>();
+  const navParams = route.params as { id?: string } | undefined;
+  const id = navParams?.id ?? params.id;
   const [pet, setPet] = useState<Pet | null>(null);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -108,7 +112,7 @@ export default function PetDetailScreen() {
           <View style={[styles.imageHeader, { top: insets.top + 10 }]}>
             <TouchableOpacity
               style={styles.headerIconBtn}
-              onPress={() => router.back()}
+              onPress={() => navigation.goBack()}
             >
               <Ionicons name="chevron-back" size={20} color="#fff" />
             </TouchableOpacity>
@@ -232,7 +236,7 @@ export default function PetDetailScreen() {
 
       {/* Footer Actions */}
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 20) }]}>
-        <TouchableOpacity style={styles.actionBtnSmall} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.actionBtnSmall} onPress={() => navigation.goBack()}>
           <Ionicons name="close" size={32} color="#888" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionBtnLarge}>

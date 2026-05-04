@@ -1,33 +1,34 @@
 import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { EntityManager } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { ConfigService } from '@nestjs/config';
-import { OAuth2Client } from 'google-auth-library';
-import axios from 'axios';
 import { User } from '../database/entities/user.entity';
 import { UserProfile } from '../database/entities/user-profile.entity';
-import { OAuthAccount, OAuthProvider } from '../database/entities/oauth-account.entity';
+import { OAuthProvider } from '../database/entities/oauth-account.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { OAuthGoogleDto } from './dto/oauth-google.dto';
 import { OAuthFacebookDto } from './dto/oauth-facebook.dto';
 import { OAuthAppleDto } from './dto/oauth-apple.dto';
+import { TokenService } from './services/token.service';
+import { UserAuthService } from './services/user-auth.service';
+import { PasswordAuthService } from './services/password-auth.service';
+import { OAuthAccountService } from './services/oauth-account.service';
+import { GoogleOAuthService } from './services/google-oauth.service';
+import { FacebookOAuthService } from './services/facebook-oauth.service';
+import { AppleOAuthService } from './services/apple-oauth.service';
 
 @Injectable()
 export class AuthService {
-  private googleClient: OAuth2Client;
-
   constructor(
     private readonly entityManager: EntityManager,
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
-  ) {
-    const googleClientId = this.configService.get('GOOGLE_CLIENT_ID');
-    if (googleClientId && googleClientId !== 'your_google_client_id_here') {
-      this.googleClient = new OAuth2Client(googleClientId);
-    }
-  }
+    private readonly tokenService: TokenService,
+    private readonly userAuthService: UserAuthService,
+    private readonly passwordAuthService: PasswordAuthService,
+    private readonly oauthAccountService: OAuthAccountService,
+    private readonly googleOAuthService: GoogleOAuthService,
+    private readonly facebookOAuthService: FacebookOAuthService,
+    private readonly appleOAuthService: AppleOAuthService,
+  ) {}
 
   async register(registerDto: RegisterDto) {
     const { email, password, firstName, lastName, phone } = registerDto;
@@ -63,7 +64,7 @@ export class AuthService {
       await manager.save(profile);
 
       // Generate tokens
-      const tokens = await this.generateTokens(savedUser);
+      const tokens = this.tokenService.generateTokens(savedUser);
 
       return {
         ...tokens,
@@ -78,80 +79,19 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const { email, password } = loginDto;
-
-    const user = await this.entityManager.findOne(User, {
-      where: { email },
-      relations: ['profile'],
-    });
-
-    if (!user || !user.password) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    if (!user.isActive) {
-      throw new UnauthorizedException('Account is inactive');
-    }
-
-    const tokens = await this.generateTokens(user);
-
-    return {
-      ...tokens,
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        profile: user.profile,
-      },
-    };
+    return this.passwordAuthService.login(loginDto.email, loginDto.password);
   }
 
   async validateUser(userId: number): Promise<User> {
-    const user = await this.entityManager.findOne(User, {
-      where: { id: userId },
-      relations: ['profile'],
-    });
-
-    if (!user || !user.isActive) {
-      throw new UnauthorizedException('User not found or inactive');
-    }
-
-    return user;
-  }
-
-  private async generateTokens(user: User) {
-    const payload = {
-      sub: user.id,
-      email: user.email,
-    };
-
-    const accessToken = this.jwtService.sign(payload);
-    const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.get('JWT_REFRESH_SECRET'),
-      expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN'),
-    });
-
-    return {
-      accessToken,
-      refreshToken,
-    };
+    return this.userAuthService.validateUser(userId);
   }
 
   async refreshToken(refreshToken: string) {
     try {
-      const payload = this.jwtService.verify(refreshToken, {
-        secret: this.configService.get('JWT_REFRESH_SECRET'),
-      });
+      const payload: any = this.tokenService.verifyRefreshToken(refreshToken);
 
       const user = await this.validateUser(payload.sub);
-      return await this.generateTokens(user);
+      return this.tokenService.generateTokens(user);
     } catch (error) {
       throw new UnauthorizedException('Invalid refresh token');
     }
@@ -159,61 +99,60 @@ export class AuthService {
 
   async googleLogin(oauthDto: OAuthGoogleDto) {
     try {
-      if (!this.googleClient) {
-        throw new UnauthorizedException('Google OAuth not configured');
+      if (!oauthDto.idToken && !oauthDto.accessToken && !oauthDto.authorizationCode) {
+        throw new UnauthorizedException('Google token missing');
       }
 
-      const ticket = await this.googleClient.verifyIdToken({
-        idToken: oauthDto.idToken,
-        audience: this.configService.get('GOOGLE_CLIENT_ID'),
-      });
+      const profile = oauthDto.idToken
+        ? await this.googleOAuthService.getProfile(oauthDto.idToken)
+        : oauthDto.accessToken
+          ? await this.googleOAuthService.getProfileByAccessToken(String(oauthDto.accessToken))
+          : await this.googleOAuthService.getProfileByAuthorizationCode(
+              String(oauthDto.authorizationCode),
+              oauthDto.redirectUri,
+              oauthDto.codeVerifier,
+              oauthDto.clientId,
+            );
 
-      const payload = ticket.getPayload();
-      if (!payload || !payload.email) {
-        throw new UnauthorizedException('Invalid Google token');
-      }
-
-      return await this.findOrCreateOAuthUser(
+      return await this.oauthAccountService.findOrCreateOAuthUser(
         OAuthProvider.GOOGLE,
-        payload.sub,
-        payload.email,
-        payload.given_name || '',
-        payload.family_name || '',
-        payload.picture || null,
+        profile.providerId,
+        profile.email,
+        profile.firstName,
+        profile.lastName,
+        profile.picture,
       );
     } catch (error) {
-      throw new UnauthorizedException('Google authentication failed');
+      const message =
+        (error as any)?.response?.data?.error_description ||
+        (error as any)?.response?.data?.error ||
+        (error as any)?.message ||
+        'Google authentication failed';
+      console.error('Google OAuth error details:', {
+        message,
+        hasIdToken: !!oauthDto.idToken,
+        hasAccessToken: !!oauthDto.accessToken,
+        hasAuthorizationCode: !!oauthDto.authorizationCode,
+        redirectUri: oauthDto.redirectUri,
+        hasCodeVerifier: !!oauthDto.codeVerifier,
+        clientId: oauthDto.clientId,
+        rawError: (error as any)?.response?.data || (error as any)?.message || error,
+      });
+      throw new UnauthorizedException(`Google authentication failed: ${message}`);
     }
   }
 
   async facebookLogin(oauthDto: OAuthFacebookDto) {
     try {
-      const facebookAppId = this.configService.get('FACEBOOK_APP_ID');
-      if (!facebookAppId || facebookAppId === 'your_facebook_app_id_here') {
-        throw new UnauthorizedException('Facebook OAuth not configured');
-      }
+      const profile = await this.facebookOAuthService.getProfile(oauthDto.accessToken);
 
-      // Verify token and get user info
-      const response = await axios.get(
-        `https://graph.facebook.com/me?fields=id,name,email&access_token=${oauthDto.accessToken}`,
-      );
-
-      const { id, name, email } = response.data;
-      if (!email) {
-        throw new UnauthorizedException('Email not provided by Facebook');
-      }
-
-      const nameParts = name.split(' ');
-      const firstName = nameParts[0] || '';
-      const lastName = nameParts.slice(1).join(' ') || '';
-
-      return await this.findOrCreateOAuthUser(
+      return await this.oauthAccountService.findOrCreateOAuthUser(
         OAuthProvider.FACEBOOK,
-        id,
-        email,
-        firstName,
-        lastName,
-        null,
+        profile.providerId,
+        profile.email,
+        profile.firstName,
+        profile.lastName,
+        profile.picture,
       );
     } catch (error) {
       throw new UnauthorizedException('Facebook authentication failed');
@@ -222,105 +161,63 @@ export class AuthService {
 
   async appleLogin(oauthDto: OAuthAppleDto) {
     try {
-      // Apple token verification is complex and requires JWT verification
-      // For now, we'll decode the token (in production, verify with Apple's public keys)
-      const tokenParts = oauthDto.idToken.split('.');
-      if (tokenParts.length !== 3) {
-        throw new UnauthorizedException('Invalid Apple token');
+      const decoded = this.appleOAuthService.decodeIdToken(oauthDto.idToken);
+
+      // First sign-in usually includes email; later sign-ins might not.
+      if (decoded.email) {
+        return await this.oauthAccountService.findOrCreateOAuthUser(
+          OAuthProvider.APPLE,
+          decoded.providerId,
+          decoded.email,
+          decoded.firstName,
+          decoded.lastName,
+          decoded.picture,
+        );
       }
 
-      const payload = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
-      
-      if (!payload.sub || !payload.email) {
-        throw new UnauthorizedException('Invalid Apple token payload');
-      }
-
-      // Apple provides email in token, name might be in user info
-      const nameParts = (payload.name || '').split(' ') || [];
-      const firstName = nameParts[0] || '';
-      const lastName = nameParts.slice(1).join(' ') || '';
-
-      return await this.findOrCreateOAuthUser(
+      // If email is missing, try to login by oauth_account first.
+      const existingUser = await this.oauthAccountService.findUserByOAuthAccount(
         OAuthProvider.APPLE,
-        payload.sub,
-        payload.email,
-        firstName,
-        lastName,
-        null,
+        decoded.providerId,
+      );
+
+      if (existingUser) {
+        const tokens = this.tokenService.generateTokens(existingUser);
+        return {
+          ...tokens,
+          user: {
+            id: existingUser.id,
+            email: existingUser.email,
+            firstName: existingUser.firstName,
+            lastName: existingUser.lastName,
+            profile: existingUser.profile,
+          },
+        };
+      }
+
+      // If we still don't have an account, exchange authorizationCode to get an email.
+      if (!oauthDto.authorizationCode) {
+        throw new UnauthorizedException('Email not provided by Apple');
+      }
+
+      const exchangedIdToken = await this.appleOAuthService.exchangeAuthorizationCode(oauthDto.authorizationCode);
+      const exchangedProfile = this.appleOAuthService.decodeIdToken(exchangedIdToken);
+
+      if (!exchangedProfile.email) {
+        throw new UnauthorizedException('Email not provided by Apple');
+      }
+
+      return await this.oauthAccountService.findOrCreateOAuthUser(
+        OAuthProvider.APPLE,
+        exchangedProfile.providerId,
+        exchangedProfile.email,
+        exchangedProfile.firstName,
+        exchangedProfile.lastName,
+        exchangedProfile.picture,
       );
     } catch (error) {
       throw new UnauthorizedException('Apple authentication failed');
     }
-  }
-
-  private async findOrCreateOAuthUser(
-    provider: OAuthProvider,
-    providerId: string,
-    email: string,
-    firstName: string,
-    lastName: string,
-    picture: string | null,
-  ) {
-    return this.entityManager.transaction(async (manager) => {
-      // Check if OAuth account exists
-      let oauthAccount = await manager.findOne(OAuthAccount, {
-        where: { provider, providerId },
-        relations: ['user', 'user.profile'],
-      });
-
-      let user: User;
-
-      if (oauthAccount) {
-        user = oauthAccount.user;
-      } else {
-        // Check if user with email exists
-        user = await manager.findOne(User, {
-          where: { email },
-          relations: ['profile'],
-        });
-
-        if (!user) {
-          // Create new user
-          user = manager.create(User, {
-            email,
-            firstName,
-            lastName,
-            isActive: true,
-          });
-          user = await manager.save(user);
-
-          // Create profile
-          const profile = manager.create(UserProfile, {
-            userId: user.id,
-            avatar: picture,
-          });
-          await manager.save(profile);
-          user.profile = profile;
-        }
-
-        // Create OAuth account
-        oauthAccount = manager.create(OAuthAccount, {
-          userId: user.id,
-          provider,
-          providerId,
-        });
-        await manager.save(oauthAccount);
-      }
-
-      // Generate tokens
-      const tokens = await this.generateTokens(user);
-
-      return {
-        ...tokens,
-        user: {
-          id: user.id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          profile: user.profile,
-        },
-      };
-    });
   }
 }
 

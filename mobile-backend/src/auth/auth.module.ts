@@ -12,6 +12,13 @@ import { User } from '../database/entities/user.entity';
 import { UserProfile } from '../database/entities/user-profile.entity';
 import { OAuthAccount } from '../database/entities/oauth-account.entity';
 import { UsersModule } from '../users/users.module';
+import { TokenService } from './services/token.service';
+import { UserAuthService } from './services/user-auth.service';
+import { PasswordAuthService } from './services/password-auth.service';
+import { OAuthAccountService } from './services/oauth-account.service';
+import { GoogleOAuthService } from './services/google-oauth.service';
+import { FacebookOAuthService } from './services/facebook-oauth.service';
+import { AppleOAuthService } from './services/apple-oauth.service';
 
 @Module({
   imports: [
@@ -29,7 +36,21 @@ import { UsersModule } from '../users/users.module';
     UsersModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, GoogleStrategy, FacebookStrategy],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    // legacy passport strategies (currently not used by our controller endpoints, but keep for compatibility)
+    GoogleStrategy,
+    FacebookStrategy,
+    // SOLID auth services
+    TokenService,
+    UserAuthService,
+    PasswordAuthService,
+    OAuthAccountService,
+    GoogleOAuthService,
+    FacebookOAuthService,
+    AppleOAuthService,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

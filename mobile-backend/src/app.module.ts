@@ -14,6 +14,9 @@ import { VeterinariansModule } from './veterinarians/veterinarians.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ChatModule } from './chat/chat.module';
+import { RatingsModule } from './ratings/ratings.module';
+import { SupportModule } from './support/support.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 
 @Module({
   imports: [
@@ -37,6 +40,9 @@ import { ChatModule } from './chat/chat.module';
     UploadsModule,
     NotificationsModule,
     ChatModule,
+    RatingsModule,
+    SupportModule,
+    SubscriptionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

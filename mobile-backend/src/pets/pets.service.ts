@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { EntityManager, In } from 'typeorm';
 import { Pet } from '../database/entities/pet.entity';
+import { PetFavorite } from '../database/entities/pet-favorite.entity';
 import { PetPhoto } from '../database/entities/pet-photo.entity';
 import { Temperament } from '../database/entities/temperament.entity';
 import { CreatePetDto } from './dto/create-pet.dto';
@@ -157,6 +158,61 @@ export class PetsService {
     }
 
     await this.entityManager.remove(photo);
+  }
+
+  async listFavorites(userId: number) {
+    const rows = await this.entityManager.find(PetFavorite, {
+      where: { userId },
+      relations: ['pet', 'pet.photos', 'pet.owner'],
+      order: { createdAt: 'DESC' },
+    });
+    return {
+      pets: rows
+        .filter((r) => r.pet && r.pet.isActive)
+        .map((r) => ({
+          id: r.pet.id,
+          name: r.pet.name,
+          breed: r.pet.breed,
+          age: r.pet.age,
+          gender: r.pet.gender,
+          species: r.pet.species,
+          bio: r.pet.bio,
+          photos: r.pet.photos,
+          owner: r.pet.owner
+            ? {
+                id: r.pet.owner.id,
+                firstName: r.pet.owner.firstName,
+                lastName: r.pet.owner.lastName,
+              }
+            : null,
+          favoritedAt: r.createdAt,
+        })),
+    };
+  }
+
+  async addFavorite(userId: number, petId: number) {
+    const pet = await this.entityManager.findOne(Pet, { where: { id: petId } });
+    if (!pet) {
+      throw new NotFoundException('Pet not found');
+    }
+    if (pet.ownerId === userId) {
+      throw new ForbiddenException('Cannot favorite your own pet');
+    }
+    const existing = await this.entityManager.findOne(PetFavorite, {
+      where: { userId, petId },
+    });
+    if (existing) {
+      return { success: true, petId };
+    }
+    await this.entityManager.save(
+      this.entityManager.create(PetFavorite, { userId, petId }),
+    );
+    return { success: true, petId };
+  }
+
+  async removeFavorite(userId: number, petId: number) {
+    await this.entityManager.delete(PetFavorite, { userId, petId });
+    return { success: true };
   }
 }
 

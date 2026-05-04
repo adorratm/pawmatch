@@ -6,16 +6,16 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-  SafeAreaView,
   TextInput,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import api from '@/infrastructure/api/api';
 
 export default function ConversationsScreen() {
-  const router = useRouter();
+  const navigation = useNavigation();
   const [conversations, setConversations] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -35,7 +35,7 @@ export default function ConversationsScreen() {
   const renderConversation = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={styles.conversationItem}
-      onPress={() => router.push({ pathname: `/chat/${item.id}` })}
+      onPress={() => (navigation as any).navigate('Chat', { id: String(item.id) })}
     >
       <View style={styles.conversationAvatar}>
         {item.pet.photos?.[0] ? (
@@ -77,7 +77,10 @@ export default function ConversationsScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Mesajlar</Text>
-        <TouchableOpacity style={styles.filterButton}>
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={() => (navigation as any).navigate('Filter')}
+        >
           <Ionicons name="options" size={24} color={COLORS.text} />
         </TouchableOpacity>
       </View>

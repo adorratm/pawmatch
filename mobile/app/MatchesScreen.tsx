@@ -10,13 +10,13 @@ import {
   FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useChatStore } from '@/application/stores/chatStore';
 
 export default function MatchesScreen() {
-  const router = useRouter();
+  const navigation = useNavigation();
   const { matches, loading, loadMatches } = useChatStore();
 
   useEffect(() => {
@@ -26,7 +26,9 @@ export default function MatchesScreen() {
   const renderNewMatchItem = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={styles.newMatchItem}
-      onPress={() => router.push(`/chat/${item.conversationId}`)}
+      onPress={() =>
+        (navigation as any).navigate('Chat', { id: String(item.conversationId) })
+      }
     >
       <View style={styles.newMatchAvatarContainer}>
         <Image
@@ -42,7 +44,9 @@ export default function MatchesScreen() {
   const renderConversationItem = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={styles.convItem}
-      onPress={() => router.push(`/chat/${item.conversationId}`)}
+      onPress={() =>
+        (navigation as any).navigate('Chat', { id: String(item.conversationId) })
+      }
     >
       <View style={styles.convAvatarContainer}>
         <Image
@@ -80,11 +84,17 @@ export default function MatchesScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.headerBtn}>
+        <TouchableOpacity
+          onPress={() => navigation.canGoBack() && navigation.goBack()}
+          style={styles.headerBtn}
+        >
           <Ionicons name="arrow-back" size={24} color="#181611" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Eşleşmelerim</Text>
-        <TouchableOpacity style={styles.headerBtn}>
+        <TouchableOpacity
+          style={styles.headerBtn}
+          onPress={() => (navigation as any).navigate('Filter')}
+        >
           <Ionicons name="options-outline" size={24} color="#181611" />
         </TouchableOpacity>
       </View>

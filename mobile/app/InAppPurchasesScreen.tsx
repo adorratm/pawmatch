@@ -1,49 +1,120 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import type { PurchasesPackage } from 'react-native-purchases';
+import Purchases from 'react-native-purchases';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { subscriptionsService } from '@/infrastructure/api/subscriptions.service';
+import {
+  revenueCatHasApiKeyInEnv,
+  revenueCatIsNativeSupported,
+  revenueCatService,
+} from '@/infrastructure/purchases/revenueCat.service';
+
+const FEATURES = [
+  'Sınırsız beğeni',
+  'Kimlerin beğendiğini gör',
+  'Reklamsız deneyim',
+  'Öncelikli destek',
+];
+
+function isUserCancelled(e: unknown): boolean {
+  const err = e as { code?: string | number; userCancelled?: boolean };
+  if (err.userCancelled === true) return true;
+  const code = err.code == null ? '' : String(err.code);
+  const rc = Purchases.PURCHASES_ERROR_CODE?.PURCHASE_CANCELLED_ERROR;
+  if (rc != null && code === String(rc)) return true;
+  return code === 'PURCHASE_CANCELLED_ERROR';
+}
 
 export default function InAppPurchasesScreen() {
   const navigation = useNavigation();
+  const [tierLabel, setTierLabel] = useState<string | null>(null);
+  const [keyModeLabel, setKeyModeLabel] = useState<string | null>(null);
+  const [packages, setPackages] = useState<PurchasesPackage[]>([]);
+  const [loadingOfferings, setLoadingOfferings] = useState(true);
+  const [purchasingId, setPurchasingId] = useState<string | null>(null);
+  const [restoring, setRestoring] = useState(false);
 
-  const plans = [
-    {
-      id: 1,
-      name: 'Pati Gold Aylık',
-      price: '₺99.99',
-      period: 'ay',
-      features: [
-        'Sınırsız beğeni',
-        'Kimlerin beğendiğini gör',
-        'Reklamsız deneyim',
-        'Öncelikli destek',
-      ],
-      popular: false,
-    },
-    {
-      id: 2,
-      name: 'Pati Gold Yıllık',
-      price: '₺799.99',
-      period: 'yıl',
-      originalPrice: '₺1199.88',
-      features: [
-        'Sınırsız beğeni',
-        'Kimlerin beğendiğini gör',
-        'Reklamsız deneyim',
-        'Öncelikli destek',
-        '2 ay bedava',
-      ],
-      popular: true,
-    },
-  ];
+  const refreshStatus = useCallback(async () => {
+    try {
+      const s = await subscriptionsService.getMySubscription();
+      setTierLabel(s.isActive ? (s.tier === 'gold' ? 'Pati Gold' : s.tier) : 'Ücretsiz');
+      setKeyModeLabel(s.keyMode ?? null);
+    } catch {
+      setTierLabel(null);
+      setKeyModeLabel(null);
+    }
+  }, []);
+
+  const loadOfferings = useCallback(async () => {
+    if (!revenueCatIsNativeSupported() || !revenueCatHasApiKeyInEnv()) {
+      setPackages([]);
+      setLoadingOfferings(false);
+      return;
+    }
+    setLoadingOfferings(true);
+    try {
+      const pkgs = await revenueCatService.getCurrentPackages();
+      setPackages(pkgs);
+    } catch {
+      setPackages([]);
+    } finally {
+      setLoadingOfferings(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshStatus();
+    void loadOfferings();
+  }, [refreshStatus, loadOfferings]);
+
+  const onPurchase = async (pkg: PurchasesPackage) => {
+    if (!revenueCatService.isConfigured()) {
+      Alert.alert('Kurulum', 'RevenueCat API anahtarlarını .env içinde tanımlayıp uygulamayı yeniden derleyin.');
+      return;
+    }
+    setPurchasingId(pkg.identifier);
+    try {
+      await revenueCatService.purchasePackage(pkg);
+      await refreshStatus();
+      Alert.alert('Teşekkürler', 'Pati Gold aboneliğin aktifleştirildi.');
+    } catch (e: unknown) {
+      if (isUserCancelled(e)) return;
+      const msg = (e as { message?: string })?.message ?? 'Satın alma tamamlanamadı.';
+      Alert.alert('Hata', msg);
+    } finally {
+      setPurchasingId(null);
+    }
+  };
+
+  const onRestore = async () => {
+    if (!revenueCatService.isConfigured()) return;
+    setRestoring(true);
+    try {
+      await revenueCatService.restorePurchases();
+      await refreshStatus();
+      Alert.alert('Geri yükleme', 'Satın alımlar senkronize edildi.');
+    } catch (e: unknown) {
+      const msg = (e as { message?: string })?.message ?? 'Geri yükleme başarısız.';
+      Alert.alert('Hata', msg);
+    } finally {
+      setRestoring(false);
+    }
+  };
+
+  const rcReady =
+    revenueCatIsNativeSupported() && revenueCatHasApiKeyInEnv() && revenueCatService.isConfigured();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -64,53 +135,109 @@ export default function InAppPurchasesScreen() {
           <Text style={styles.heroSubtitle}>
             Sınırsız beğeni hakkı kazan ve seni kimlerin beğendiğini anında gör.
           </Text>
+          {tierLabel !== null && (
+            <Text style={styles.currentPlanHint}>Mevcut plan: {tierLabel}</Text>
+          )}
+          {keyModeLabel === 'sandbox' && (
+            <View style={styles.sandboxBadge}>
+              <Text style={styles.sandboxBadgeText}>
+                Mağaza: Sandbox (EXPO_PUBLIC_REVENUECAT_KEY_MODE=sandbox veya geliştirme)
+              </Text>
+            </View>
+          )}
+          {keyModeLabel === 'production' && rcReady && (
+            <Text style={styles.prodHint}>Mağaza: Production anahtarı</Text>
+          )}
+          {!revenueCatHasApiKeyInEnv() && revenueCatIsNativeSupported() && (
+            <Text style={styles.warningHint}>
+              RevenueCat API anahtarı yok — .env içine EXPO_PUBLIC_REVENUECAT_IOS_API_KEY (ve Android için
+              ANDROID) ekleyin.
+            </Text>
+          )}
         </View>
 
-        <View style={styles.plansSection}>
-          {plans.map((plan) => (
-            <TouchableOpacity
-              key={plan.id}
-              style={[styles.planCard, plan.popular && styles.planCardPopular]}
-            >
-              {plan.popular && (
-                <View style={styles.popularBadge}>
-                  <Text style={styles.popularText}>EN POPÜLER</Text>
-                </View>
-              )}
-              <View style={styles.planHeader}>
-                <Text style={styles.planName}>{plan.name}</Text>
-                <View style={styles.priceContainer}>
-                  {plan.originalPrice && (
-                    <Text style={styles.originalPrice}>{plan.originalPrice}</Text>
+        {loadingOfferings ? (
+          <ActivityIndicator style={{ marginVertical: 24 }} color={COLORS.primary} />
+        ) : packages.length === 0 ? (
+          <View style={styles.emptyOfferings}>
+            <Text style={styles.emptyOfferingsText}>
+              RevenueCat teklifleri bulunamadı. Dashboard&apos;da Offering (varsayılan) ve ürünleri
+              bağladığınızdan emin olun; ardından yeniden derleyin.
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.plansSection}>
+            {packages.map((pkg) => {
+              const product = pkg.product as { priceString?: string; title?: string } | undefined;
+              const title = product?.title ?? pkg.identifier;
+              const price = product?.priceString ?? '—';
+              const isAnnual =
+                String(pkg.packageType ?? '').includes('ANNUAL') || pkg.identifier.includes('annual');
+              return (
+                <View
+                  key={pkg.identifier}
+                  style={[styles.planCard, isAnnual && styles.planCardPopular]}
+                >
+                  {isAnnual && (
+                    <View style={styles.popularBadge}>
+                      <Text style={styles.popularText}>EN POPÜLER</Text>
+                    </View>
                   )}
-                  <Text style={styles.price}>{plan.price}</Text>
-                  <Text style={styles.period}>/{plan.period}</Text>
-                </View>
-              </View>
-              <View style={styles.featuresList}>
-                {plan.features.map((feature, index) => (
-                  <View key={index} style={styles.featureItem}>
-                    <Ionicons name="checkmark-circle" size={20} color={COLORS.primary} />
-                    <Text style={styles.featureText}>{feature}</Text>
+                  <View style={styles.planHeader}>
+                    <Text style={styles.planName}>{title}</Text>
+                    <View style={styles.priceContainer}>
+                      <Text style={styles.price}>{price}</Text>
+                    </View>
                   </View>
-                ))}
-              </View>
-              <TouchableOpacity style={[styles.subscribeButton, plan.popular && styles.subscribeButtonPopular]}>
-                <Text style={[styles.subscribeButtonText, plan.popular && styles.subscribeButtonTextPopular]}>
-                  Abone Ol
-                </Text>
-              </TouchableOpacity>
-            </TouchableOpacity>
-          ))}
-        </View>
+                  <View style={styles.featuresList}>
+                    {FEATURES.map((feature, index) => (
+                      <View key={index} style={styles.featureItem}>
+                        <Ionicons name="checkmark-circle" size={20} color={COLORS.primary} />
+                        <Text style={styles.featureText}>{feature}</Text>
+                      </View>
+                    ))}
+                  </View>
+                  <TouchableOpacity
+                    style={[styles.subscribeButton, isAnnual && styles.subscribeButtonPopular]}
+                    disabled={!!purchasingId || restoring}
+                    onPress={() => onPurchase(pkg)}
+                  >
+                    {purchasingId === pkg.identifier ? (
+                      <ActivityIndicator color="#fff" />
+                    ) : (
+                      <Text
+                        style={[
+                          styles.subscribeButtonText,
+                          isAnnual && styles.subscribeButtonTextPopular,
+                        ]}
+                      >
+                        Abone Ol
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
+              );
+            })}
+          </View>
+        )}
+
+        <TouchableOpacity
+          style={styles.restoreButton}
+          onPress={onRestore}
+          disabled={restoring || !rcReady}
+        >
+          {restoring ? (
+            <ActivityIndicator color={COLORS.primary} />
+          ) : (
+            <Text style={styles.restoreText}>Satın alımları geri yükle</Text>
+          )}
+        </TouchableOpacity>
 
         <View style={styles.infoSection}>
           <Text style={styles.infoText}>
-            Abonelik otomatik olarak yenilenir. İstediğiniz zaman iptal edebilirsiniz.
+            Abonelik otomatik olarak yenilenir. İstediğiniz zaman App Store / Play Store üzerinden iptal
+            edebilirsiniz.
           </Text>
-          <TouchableOpacity>
-            <Text style={styles.infoLink}>Kullanım Koşulları</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -146,8 +273,8 @@ const styles = StyleSheet.create({
   },
   heroSection: {
     alignItems: 'center',
-    marginBottom: 32,
-    paddingVertical: 24,
+    marginBottom: 24,
+    paddingVertical: 16,
   },
   iconContainer: {
     width: 96,
@@ -171,9 +298,56 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
   },
+  currentPlanHint: {
+    marginTop: 12,
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.primary,
+    textAlign: 'center',
+  },
+  sandboxBadge: {
+    marginTop: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: '#fef3c7',
+    borderRadius: 10,
+  },
+  sandboxBadgeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#92400e',
+    textAlign: 'center',
+  },
+  prodHint: {
+    marginTop: 8,
+    fontSize: 11,
+    color: COLORS.textMuted,
+    textAlign: 'center',
+  },
+  warningHint: {
+    marginTop: 12,
+    fontSize: 12,
+    color: '#b45309',
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+  emptyOfferings: {
+    padding: 16,
+    marginBottom: 16,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e5e5e5',
+  },
+  emptyOfferingsText: {
+    fontSize: 13,
+    color: COLORS.textMuted,
+    lineHeight: 20,
+    textAlign: 'center',
+  },
   plansSection: {
     gap: 16,
-    marginBottom: 32,
+    marginBottom: 16,
   },
   planCard: {
     backgroundColor: '#fff',
@@ -209,7 +383,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   planName: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
     color: COLORS.text,
     marginBottom: 12,
@@ -218,21 +392,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'baseline',
   },
-  originalPrice: {
-    fontSize: 14,
-    color: COLORS.textMuted,
-    textDecorationLine: 'line-through',
-    marginRight: 8,
-  },
   price: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '800',
     color: COLORS.primary,
-  },
-  period: {
-    fontSize: 16,
-    color: COLORS.textMuted,
-    marginLeft: 4,
   },
   featuresList: {
     marginBottom: 20,
@@ -271,6 +434,16 @@ const styles = StyleSheet.create({
   subscribeButtonTextPopular: {
     color: '#fff',
   },
+  restoreButton: {
+    alignItems: 'center',
+    paddingVertical: 16,
+    marginBottom: 8,
+  },
+  restoreText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: COLORS.primary,
+  },
   infoSection: {
     alignItems: 'center',
     paddingVertical: 24,
@@ -279,14 +452,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.textMuted,
     textAlign: 'center',
-    marginBottom: 8,
     lineHeight: 18,
   },
-  infoLink: {
-    fontSize: 12,
-    color: COLORS.primary,
-    textDecorationLine: 'underline',
-  },
 });
-
-

@@ -8,9 +8,11 @@ import {
   Dimensions,
   Platform,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
+import { favoritesService } from '@/infrastructure/api/favorites.service';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { usePetStore } from '@/application/stores/petStore';
@@ -19,7 +21,7 @@ import { useAuthStore } from '@/application/stores/authStore';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function DiscoverScreen() {
-  const router = useRouter();
+  const navigation = useNavigation();
   const { user } = useAuthStore();
   const { pets, currentIndex, loading, loadPets, likePet, dislikePet } = usePetStore();
 
@@ -46,6 +48,12 @@ export default function DiscoverScreen() {
           <TouchableOpacity style={styles.refreshBtn} onPress={() => loadPets()}>
             <Text style={styles.refreshBtnText}>Yeniden Dene</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.refreshBtn, { marginTop: 12, backgroundColor: '#f5f5f5' }]}
+            onPress={() => (navigation as any).navigate('Filter')}
+          >
+            <Text style={[styles.refreshBtnText, { color: COLORS.primary }]}>Filtreleri Aç</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
@@ -56,7 +64,7 @@ export default function DiscoverScreen() {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.profileButton}
-          onPress={() => router.push('/(tabs)/profile')}
+          onPress={() => (navigation as any).navigate('Profile')}
         >
           <Image
             source={{ uri: user?.profile?.photoUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCG3B8xe_3c4vII4DM0h6bfLId7eOc8O3pVJtHKhJXQpNP05XDFgW4FI8XycNBFd0MeKsZUzfHjpDWF6RONaYYJCUvxC0k54YFJliAYlAfR0f7VZGmEaZsdUFS9uFTjuPygy9LAEBjBatQ0Twnsr4nZwGcm8SeOgMMgroiLDvR7UoItHV_-7nCqPD7tIkw8_Cing7Ed-B_ZnydmhSKwgDZEgaeDBS3iZTJVAzBZBJLQVJ1b-7NBSzD1Sw8AQUn6f3RzkJ3jC4nMPBt8' }}
@@ -69,24 +77,35 @@ export default function DiscoverScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.toggleItem}
-            onPress={() => router.push('/(tabs)/map')}
+            onPress={() => (navigation as any).navigate('DiscoverMap')}
           >
             <Ionicons name="map-outline" size={14} color="#888" style={{ marginRight: 4 }} />
             <Text style={styles.toggleText}>Harita</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.iconButton}
-        >
-          <Ionicons name="options-outline" size={24} color={COLORS.text} />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => (navigation as any).navigate('Filter')}
+          >
+            <Ionicons name="options-outline" size={22} color={COLORS.text} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.iconButton}
+            onPress={() => (navigation as any).navigate('Favorites')}
+          >
+            <Ionicons name="heart-outline" size={22} color={COLORS.primary} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.content}>
         <TouchableOpacity
           activeOpacity={0.9}
           style={styles.cardContainer}
-          onPress={() => router.push(`/pet/${currentPet.id}`)}
+          onPress={() =>
+            (navigation as any).navigate('PetDetail', { id: String(currentPet.id) })
+          }
         >
           <Image
             source={{ uri: currentPet.photos?.[0]?.url || 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6JqyeFfKbzIV96d7Ss8Z8VIbXK_ip3_tgj65pp7VYE2Y51FBPgWJ7GO_67BusF0qB8PRHHPK2om8_D7FJt8_AgzuYQX5oiEwYaSKsy_eIoDazBt5KIy9iKhxGIRXFU9DiL4Ql-7Iy-qeAzoJm18tZsNFTP72l8duZlbVwVBNSyx_UcrKs54Ow6lIO6LVRb9_AFpT_AU2FXoYm5QhKhzYzfDdSRyXaP-Jxqj5Nt0DYG8lNbEXf-9ksglCDsYHvZpI7QH5092r7MQdB' }}
@@ -112,7 +131,9 @@ export default function DiscoverScreen() {
             </View>
             <TouchableOpacity
               style={styles.suggestButton}
-              onPress={() => router.push(`/pet/${currentPet.id}`)}
+              onPress={() =>
+                (navigation as any).navigate('PetDetail', { id: String(currentPet.id) })
+              }
             >
               <Ionicons name="information-circle-outline" size={18} color="#fff" style={{ marginRight: 6 }} />
               <Text style={styles.suggestButtonText}>Detayları Görüntüle</Text>
@@ -136,6 +157,14 @@ export default function DiscoverScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.actionButtonSmall}
+          onPress={async () => {
+            try {
+              await favoritesService.add(currentPet.id);
+              Alert.alert('Favoriler', `${currentPet.name} favorilere eklendi.`);
+            } catch (e: any) {
+              Alert.alert('Hata', e?.response?.data?.message || 'Eklenemedi.');
+            }
+          }}
         >
           <Ionicons name="star" size={24} color={COLORS.primary} />
         </TouchableOpacity>
@@ -199,10 +228,15 @@ const styles = StyleSheet.create({
     color: '#181611',
     fontFamily: 'PlusJakartaSans-ExtraBold',
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   iconButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',

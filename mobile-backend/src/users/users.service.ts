@@ -7,6 +7,33 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { UploadsService } from '../uploads/uploads.service';
 
+function mergePreferenceObjects(
+  existing: Record<string, unknown>,
+  incoming: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = { ...existing };
+  for (const key of Object.keys(incoming)) {
+    const inc = incoming[key];
+    const ex = existing[key];
+    if (
+      inc !== null &&
+      typeof inc === 'object' &&
+      !Array.isArray(inc) &&
+      ex !== null &&
+      typeof ex === 'object' &&
+      !Array.isArray(ex)
+    ) {
+      out[key] = mergePreferenceObjects(
+        ex as Record<string, unknown>,
+        inc as Record<string, unknown>,
+      );
+    } else {
+      out[key] = inc;
+    }
+  }
+  return out;
+}
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -72,6 +99,13 @@ export class UsersService {
       }
       if (updateProfileDto.gender !== undefined) {
         user.profile.gender = updateProfileDto.gender;
+      }
+      if (updateProfileDto.preferences !== undefined) {
+        const prev = (user.profile.preferences || {}) as Record<string, unknown>;
+        user.profile.preferences = mergePreferenceObjects(
+          prev,
+          updateProfileDto.preferences as Record<string, unknown>,
+        );
       }
 
       await manager.save(user.profile);

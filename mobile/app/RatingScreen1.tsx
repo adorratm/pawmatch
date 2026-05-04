@@ -5,12 +5,15 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   TextInput,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { ratingsService } from '@/infrastructure/api/ratings.service';
 
 export default function RatingScreen1() {
   const route = useRoute();
@@ -18,6 +21,7 @@ export default function RatingScreen1() {
   const { userId } = route.params as any;
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -80,9 +84,26 @@ export default function RatingScreen1() {
       <View style={styles.footer}>
         <TouchableOpacity
           style={[styles.submitButton, rating === 0 && styles.submitButtonDisabled]}
-          disabled={rating === 0}
+          disabled={rating === 0 || submitting}
+          onPress={async () => {
+            if (!userId) return;
+            setSubmitting(true);
+            try {
+              await ratingsService.rateUser(Number(userId), rating, comment.trim() || undefined);
+              Alert.alert('Teşekkürler', 'Değerlendirmen kaydedildi.');
+              navigation.goBack();
+            } catch (e: any) {
+              Alert.alert('Hata', e?.response?.data?.message || 'Gönderilemedi.');
+            } finally {
+              setSubmitting(false);
+            }
+          }}
         >
-          <Text style={styles.submitButtonText}>Gönder</Text>
+          {submitting ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.submitButtonText}>Gönder</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>

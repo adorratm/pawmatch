@@ -68,6 +68,14 @@ APPLE_TEAM_ID=your_apple_team_id_here
 APPLE_KEY_ID=your_apple_key_id_here
 APPLE_PRIVATE_KEY=your_apple_private_key_here
 
+# Not: `APPLE_PRIVATE_KEY` multiline bir değerdir.
+# - .env içinde en pratik biçim: tırnak içine alıp gerçek satır sonlarıyla yapıştırın
+#   APPLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----
+#   ...
+#   -----END PRIVATE KEY-----"
+# - Alternatif olarak `\n` kaçışlarıyla da koyabilirsiniz (kod tarafı `\\n` -> gerçek newline'a çevirir):
+#   APPLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+
 # ============================================
 # AWS S3 (File Storage - OPSIYONEL)
 # ============================================
@@ -136,6 +144,20 @@ CORS_ORIGIN=http://localhost:3000,http://localhost:19006,http://localhost:8081
 3. Zorunlu key'leri doldurun (DB, REDIS, JWT)
 4. Opsiyonel key'leri ihtiyacınıza göre doldurun
 5. Backend'i başlatın: `yarn start:dev`
+
+## Auth Doğrulama (Seeder sonrası)
+1. `mobile-backend` klasöründe seeder’ı çalıştırın: `yarn seed`
+2. Login:
+   - URL: `POST http://localhost:3000/auth/login`
+   - Body (JSON):
+     ```json
+     { "email": "demo@pawmatch.local", "password": "password123" }
+     ```
+   - Yanıt içinde `accessToken` dönmelidir.
+3. Kullanıcıyı doğrulama:
+   - URL: `GET http://localhost:3000/users/me`
+   - Header: `Authorization: Bearer <accessToken>`
+   - 200 ile kullanıcı datası gelmelidir.
 
 ## Notlar
 

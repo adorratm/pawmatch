@@ -1,8 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { VeterinarianClinic } from '../database/entities/veterinarian-clinic.entity';
+import { ClinicReview } from '../database/entities/clinic-review.entity';
 import { Appointment } from '../database/entities/appointment.entity';
 import { AppointmentSlot } from '../database/entities/appointment-slot.entity';
+import { CreateClinicReviewDto } from './dto/create-clinic-review.dto';
 
 @Injectable()
 export class VeterinariansService {
@@ -88,6 +90,78 @@ export class VeterinariansService {
     });
 
     return this.entityManager.save(appointment);
+  }
+
+  async listClinicReviews(clinicId: number) {
+    const clinic = await this.entityManager.findOne(VeterinarianClinic, {
+      where: { id: clinicId },
+    });
+    if (!clinic) {
+      throw new NotFoundException('Clinic not found');
+    }
+    const reviews = await this.entityManager.find(ClinicReview, {
+      where: { clinicId },
+      relations: ['user'],
+      order: { createdAt: 'DESC' },
+      take: 50,
+    });
+    return {
+      reviews: reviews.map((r) => ({
+        id: r.id,
+        overallRating: r.overallRating,
+        cleanlinessRating: r.cleanlinessRating,
+        serviceRating: r.serviceRating,
+        valueRating: r.valueRating,
+        comment: r.comment,
+        createdAt: r.createdAt,
+        user: r.user
+          ? { id: r.user.id, firstName: r.user.firstName, lastName: r.user.lastName }
+          : null,
+      })),
+    };
+  }
+
+  async createClinicReview(clinicId: number, userId: number, dto: CreateClinicReviewDto) {
+    const clinic = await this.entityManager.findOne(VeterinarianClinic, {
+      where: { id: clinicId },
+    });
+    if (!clinic) {
+      throw new NotFoundException('Clinic not found');
+    }
+    const existing = await this.entityManager.findOne(ClinicReview, {
+      where: { clinicId, userId },
+    });
+    if (existing) {
+      throw new ConflictException('Bu klinik için zaten değerlendirme gönderdiniz');
+    }
+    const review = this.entityManager.create(ClinicReview, {
+      clinicId,
+      userId,
+      overallRating: dto.overallRating,
+      cleanlinessRating: dto.cleanlinessRating,
+      serviceRating: dto.serviceRating,
+      valueRating: dto.valueRating,
+      comment: dto.comment ?? null,
+    });
+    await this.entityManager.save(review);
+    await this.refreshClinicRatingAggregate(clinicId);
+    return { success: true, id: review.id };
+  }
+
+  private async refreshClinicRatingAggregate(clinicId: number) {
+    const raw = await this.entityManager
+      .createQueryBuilder(ClinicReview, 'r')
+      .select('AVG(r.overallRating)', 'avg')
+      .addSelect('COUNT(r.id)', 'cnt')
+      .where('r.clinicId = :clinicId', { clinicId })
+      .getRawOne<{ avg: string; cnt: string }>();
+    const avg = raw?.avg != null ? parseFloat(raw.avg) : 0;
+    const cnt = raw?.cnt != null ? parseInt(raw.cnt, 10) : 0;
+    await this.entityManager.update(
+      VeterinarianClinic,
+      { id: clinicId },
+      { rating: Math.round(avg * 10) / 10, reviewCount: cnt },
+    );
   }
 }
 

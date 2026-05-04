@@ -5,20 +5,33 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   TextInput,
+  Alert,
 } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useLocalSearchParams } from 'expo-router';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import api from '@/infrastructure/api/api';
+import { petsService } from '@/infrastructure/api/pets.service';
 
 export default function AppointmentManagementScreen() {
-  const router = useRouter();
-  const { clinicId } = useLocalSearchParams<{ clinicId: string }>();
+  const navigation = useNavigation();
+  const route = useRoute();
+  const expoClinic = useLocalSearchParams<{ clinicId: string }>().clinicId;
+  const navClinic = (route.params as { clinicId?: string } | undefined)?.clinicId;
+  const clinicId = navClinic ?? expoClinic;
   const [clinic, setClinic] = useState<any>(null);
+  const [myPets, setMyPets] = useState<any[]>([]);
+  const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
   const [selectedService, setSelectedService] = useState<any>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    d.setHours(10, 0, 0, 0);
+    return d;
+  });
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [notes, setNotes] = useState('');
 
@@ -27,6 +40,19 @@ export default function AppointmentManagementScreen() {
       loadClinic();
     }
   }, [clinicId]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const pets = await petsService.getMyPets();
+        const list = Array.isArray(pets) ? pets : [];
+        setMyPets(list);
+        if (list.length === 1) setSelectedPetId(list[0].id);
+      } catch {
+        setMyPets([]);
+      }
+    })();
+  }, []);
 
   const loadClinic = async () => {
     try {
@@ -40,32 +66,38 @@ export default function AppointmentManagementScreen() {
   const availableTimes = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
 
   const handleBookAppointment = async () => {
-    if (!selectedService || !selectedDate || !selectedTime) {
+    if (!clinicId || !selectedPetId || !selectedService || !selectedDate || !selectedTime) {
+      if (!selectedPetId) {
+        Alert.alert('Pet gerekli', 'Randevu için önce bir pet profilin olmalı. Pet ekle ekranından oluşturabilirsin.');
+      }
       return;
     }
 
     try {
       const appointmentDate = new Date(selectedDate);
       const [hours, minutes] = selectedTime.split(':');
-      appointmentDate.setHours(parseInt(hours), parseInt(minutes));
+      appointmentDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
 
       await api.post('/veterinarians/appointments', {
-        clinicId,
+        clinicId: Number(clinicId),
+        petId: selectedPetId,
         serviceId: selectedService.id,
         appointmentDate: appointmentDate.toISOString(),
-        notes,
+        notes: notes || undefined,
       });
 
-      router.back();
-    } catch (error) {
+      Alert.alert('Randevu', 'Randevun kaydedildi.');
+      navigation.goBack();
+    } catch (error: any) {
       console.error('Error booking appointment:', error);
+      Alert.alert('Hata', error?.response?.data?.message || 'Randevu oluşturulamadı.');
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Randevu Al</Text>
@@ -76,6 +108,29 @@ export default function AppointmentManagementScreen() {
         {clinic && (
           <>
             <Text style={styles.clinicName}>{clinic.name}</Text>
+
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Hangi pet için?</Text>
+              {myPets.length === 0 ? (
+                <Text style={styles.hintText}>
+                  Kayıtlı pet yok. Önce pet profili oluşturmalısın.
+                </Text>
+              ) : (
+                myPets.map((p: any) => (
+                  <TouchableOpacity
+                    key={p.id}
+                    style={[
+                      styles.serviceCard,
+                      selectedPetId === p.id && styles.serviceCardSelected,
+                    ]}
+                    onPress={() => setSelectedPetId(p.id)}
+                  >
+                    <Text style={styles.serviceName}>{p.name}</Text>
+                    <Text style={styles.serviceDescription}>{p.breed || p.species}</Text>
+                  </TouchableOpacity>
+                ))
+              )}
+            </View>
 
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Hizmet Seç</Text>
@@ -100,7 +155,14 @@ export default function AppointmentManagementScreen() {
 
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Tarih Seç</Text>
-              <TouchableOpacity style={styles.dateButton}>
+              <TouchableOpacity
+                style={styles.dateButton}
+                onPress={() => {
+                  const d = selectedDate ? new Date(selectedDate) : new Date();
+                  d.setDate(d.getDate() + 1);
+                  setSelectedDate(d);
+                }}
+              >
                 <Ionicons name="calendar" size={20} color={COLORS.primary} />
                 <Text style={styles.dateButtonText}>
                   {selectedDate
@@ -154,10 +216,11 @@ export default function AppointmentManagementScreen() {
         <TouchableOpacity
           style={[
             styles.bookButton,
-            (!selectedService || !selectedDate || !selectedTime) && styles.bookButtonDisabled,
+            (!selectedPetId || !selectedService || !selectedDate || !selectedTime) &&
+              styles.bookButtonDisabled,
           ]}
           onPress={handleBookAppointment}
-          disabled={!selectedService || !selectedDate || !selectedTime}
+          disabled={!selectedPetId || !selectedService || !selectedDate || !selectedTime}
         >
           <Text style={styles.bookButtonText}>Randevu Al</Text>
         </TouchableOpacity>
@@ -207,6 +270,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: COLORS.text,
     marginBottom: 16,
+  },
+  hintText: {
+    fontSize: 14,
+    color: COLORS.textMuted,
+    lineHeight: 20,
   },
   serviceCard: {
     flexDirection: 'row',

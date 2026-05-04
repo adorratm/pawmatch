@@ -24,6 +24,9 @@ import { Appointment } from './entities/appointment.entity';
 import { AppointmentSlot } from './entities/appointment-slot.entity';
 import { Shelter } from './entities/shelter.entity';
 import { ShelterPet } from './entities/shelter-pet.entity';
+import { PetFavorite } from './entities/pet-favorite.entity';
+import { ClinicReview } from './entities/clinic-review.entity';
+import { SupportTicket } from './entities/support-ticket.entity';
 
 @Module({
   imports: [
@@ -60,6 +63,9 @@ import { ShelterPet } from './entities/shelter-pet.entity';
           AppointmentSlot,
           Shelter,
           ShelterPet,
+          PetFavorite,
+          ClinicReview,
+          SupportTicket,
         ],
         synchronize: false, // Mevcut veritabanı yapısını korumak için kapalı
         logging: configService.get('NODE_ENV') === 'development',

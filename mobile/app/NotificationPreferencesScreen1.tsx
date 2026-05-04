@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   Switch,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { userRepository } from '@/infrastructure/repositories/ApiUserRepository';
+import { mergeAndSavePreferences } from '@/infrastructure/api/userPreferences';
 
 export default function NotificationPreferencesScreen1() {
   const navigation = useNavigation();
@@ -18,6 +20,50 @@ export default function NotificationPreferencesScreen1() {
   const [messages, setMessages] = useState(true);
   const [likes, setLikes] = useState(false);
   const [appointments, setAppointments] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const u = await userRepository.getCurrentUser();
+        if (!u || cancelled) {
+          setHydrated(true);
+          return;
+        }
+        const types = (u.profile?.preferences as { notifications?: { types?: Record<string, boolean> } })
+          ?.notifications?.types;
+        if (types) {
+          setNewMatches(types.newMatches !== false);
+          setMessages(types.messages !== false);
+          setLikes(types.likes === true);
+          setAppointments(types.appointments !== false);
+        }
+      } finally {
+        if (!cancelled) setHydrated(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const t = setTimeout(() => {
+      mergeAndSavePreferences({
+        notifications: {
+          types: {
+            newMatches,
+            messages,
+            likes,
+            appointments,
+          },
+        },
+      }).catch(() => {});
+    }, 500);
+    return () => clearTimeout(t);
+  }, [hydrated, newMatches, messages, likes, appointments]);
 
   return (
     <SafeAreaView style={styles.container}>

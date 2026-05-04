@@ -6,10 +6,10 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
-  SafeAreaView,
   Dimensions,
   FlatList,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
@@ -100,12 +100,27 @@ export default function VeterinarianDetailScreen1() {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.actionButton, styles.primaryAction]}
-              onPress={() => navigation.navigate('AppointmentManagement' as never)}
+              onPress={() =>
+                (navigation as any).navigate('AppointmentManagement', {
+                  clinicId: String(clinic.id),
+                })
+              }
             >
               <Ionicons name="calendar" size={20} color="#fff" />
               <Text style={[styles.actionText, styles.primaryActionText]}>Randevu Al</Text>
             </TouchableOpacity>
           </View>
+
+          <TouchableOpacity
+            style={styles.rateClinicButton}
+            onPress={() =>
+              (navigation as any).navigate('Rating2', { clinicId: String(clinic.id) })
+            }
+          >
+            <Ionicons name="star-outline" size={22} color={COLORS.primary} />
+            <Text style={styles.rateClinicText}>Kliniği değerlendir</Text>
+            <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
+          </TouchableOpacity>
 
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Hakkında</Text>
@@ -221,7 +236,25 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 32,
+    marginBottom: 16,
+  },
+  rateClinicButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    marginBottom: 24,
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e5e5e5',
+  },
+  rateClinicText: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '600',
+    color: COLORS.text,
   },
   actionButton: {
     flex: 1,
