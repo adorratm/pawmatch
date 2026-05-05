@@ -12,6 +12,11 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "extra": {
+      "eas": {
+        "projectId": "b342e8d3-5de0-4e64-ad18-b770821c552b"
+      }
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pawmatchmobile.app"

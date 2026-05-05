@@ -43,7 +43,10 @@ export class PetsService {
   async findOne(id: number) {
     const pet = await this.entityManager.findOne(Pet, {
       where: { id },
-      relations: ['owner', 'photos', 'temperaments'],
+      // `owner` relation is intentionally omitted here to avoid UUID-cast
+      // failures caused by legacy/inconsistent owner references on old pets.
+      // Pet detail screens currently require photos + temperaments only.
+      relations: ['photos', 'temperaments'],
     });
 
     if (!pet) {
