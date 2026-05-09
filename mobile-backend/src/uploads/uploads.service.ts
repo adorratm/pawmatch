@@ -18,7 +18,7 @@ export class UploadsService {
     // For development, return a placeholder URL
     // In production, upload to S3
     if (this.configService.get('NODE_ENV') === 'development') {
-      return `https://pawmatch-dev.s3.amazonaws.com/${file.originalname}`;
+      return `https://${this.configService.get('AWS_S3_BUCKET')}.s3.${this.configService.get('AWS_REGION')}.amazonaws.com/${file.originalname}`;
     }
 
     const params: AWS.S3.PutObjectRequest = {
