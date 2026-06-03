@@ -77,7 +77,11 @@ export class ConversationsService {
   async getConversation(conversationId: number, userId: number) {
     const conversation = await this.entityManager.findOne(Conversation, {
       where: { id: conversationId },
-      relations: ['pet1', 'pet2', 'pet1.owner', 'pet2.owner', 'match'],
+      relations: {
+        pet1: { owner: true },
+        pet2: { owner: true },
+        match: true,
+      },
     });
 
     if (!conversation) {
@@ -112,7 +116,7 @@ export class ConversationsService {
 
     const [messages, total] = await this.entityManager.findAndCount(Message, {
       where: { conversationId },
-      relations: ['sender'],
+      relations: { sender: true },
       order: { createdAt: 'DESC' },
       take: limit,
       skip,
@@ -144,7 +148,7 @@ export class ConversationsService {
     return this.entityManager.transaction(async (manager) => {
       const conversation = await manager.findOne(Conversation, {
         where: { id: conversationId },
-        relations: ['match'],
+        relations: { match: true },
       });
 
       if (!conversation) {

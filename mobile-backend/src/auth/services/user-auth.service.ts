@@ -9,7 +9,7 @@ export class UserAuthService {
   async validateUser(userId: number): Promise<User> {
     const user = await this.entityManager.findOne(User, {
       where: { id: userId },
-      relations: ['profile'],
+      relations: { profile: true },
     });
 
     if (!user || !user.isActive) {

@@ -11,7 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "expo-router/react-navigation";
 import { favoritesService } from '@/infrastructure/api/favorites.service';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "expo-router/react-navigation";
 import { COLORS } from '@/presentation/styles/config';
 import { isPatiGoldFromProfile } from '@/application/subscription';
 import { useAuthStore } from '@/application/stores/authStore';

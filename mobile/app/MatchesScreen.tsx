@@ -10,7 +10,7 @@ import {
   FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "expo-router/react-navigation";
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useChatStore } from '@/application/stores/chatStore';

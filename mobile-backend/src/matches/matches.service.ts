@@ -170,7 +170,7 @@ export class MatchesService {
     return this.entityManager.transaction(async (manager) => {
       const likedPet = await manager.findOne(Pet, {
         where: { id: petId },
-        relations: ['owner'],
+        relations: { owner: true },
       });
 
       if (!likedPet) {
@@ -330,7 +330,7 @@ export class MatchesService {
           { pet1Id: In(userPetIds), pet2Id: targetPetId, isActive: true },
           { pet2Id: In(userPetIds), pet1Id: targetPetId, isActive: true },
         ],
-        relations: ['conversation'],
+        relations: { conversation: true },
       });
 
       if (!match) {
@@ -371,7 +371,11 @@ export class MatchesService {
         { pet1Id: In(userPetIds), isActive: true },
         { pet2Id: In(userPetIds), isActive: true },
       ],
-      relations: ['pet1', 'pet2', 'pet1.photos', 'pet2.photos', 'conversation'],
+      relations: {
+        pet1: { photos: true },
+        pet2: { photos: true },
+        conversation: true,
+      },
       order: { matchedAt: 'DESC' },
     });
 
@@ -399,7 +403,7 @@ export class MatchesService {
   async getIncomingLikes(userId: number) {
     const user = await this.entityManager.findOne(User, {
       where: { id: userId },
-      relations: ['profile'],
+      relations: { profile: true },
     });
     if (!user) {
       throw new NotFoundException('User not found');
@@ -426,7 +430,10 @@ export class MatchesService {
 
     const likes = await this.entityManager.find(MatchLike, {
       where: { likedPetId: In(myPetIds) },
-      relations: ['likerPet', 'likerPet.photos', 'likerPet.owner', 'likedPet', 'likedPet.photos'],
+      relations: {
+        likerPet: { photos: true, owner: true },
+        likedPet: { photos: true },
+      },
       order: { createdAt: 'ASC' },
     });
 
@@ -498,7 +505,7 @@ export class MatchesService {
   private async assertSuperlikeAllowed(manager: EntityManager, likerUserId: number): Promise<void> {
     const user = await manager.findOne(User, {
       where: { id: likerUserId },
-      relations: ['profile'],
+      relations: { profile: true },
     });
     const prefs = (user?.profile?.preferences ?? {}) as Record<string, unknown>;
     if (!resolveGoldFromPreferences(prefs)) {
@@ -518,7 +525,7 @@ export class MatchesService {
   private async incrementSuperlikeUsage(manager: EntityManager, likerUserId: number): Promise<void> {
     const user = await manager.findOne(User, {
       where: { id: likerUserId },
-      relations: ['profile'],
+      relations: { profile: true },
     });
     if (!user) return;
 

@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation } from "expo-router/react-navigation";
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { petRepository } from '@/infrastructure/repositories/ApiPetRepository';

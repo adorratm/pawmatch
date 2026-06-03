@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { NavigationContainer, NavigationIndependentTree } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer, NavigationIndependentTree } from 'expo-router/react-navigation';
+import { createNativeStackNavigator } from 'expo-router/build/react-navigation/native-stack';
+import { createBottomTabNavigator } from 'expo-router/js-tabs';
 import { useAuthStore } from '@/application/stores/authStore';
 import WelcomeScreen from '@app/WelcomeScreen';
 import Onboarding1Screen from '@app/Onboarding1Screen';

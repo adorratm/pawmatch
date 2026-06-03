@@ -44,7 +44,7 @@ export class UsersService {
   async findById(id: number) {
     const user = await this.entityManager.findOne(User, {
       where: { id },
-      relations: ['profile', 'locations'],
+      relations: { profile: true, locations: true },
     });
 
     if (!user) {
@@ -68,7 +68,7 @@ export class UsersService {
     return this.entityManager.transaction(async (manager) => {
       const user = await manager.findOne(User, {
         where: { id: userId },
-        relations: ['profile'],
+        relations: { profile: true },
       });
 
       if (!user) {
@@ -138,7 +138,7 @@ export class UsersService {
     return this.entityManager.transaction(async (manager) => {
       const user = await manager.findOne(User, {
         where: { id: userId },
-        relations: ['profile'],
+        relations: { profile: true },
       });
 
       if (!user) {

@@ -46,7 +46,7 @@ export class PetsService {
       // `owner` relation is intentionally omitted here to avoid UUID-cast
       // failures caused by legacy/inconsistent owner references on old pets.
       // Pet detail screens currently require photos + temperaments only.
-      relations: ['photos', 'temperaments'],
+      relations: { photos: true, temperaments: true },
     });
 
     if (!pet) {
@@ -59,7 +59,7 @@ export class PetsService {
   async findByOwner(ownerId: number) {
     return this.entityManager.find(Pet, {
       where: { ownerId, isActive: true },
-      relations: ['photos', 'temperaments'],
+      relations: { photos: true, temperaments: true },
       order: { createdAt: 'DESC' },
     });
   }
@@ -68,7 +68,7 @@ export class PetsService {
     return this.entityManager.transaction(async (manager) => {
       const pet = await manager.findOne(Pet, {
         where: { id },
-        relations: ['temperaments'],
+        relations: { temperaments: true },
       });
 
       if (!pet) {
@@ -149,7 +149,7 @@ export class PetsService {
   async removePhoto(photoId: number, ownerId: number) {
     const photo = await this.entityManager.findOne(PetPhoto, {
       where: { id: photoId },
-      relations: ['pet'],
+      relations: { pet: true },
     });
 
     if (!photo) {
@@ -166,7 +166,7 @@ export class PetsService {
   async listFavorites(userId: number) {
     const rows = await this.entityManager.find(PetFavorite, {
       where: { userId },
-      relations: ['pet', 'pet.photos', 'pet.owner'],
+      relations: { pet: { photos: true, owner: true } },
       order: { createdAt: 'DESC' },
     });
     return {

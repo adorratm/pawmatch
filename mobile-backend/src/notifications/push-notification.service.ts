@@ -43,7 +43,7 @@ export class PushNotificationService {
   private async userAllowsPush(userId: number): Promise<boolean> {
     const user = await this.entityManager.findOne(User, {
       where: { id: userId },
-      relations: ['profile'],
+      relations: { profile: true },
     });
     const prefs = user?.profile?.preferences as Record<string, unknown> | undefined;
     const notifications = prefs?.notifications as Record<string, unknown> | undefined;
@@ -58,7 +58,7 @@ export class PushNotificationService {
   private async userAllowsNotificationType(userId: number, type: string): Promise<boolean> {
     const user = await this.entityManager.findOne(User, {
       where: { id: userId },
-      relations: ['profile'],
+      relations: { profile: true },
     });
     const types = (user?.profile?.preferences as Record<string, unknown> | undefined)?.notifications as
       | { types?: Record<string, boolean> }

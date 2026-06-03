@@ -14,7 +14,7 @@ export class PasswordAuthService {
   async login(email: string, password: string) {
     const user = await this.entityManager.findOne(User, {
       where: { email },
-      relations: ['profile'],
+      relations: { profile: true },
     });
 
     if (!user || !user.password) {

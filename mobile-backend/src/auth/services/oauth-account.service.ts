@@ -23,7 +23,7 @@ export class OAuthAccountService {
     return this.entityManager.transaction(async (manager) => {
       let oauthAccount = await manager.findOne(OAuthAccount, {
         where: { provider, providerId },
-        relations: ['user', 'user.profile'],
+        relations: { user: { profile: true } },
       });
 
       let user: User;
@@ -34,7 +34,7 @@ export class OAuthAccountService {
         // Check if user with email exists
         user = await manager.findOne(User, {
           where: { email },
-          relations: ['profile'],
+          relations: { profile: true },
         });
 
         if (!user) {
@@ -86,7 +86,7 @@ export class OAuthAccountService {
   async findUserByOAuthAccount(provider: OAuthProvider, providerId: string): Promise<User | null> {
     const oauthAccount = await this.entityManager.findOne(OAuthAccount, {
       where: { provider, providerId },
-      relations: ['user', 'user.profile'],
+      relations: { user: { profile: true } },
     });
 
     return oauthAccount?.user ?? null;

@@ -15,7 +15,7 @@ export class SubscriptionsService {
   async getMySubscription(userId: number) {
     const user = await this.entityManager.findOne(User, {
       where: { id: userId },
-      relations: ['profile'],
+      relations: { profile: true },
     });
     const prefs = (user?.profile?.preferences ?? {}) as Record<string, unknown>;
     const pati = (prefs.patiSubscription ?? {}) as PatiSubscriptionPrefs;

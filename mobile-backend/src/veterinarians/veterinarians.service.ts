@@ -15,7 +15,7 @@ export class VeterinariansService {
   async findNearby(latitude: number, longitude: number, radius: number = 10) {
     const clinics = await this.entityManager.find(VeterinarianClinic, {
       where: { isActive: true },
-      relations: ['veterinarian', 'services'],
+      relations: { veterinarian: true, services: true },
       take: 50,
     });
 
@@ -65,7 +65,7 @@ export class VeterinariansService {
   async findOne(id: number) {
     const clinic = await this.entityManager.findOne(VeterinarianClinic, {
       where: { id },
-      relations: ['veterinarian', 'services'],
+      relations: { veterinarian: true, services: true },
     });
 
     if (!clinic) {
@@ -78,7 +78,7 @@ export class VeterinariansService {
   async getAppointments(userId: number) {
     return this.entityManager.find(Appointment, {
       where: { userId },
-      relations: ['clinic', 'pet', 'service'],
+      relations: { clinic: true, pet: true, service: true },
       order: { appointmentDate: 'DESC' },
     });
   }
@@ -101,7 +101,7 @@ export class VeterinariansService {
     }
     const reviews = await this.entityManager.find(ClinicReview, {
       where: { clinicId },
-      relations: ['user'],
+      relations: { user: true },
       order: { createdAt: 'DESC' },
       take: 50,
     });

@@ -48,7 +48,7 @@ export class RatingsService {
   async listRatingsForUser(userId: number) {
     const list = await this.entityManager.find(Rating, {
       where: { rateeId: userId },
-      relations: ['rater'],
+      relations: { rater: true },
       order: { createdAt: 'DESC' },
       take: 50,
     });
