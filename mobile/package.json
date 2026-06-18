@@ -14,22 +14,22 @@
     "@gorhom/bottom-sheet": "^5.2.14",
     "@react-native-async-storage/async-storage": "3.1.1",
     "@react-native/metro-config": "^0.86.0",
-    "axios": "^1.17.0",
+    "axios": "^1.18.0",
     "babel-plugin-module-resolver": "^5.0.3",
-    "expo": "~56.0.11",
+    "expo": "~56.0.12",
     "expo-apple-authentication": "~56.0.4",
     "expo-auth-session": "~56.0.14",
     "expo-constants": "~56.0.18",
     "expo-crypto": "~56.0.4",
     "expo-dev-client": "~56.0.20",
     "expo-device": "^56.0.4",
-    "expo-font": "^56.0.6",
-    "expo-image-picker": "~56.0.17",
+    "expo-font": "^56.0.7",
+    "expo-image-picker": "~56.0.18",
     "expo-linear-gradient": "~56.0.4",
     "expo-linking": "~56.0.14",
-    "expo-location": "~56.0.17",
-    "expo-notifications": "^56.0.17",
-    "expo-router": "^56.2.10",
+    "expo-location": "~56.0.18",
+    "expo-notifications": "^56.0.18",
+    "expo-router": "^56.2.11",
     "expo-splash-screen": "^56.0.10",
     "react": "19.2.7",
     "react-dom": "19.2.7",
@@ -46,14 +46,14 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
+    "@babel/core": "^8.0.1",
     "@types/react": "~19.2.17",
-    "eas-cli": "^20.1.0",
+    "eas-cli": "^20.2.0",
     "typescript": "~6.0.3"
   },
   "private": true,
   "volta": {
-    "node": "26.3.0",
+    "node": "26.3.1",
     "yarn": "4.17.0"
   }
 }
