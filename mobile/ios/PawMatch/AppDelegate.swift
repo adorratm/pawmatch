@@ -1,6 +1,7 @@
 internal import Expo
 import React
 import ReactAppDependencyProvider
+import UIKit
 
 @main
 class AppDelegate: ExpoAppDelegate {
@@ -21,14 +22,28 @@ class AppDelegate: ExpoAppDelegate {
     reactNativeFactory = factory
 
 #if os(iOS) || os(tvOS)
-    window = UIWindow(frame: UIScreen.main.bounds)
-    factory.startReactNative(
-      withModuleName: "main",
-      in: window,
-      launchOptions: launchOptions)
+    if #unavailable(iOS 13.0) {
+      window = UIWindow(frame: UIScreen.main.bounds)
+      factory.startReactNative(
+        withModuleName: "main",
+        in: window,
+        launchOptions: launchOptions)
+    }
 #endif
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  public func application(
+    _ application: UIApplication,
+    configurationForConnecting connectingSceneSession: UISceneSession,
+    options: UIScene.ConnectionOptions
+  ) -> UISceneConfiguration {
+    let configuration = UISceneConfiguration(
+      name: "Default Configuration",
+      sessionRole: connectingSceneSession.role)
+    configuration.delegateClass = SceneDelegate.self
+    return configuration
   }
 
   // Linking API
@@ -48,6 +63,74 @@ class AppDelegate: ExpoAppDelegate {
   ) -> Bool {
     let result = RCTLinkingManager.application(application, continue: userActivity, restorationHandler: restorationHandler)
     return super.application(application, continue: userActivity, restorationHandler: restorationHandler) || result
+  }
+}
+
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+  var window: UIWindow?
+
+  func scene(
+    _ scene: UIScene,
+    willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions
+  ) {
+    guard let windowScene = scene as? UIWindowScene else {
+      return
+    }
+
+    guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+      let factory = appDelegate.reactNativeFactory else {
+      return
+    }
+
+    let nextWindow = UIWindow(windowScene: windowScene)
+    window = nextWindow
+    appDelegate.window = nextWindow
+
+    factory.startReactNative(
+      withModuleName: "main",
+      in: nextWindow,
+      launchOptions: nil)
+
+    if !connectionOptions.urlContexts.isEmpty {
+      self.scene(scene, openURLContexts: connectionOptions.urlContexts)
+    }
+
+    if let userActivity = connectionOptions.userActivities.first {
+      self.scene(scene, continue: userActivity)
+    }
+  }
+
+  func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    guard let urlContext = URLContexts.first,
+      let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+      return
+    }
+
+    var options: [UIApplication.OpenURLOptionsKey: Any] = [
+      .openInPlace: urlContext.options.openInPlace,
+    ]
+
+    if let sourceApplication = urlContext.options.sourceApplication {
+      options[.sourceApplication] = sourceApplication
+    }
+
+    if let annotation = urlContext.options.annotation {
+      options[.annotation] = annotation
+    }
+
+    _ = appDelegate.application(UIApplication.shared, open: urlContext.url, options: options)
+  }
+
+  func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+      return
+    }
+
+    _ = appDelegate.application(
+      UIApplication.shared,
+      continue: userActivity,
+      restorationHandler: { _ in })
   }
 }
 
