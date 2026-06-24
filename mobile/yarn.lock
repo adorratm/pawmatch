@@ -3546,26 +3546,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@revenuecat/purchases-js-hybrid-mappings@npm:18.14.1":
-  version: 18.14.1
-  resolution: "@revenuecat/purchases-js-hybrid-mappings@npm:18.14.1"
+"@revenuecat/purchases-js-hybrid-mappings@npm:18.15.1":
+  version: 18.15.1
+  resolution: "@revenuecat/purchases-js-hybrid-mappings@npm:18.15.1"
   dependencies:
-    "@revenuecat/purchases-js": "npm:1.42.3"
-  checksum: 10c0/a4531214ada249b47c611672af337cbca5b4ed08dc48dd8f0575f3d9f0f7b7c5835fd1839ce92dd3cbee4e2824ec7a77747351a067dfdaf9049feede23d0deb1
+    "@revenuecat/purchases-js": "npm:1.42.4"
+  checksum: 10c0/21b2b55c0b0c83a1aae2adeee78a811f86243d391adaa458ab4199b95ee5ddef4f7e6ddcce9dd7f02eedf6ec381380eb6dec3326a48fafb35b096d9082a99091
   languageName: node
   linkType: hard
 
-"@revenuecat/purchases-js@npm:1.42.3":
-  version: 1.42.3
-  resolution: "@revenuecat/purchases-js@npm:1.42.3"
-  checksum: 10c0/8aebad90f588ac5aa6d32b59884fa3fbe4a94368e78f1e977218c58655f504525471479802a59089c0b69cfd5892a5c666659a439a72cacb3ca509b639d0acaa
+"@revenuecat/purchases-js@npm:1.42.4":
+  version: 1.42.4
+  resolution: "@revenuecat/purchases-js@npm:1.42.4"
+  checksum: 10c0/a79154fa9d465b3bc44d92a81def83a1c2075a79391d2ac78559f07272c20c5e3c7a73fc0946b55499b2da3f5c4feb5db66a27bb20da8d87f3991869fc5f0962
   languageName: node
   linkType: hard
 
-"@revenuecat/purchases-typescript-internal@npm:18.14.1":
-  version: 18.14.1
-  resolution: "@revenuecat/purchases-typescript-internal@npm:18.14.1"
-  checksum: 10c0/f22551959c9f4d78fdceac115dac1466abb43cd60109e83692e2e3f9d90654b760f03dcffa4e75ff33acbcde99ead841e367099130edbb95cc5098346c2d20fb
+"@revenuecat/purchases-typescript-internal@npm:18.15.1":
+  version: 18.15.1
+  resolution: "@revenuecat/purchases-typescript-internal@npm:18.15.1"
+  checksum: 10c0/f726690726b64de558ad06794bbb47e86f592a1320aa80f6e9f0dee917a933126ec58e6f8b29f64b6a4b9fb9f35df1b0395b827e1b7ef4ac80fe24b62e80c40a
   languageName: node
   linkType: hard
 
@@ -4211,15 +4211,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.18.0":
-  version: 1.18.0
-  resolution: "axios@npm:1.18.0"
+"axios@npm:^1.18.1":
+  version: 1.18.1
+  resolution: "axios@npm:1.18.1"
   dependencies:
     follow-redirects: "npm:^1.16.0"
     form-data: "npm:^4.0.5"
     https-proxy-agent: "npm:^5.0.1"
     proxy-from-env: "npm:^2.1.0"
-  checksum: 10c0/f88aae13fd9dd395dea3053c7299178fee62f436f20424a1d6d79ec11ffb7656ba664b4630defbadab2c387b6ea07e29afb9f28b26d8e0e49d45be766983290d
+  checksum: 10c0/9d9378a3af0d0ad730a52ad9d15ec7201f3926ad6e7e8bbffc5ae21ca2835ad11d1d9598698f5dd9718917486039f55ea1d7dc23d8e44fa827a55cc3262c02fc
   languageName: node
   linkType: hard
 
@@ -5196,9 +5196,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eas-cli@npm:^20.2.0":
-  version: 20.2.0
-  resolution: "eas-cli@npm:20.2.0"
+"eas-cli@npm:^20.3.0":
+  version: 20.3.0
+  resolution: "eas-cli@npm:20.3.0"
   dependencies:
     "@expo/apple-utils": "npm:2.1.19"
     "@expo/code-signing-certificates": "npm:0.0.5"
@@ -5289,7 +5289,7 @@ __metadata:
     zod: "npm:^4.1.3"
   bin:
     eas: bin/run
-  checksum: 10c0/449ee4e65e233b88ec74a5e796008c1dd32b740314ba01ff11c5f694e1fe81fd76832b3d302859597095f3fb0c604f2baa93a8a25821a635f7e43cb9a75210d7
+  checksum: 10c0/f459f22bcd41a9971b37f77a3ca1e012c7e939a288750e45858e1396f76efc405dc319be402ed520bfb23bdf4a773c906b1a8a7edffe66f0ee535a9fbbe3a531
   languageName: node
   linkType: hard
 
@@ -8464,9 +8464,9 @@ __metadata:
     "@react-native-async-storage/async-storage": "npm:3.1.1"
     "@react-native/metro-config": "npm:^0.86.0"
     "@types/react": "npm:~19.2.17"
-    axios: "npm:^1.18.0"
+    axios: "npm:^1.18.1"
     babel-plugin-module-resolver: "npm:^5.0.3"
-    eas-cli: "npm:^20.2.0"
+    eas-cli: "npm:^20.3.0"
     expo: "npm:~56.0.12"
     expo-apple-authentication: "npm:~56.0.4"
     expo-auth-session: "npm:~56.0.14"
@@ -8485,14 +8485,14 @@ __metadata:
     react: "npm:19.2.7"
     react-dom: "npm:19.2.7"
     react-native: "npm:0.86.0"
-    react-native-gesture-handler: "npm:~3.0.1"
+    react-native-gesture-handler: "npm:~3.0.2"
     react-native-maps: "npm:1.27.2"
-    react-native-purchases: "npm:^10.3.0"
-    react-native-reanimated: "npm:4.4.1"
+    react-native-purchases: "npm:^10.4.0"
+    react-native-reanimated: "npm:4.5.0"
     react-native-safe-area-context: "npm:~5.8.0"
     react-native-screens: "npm:~4.25.2"
     react-native-vector-icons: "npm:^10.3.0"
-    react-native-worklets: "npm:0.9.2"
+    react-native-worklets: "npm:0.10.0"
     socket.io-client: "npm:^4.8.3"
     typescript: "npm:~6.0.3"
     zustand: "npm:^5.0.14"
@@ -8791,16 +8791,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-gesture-handler@npm:~3.0.1":
-  version: 3.0.1
-  resolution: "react-native-gesture-handler@npm:3.0.1"
+"react-native-gesture-handler@npm:~3.0.2":
+  version: 3.0.2
+  resolution: "react-native-gesture-handler@npm:3.0.2"
   dependencies:
     "@types/react-test-renderer": "npm:^19.1.0"
     invariant: "npm:^2.2.4"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/f3a06f071f3b410f39d435f6a34105fb10c29b240e66da69e9f391f6849da0d933c713cd26350526b9d6da77ca0ee75a623049cadfbfbdc2c5b094f667b465c9
+  checksum: 10c0/06d2b1a621f73c148c4000692e55d5f2a44d44229cabc79829de0b0b3dbf3bcf4bc00e8635f82bd1062d7eac87f39ca5213eb1041e23a5543947e64773eaddfb
   languageName: node
   linkType: hard
 
@@ -8830,12 +8830,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-purchases@npm:^10.3.0":
-  version: 10.3.0
-  resolution: "react-native-purchases@npm:10.3.0"
+"react-native-purchases@npm:^10.4.0":
+  version: 10.4.0
+  resolution: "react-native-purchases@npm:10.4.0"
   dependencies:
-    "@revenuecat/purchases-js-hybrid-mappings": "npm:18.14.1"
-    "@revenuecat/purchases-typescript-internal": "npm:18.14.1"
+    "@revenuecat/purchases-js-hybrid-mappings": "npm:18.15.1"
+    "@revenuecat/purchases-typescript-internal": "npm:18.15.1"
   peerDependencies:
     react: ">= 16.6.3"
     react-native: ">= 0.73.0"
@@ -8843,21 +8843,21 @@ __metadata:
   peerDependenciesMeta:
     react-native-web:
       optional: true
-  checksum: 10c0/a84c07181683a3171c9921bb7b83654814fb85eebab4d03e2c483ce2ee3ee4f8f0ee81fe8c657d968f11094358f1d7affae29f5138f69a802ab5db86c16b2440
+  checksum: 10c0/857011ae36e57ccb7a40bd645b6e2a3750ec95485a1a658c45d2e77f4472e5d9d007648a28b77678c301f78b9731686d2ba59c795223eb43f5d54453e6eb608b
   languageName: node
   linkType: hard
 
-"react-native-reanimated@npm:4.4.1":
-  version: 4.4.1
-  resolution: "react-native-reanimated@npm:4.4.1"
+"react-native-reanimated@npm:4.5.0":
+  version: 4.5.0
+  resolution: "react-native-reanimated@npm:4.5.0"
   dependencies:
     react-native-is-edge-to-edge: "npm:^1.3.1"
     semver: "npm:^7.7.3"
   peerDependencies:
     react: "*"
     react-native: 0.83 - 0.86
-    react-native-worklets: 0.9.x
-  checksum: 10c0/400db6b846c23ee523a74a0b449d07358c6ec20e4ac6e08d867eec3488b1572a2809bc324d4c860479a3fed4e2d182f51146761f24457de07dd10756ffc6de97
+    react-native-worklets: 0.10.x
+  checksum: 10c0/2df754c030a90b9bdbbc5b9fdc9201821b9487f09e72399f7525a23dad95e864470de8ada5f38e28756f8de0c52956125bccb094cec71d5a850c93c83575224a
   languageName: node
   linkType: hard
 
@@ -8899,9 +8899,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-worklets@npm:0.9.2":
-  version: 0.9.2
-  resolution: "react-native-worklets@npm:0.9.2"
+"react-native-worklets@npm:0.10.0":
+  version: 0.10.0
+  resolution: "react-native-worklets@npm:0.10.0"
   dependencies:
     "@babel/plugin-transform-arrow-functions": "npm:^7.27.1"
     "@babel/plugin-transform-class-properties": "npm:^7.28.6"
@@ -8920,7 +8920,7 @@ __metadata:
     "@react-native/metro-config": "*"
     react: "*"
     react-native: 0.83 - 0.86
-  checksum: 10c0/9e1bfd2030f51de14596eb7c394db9cabac2f9430508728407b2fea6adcf56761ee85cec03a62f1aed7c93e77ac254ddf03f38b4906885f9390b9e809cdbb065
+  checksum: 10c0/23144639390ac5d2326b0d088400584849f01eba629f0cbe2b627961c8829a4ee5092f5f4cc5008e00512837e8fbb3c73ea202c2e5ae8bb6312131822b6c9706
   languageName: node
   linkType: hard
 
