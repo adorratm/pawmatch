@@ -45,7 +45,7 @@ const AppDataSource = new DataSource({
     VeterinarianService,
     Appointment,
   ],
-  synchronize: false,
+  synchronize: true,
   logging: true,
 });
 
