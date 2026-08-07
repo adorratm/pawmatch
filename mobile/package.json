@@ -59,11 +59,22 @@
   "resolutions": {
     "@babel/core": "^7.25.2",
     "@isaacs/brace-expansion": "5.0.1",
-    "@xmldom/xmldom": "0.8.12",
+    "@xmldom/xmldom": "0.8.13",
     "brace-expansion@^1.1.7": "1.1.13",
+    "form-data": "4.0.6",
+    "minimatch@5.1.2": "5.1.9",
+    "minimatch@^10.1.1": "10.2.6",
+    "minimatch@^10.2.2": "10.2.6",
     "node-forge": "1.4.0",
     "picomatch@^2.2.3": "2.3.2",
     "picomatch@^2.3.1": "2.3.2",
+    "shell-quote": "1.10.0",
+    "tar": "7.5.22",
+    "undici": "6.28.0",
+    "ws@^7": "7.5.11",
+    "ws@^7.5.10": "7.5.11",
+    "ws@^8.12.1": "8.21.0",
+    "ws@~8.17.1": "8.21.0",
     "yaml@^2.6.1": "2.8.3",
     "expo-modules-jsi@npm:~56.0.10": "patch:expo-modules-jsi@npm%3A56.0.10#~/.yarn/patches/expo-modules-jsi-npm-56.0.10-70e070c3a6.patch"
   }
