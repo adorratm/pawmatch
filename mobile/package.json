@@ -58,6 +58,13 @@
   },
   "resolutions": {
     "@babel/core": "^7.25.2",
+    "@isaacs/brace-expansion": "5.0.1",
+    "@xmldom/xmldom": "0.8.12",
+    "brace-expansion@^1.1.7": "1.1.13",
+    "node-forge": "1.4.0",
+    "picomatch@^2.2.3": "2.3.2",
+    "picomatch@^2.3.1": "2.3.2",
+    "yaml@^2.6.1": "2.8.3",
     "expo-modules-jsi@npm:~56.0.10": "patch:expo-modules-jsi@npm%3A56.0.10#~/.yarn/patches/expo-modules-jsi-npm-56.0.10-70e070c3a6.patch"
   }
 }
