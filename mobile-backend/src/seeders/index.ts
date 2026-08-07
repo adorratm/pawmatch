@@ -113,9 +113,9 @@ async function seed() {
   console.log('Creating users...');
   const users = [];
   const hashedPassword123 = await bcrypt.hash('password123', 10);
-  const hashedPasswordTarget = await bcrypt.hash('password123', 10);
+  const hashedPasswordTarget = hashedPassword123;
 
-  // Ensure the provided demo email can always login.
+  // Ensure a stable demo account can always login after seeding.
   const targetEmail = 'demo@pawmatch.local';
   const targetFirstName = 'Demo';
   const targetLastName = 'User';
