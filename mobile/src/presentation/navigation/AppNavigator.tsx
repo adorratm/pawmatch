@@ -2,6 +2,9 @@ import React, { useEffect } from 'react';
 import { NavigationContainer, NavigationIndependentTree } from 'expo-router/react-navigation';
 import { createNativeStackNavigator } from 'expo-router/build/react-navigation/native-stack';
 import { createBottomTabNavigator } from 'expo-router/js-tabs';
+import { useTranslation } from 'react-i18next';
+import '@/i18n';
+import { loadRemoteTranslations } from '@/i18n/remote';
 import { useAuthStore } from '@/application/stores/authStore';
 import WelcomeScreen from '@app/WelcomeScreen';
 import Onboarding1Screen from '@app/Onboarding1Screen';
@@ -35,6 +38,8 @@ import InAppPurchasesScreen from '@app/InAppPurchasesScreen';
 import ProfileScreen from '@app/ProfileScreen';
 import FavoritesScreen from '@app/FavoritesScreen';
 import IncomingLikesScreen from '@app/IncomingLikesScreen';
+import MyPetsScreen from '@app/MyPetsScreen';
+import NotificationsInboxScreen from '@app/NotificationsInboxScreen';
 import EditProfileScreen from '@app/EditProfileScreen';
 import LegalDocumentScreen from '@app/LegalDocumentScreen';
 import { Ionicons } from '@expo/vector-icons';
@@ -48,6 +53,7 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function MainTabs() {
+  const { t } = useTranslation();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -61,6 +67,7 @@ function MainTabs() {
         name="Discover"
         component={DiscoverScreen}
         options={{
+          tabBarLabel: t('nav.discover'),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="paw" size={size} color={color} />
           ),
@@ -70,6 +77,7 @@ function MainTabs() {
         name="Matches"
         component={MatchesScreen}
         options={{
+          tabBarLabel: t('nav.matches'),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart" size={size} color={color} />
           ),
@@ -79,6 +87,7 @@ function MainTabs() {
         name="Chat"
         component={ConversationsScreen}
         options={{
+          tabBarLabel: t('nav.chat'),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="chatbubbles" size={size} color={color} />
           ),
@@ -88,6 +97,7 @@ function MainTabs() {
         name="Profile"
         component={ProfileScreen}
         options={{
+          tabBarLabel: t('nav.profile'),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           ),
@@ -100,6 +110,10 @@ function MainTabs() {
 export default function AppNavigator() {
   const { isAuthenticated, isLoading } = useAuthStore();
   const { fontsLoaded, fontError } = useAppFonts();
+
+  useEffect(() => {
+    void loadRemoteTranslations('tr');
+  }, []);
 
   useEffect(() => {
     let alive = true;
@@ -141,6 +155,8 @@ export default function AppNavigator() {
                 <Stack.Screen name="PetDetail" component={PetDetailScreen} />
                 <Stack.Screen name="Favorites" component={FavoritesScreen} />
                 <Stack.Screen name="IncomingLikes" component={IncomingLikesScreen} />
+                <Stack.Screen name="NotificationsInbox" component={NotificationsInboxScreen} />
+                <Stack.Screen name="MyPets" component={MyPetsScreen} />
                 <Stack.Screen name="CreatePetProfile" component={CreatePetProfileScreen} />
                 <Stack.Screen name="Matches" component={MatchesScreen} />
                 <Stack.Screen name="NewMatchNotification" component={NewMatchNotificationScreen} />

@@ -33,6 +33,11 @@ export const matchesService = {
     const response = await api.get('/matches/incoming-likes');
     return response.data;
   },
+
+  async acceptIncomingLike(likeId: number) {
+    const response = await api.post(`/matches/incoming-likes/${likeId}/accept`);
+    return response.data;
+  },
 };
 
 

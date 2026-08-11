@@ -10,16 +10,19 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/application/stores/authStore';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { userRepository } from '@/infrastructure/repositories/ApiUserRepository';
 import { mergeAndSavePreferences } from '@/infrastructure/api/userPreferences';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 const PLACEHOLDER_AVATAR =
   'https://lh3.googleusercontent.com/aida-public/AB6AXuCG3B8xe_3c4vII4DM0h6bfLId7eOc8O3pVJtHKhJXQpNP05XDFgW4FI8XycNBFd0MeKsZUzfHjpDWF6RONaYYJCUvxC0k54YFJliAYlAfR0f7VZGmEaZsdUFS9uFTjuPygy9LAEBjBatQ0Twnsr4nZwGcm8SeOgMMgroiLDvR7UoItHV_-7nCqPD7tIkw8_Cing7Ed-B_ZnydmhSKwgDZEgaeDBS3iZTJVAzBZBJLQVJ1b-7NBSzD1Sw8AQUn6f3RzkJ3jC4nMPBt8';
 
 export default function SettingsScreen1() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { user } = useAuthStore();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -58,25 +61,25 @@ export default function SettingsScreen1() {
 
   useEffect(() => {
     if (!hydrated) return;
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       mergeAndSavePreferences({
         notificationsMaster: notificationsEnabled,
         discoveryLocationEnabled: locationEnabled,
       }).catch(() => {});
     }, 500);
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
   }, [hydrated, notificationsEnabled, locationEnabled]);
 
   const avatarUri = user?.profile?.photoUrl || PLACEHOLDER_AVATAR;
-  const displayName = user?.fullName || 'Profil';
+  const displayName = user?.fullName || t('profile.fallbackDisplayName');
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.spacer} />
-        <Text style={styles.headerTitle}>Ayarlar</Text>
+        <Text style={styles.headerTitle}>{t('settings.title')}</Text>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.doneText}>Bitti</Text>
+          <Text style={styles.doneText}>{t('common.done')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -94,7 +97,7 @@ export default function SettingsScreen1() {
             </View>
             <View style={styles.profileInfo}>
               <Text style={styles.profileName}>{displayName}</Text>
-              <Text style={styles.profileSubtext}>Profili Düzenle</Text>
+              <Text style={styles.profileSubtext}>{t('settings.editProfile')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
           </TouchableOpacity>
@@ -106,28 +109,28 @@ export default function SettingsScreen1() {
               <Ionicons name="checkmark-circle" size={24} color={COLORS.primary} />
             </View>
             <View style={styles.premiumInfo}>
-              <Text style={styles.premiumTitle}>Pati Gold'a Geç</Text>
+              <Text style={styles.premiumTitle}>{t('settings.premiumTitle')}</Text>
               <Text style={styles.premiumSubtitle}>
-                Sınırsız beğeni hakkı kazan ve seni kimlerin beğendiğini anında gör.
+                {t('settings.premiumSubtitle')}
               </Text>
             </View>
             <TouchableOpacity
               style={styles.premiumButton}
               onPress={() => navigation.navigate('InAppPurchases' as never)}
             >
-              <Text style={styles.premiumButtonText}>Pati Gold'u Keşfet</Text>
+              <Text style={styles.premiumButtonText}>{t('settings.premiumCta')}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Keşif Ayarları</Text>
+          <Text style={styles.sectionTitle}>{t('settings.sectionDiscovery')}</Text>
           <View style={styles.settingsList}>
             <TouchableOpacity style={styles.settingItem}>
               <Ionicons name="location" size={24} color={COLORS.text} />
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>Konum</Text>
-                <Text style={styles.settingSubtitle}>İstanbul, Kadıköy</Text>
+                <Text style={styles.settingTitle}>{t('settings.location')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.locationSample')}</Text>
               </View>
               <Switch
                 value={locationEnabled}
@@ -142,9 +145,9 @@ export default function SettingsScreen1() {
             >
               <Ionicons name="options" size={24} color={COLORS.text} />
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>Filtreler</Text>
+                <Text style={styles.settingTitle}>{t('settings.filters')}</Text>
                 <Text style={styles.settingSubtitle}>
-                  Tür, yaş, mesafe — kayıtlı filtreler keşfet ve haritada varsayılan
+                  {t('settings.filtersSubtitle')}
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
@@ -153,13 +156,24 @@ export default function SettingsScreen1() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Bildirimler</Text>
+          <Text style={styles.sectionTitle}>{t('settings.sectionNotifications')}</Text>
           <View style={styles.settingsList}>
-            <TouchableOpacity style={styles.settingItem}>
+            <TouchableOpacity
+              style={styles.settingItem}
+              onPress={() => (navigation as any).navigate('NotificationsInbox')}
+            >
+              <Ionicons name="notifications-outline" size={24} color={COLORS.text} />
+              <View style={styles.settingInfo}>
+                <Text style={styles.settingTitle}>{t('inbox.openInbox')}</Text>
+                <Text style={styles.settingSubtitle}>{t('inbox.emptyHint')}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
+            </TouchableOpacity>
+            <View style={styles.settingItem}>
               <Ionicons name="notifications" size={24} color={COLORS.text} />
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>Bildirimler</Text>
-                <Text style={styles.settingSubtitle}>Eşleşme, mesaj bildirimleri</Text>
+                <Text style={styles.settingTitle}>{t('settings.notifications')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.notificationsSubtitle')}</Text>
               </View>
               <Switch
                 value={notificationsEnabled}
@@ -167,15 +181,15 @@ export default function SettingsScreen1() {
                 trackColor={{ false: '#e5e5e5', true: COLORS.primary }}
                 thumbColor="#fff"
               />
-            </TouchableOpacity>
+            </View>
             <TouchableOpacity
               style={styles.settingItem}
-              onPress={() => navigation.navigate('NotificationPreferences1' as never)}
+              onPress={() => (navigation as any).navigate('NotificationPreferences1')}
             >
               <Ionicons name="settings" size={24} color={COLORS.text} />
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>Bildirim Tercihleri</Text>
-                <Text style={styles.settingSubtitle}>Detaylı ayarlar</Text>
+                <Text style={styles.settingTitle}>{t('settings.notificationPrefs')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.notificationPrefsSubtitle')}</Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
@@ -183,14 +197,14 @@ export default function SettingsScreen1() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Hesap</Text>
+          <Text style={styles.sectionTitle}>{t('settings.sectionAccount')}</Text>
           <View style={styles.settingsList}>
             <TouchableOpacity
               style={styles.settingItem}
               onPress={() => navigation.navigate('EditProfile' as never)}
             >
               <Ionicons name="person" size={24} color={COLORS.text} />
-              <Text style={styles.settingTitle}>Profil Ayarları</Text>
+              <Text style={styles.settingTitle}>{t('settings.profileSettings')}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
             <TouchableOpacity
@@ -198,7 +212,7 @@ export default function SettingsScreen1() {
               onPress={() => navigation.navigate('Settings2' as never)}
             >
               <Ionicons name="lock-closed" size={24} color={COLORS.text} />
-              <Text style={styles.settingTitle}>Gizlilik</Text>
+              <Text style={styles.settingTitle}>{t('settings.privacy')}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
             <TouchableOpacity
@@ -206,21 +220,21 @@ export default function SettingsScreen1() {
               onPress={() => navigation.navigate('About' as never)}
             >
               <Ionicons name="shield-checkmark" size={24} color={COLORS.text} />
-              <Text style={styles.settingTitle}>Güvenlik & Yasal</Text>
+              <Text style={styles.settingTitle}>{t('settings.securityLegal')}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Diğer</Text>
+          <Text style={styles.sectionTitle}>{t('settings.sectionOther')}</Text>
           <View style={styles.settingsList}>
             <TouchableOpacity
               style={styles.settingItem}
               onPress={() => navigation.navigate('HelpSupport' as never)}
             >
               <Ionicons name="help-circle" size={24} color={COLORS.text} />
-              <Text style={styles.settingTitle}>Yardım & Destek</Text>
+              <Text style={styles.settingTitle}>{t('settings.helpSupport')}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
             <TouchableOpacity
@@ -228,7 +242,7 @@ export default function SettingsScreen1() {
               onPress={() => navigation.navigate('About' as never)}
             >
               <Ionicons name="information-circle" size={24} color={COLORS.text} />
-              <Text style={styles.settingTitle}>Uygulama Hakkında</Text>
+              <Text style={styles.settingTitle}>{t('settings.aboutApp')}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
           </View>
@@ -279,11 +293,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 16,
     padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 8, opacity: 0.1, elevation: 3 }),
   },
   profileImageContainer: {
     position: 'relative',
@@ -332,11 +342,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderWidth: 1,
     borderColor: COLORS.primary + '33',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 8, opacity: 0.1, elevation: 3 }),
   },
   premiumIcon: {
     width: 48,
@@ -390,11 +396,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     borderRadius: 16,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 8, opacity: 0.1, elevation: 3 }),
   },
   settingItem: {
     flexDirection: 'row',

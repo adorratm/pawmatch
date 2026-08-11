@@ -36,7 +36,7 @@ export class MatchesController {
       gender,
       isVaccinated: isVaccinated === 'true',
       isSpayed: isSpayed === 'true',
-      mode: mode || 'pawmatch',
+      mode: mode === 'adoption' ? 'adoption' : 'playmate',
       limit: limit ? parseInt(limit) : undefined,
     });
   }
@@ -44,6 +44,14 @@ export class MatchesController {
   @Get('incoming-likes')
   async incomingLikes(@CurrentUser() user: User) {
     return this.matchesService.getIncomingLikes(user.id);
+  }
+
+  @Post('incoming-likes/:likeId/accept')
+  async acceptIncomingLike(
+    @Param('likeId', ParseIntPipe) likeId: number,
+    @CurrentUser() user: User,
+  ) {
+    return this.matchesService.acceptIncomingLike(likeId, user.id);
   }
 
   @Post('unmatch-by-pet/:targetPetId')

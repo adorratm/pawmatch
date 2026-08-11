@@ -9,10 +9,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from 'expo-router/react-navigation';
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function AboutScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
 
   return (
@@ -21,7 +23,7 @@ export default function AboutScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Uygulama Hakkında</Text>
+        <Text style={styles.headerTitle}>{t('legal.aboutTitle')}</Text>
         <View style={styles.spacer} />
       </View>
 
@@ -30,25 +32,24 @@ export default function AboutScreen() {
           <View style={styles.logoContainer}>
             <Ionicons name="paw" size={48} color={COLORS.primary} />
           </View>
-          <Text style={styles.appName}>PawMatch</Text>
-          <Text style={styles.appVersion}>Versiyon 1.0.0</Text>
+          <Text style={styles.appName}>{t('legal.appName')}</Text>
+          <Text style={styles.appVersion}>{t('legal.version')}</Text>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionText}>
-            PawMatch, hayvan sahiplenmek isteyen ve hayvanını sahiplendirmek isteyen
-            kullanıcıları buluşturan bir platformdur.
+            {t('legal.aboutBlurb')}
           </Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>İletişim</Text>
+          <Text style={styles.sectionTitle}>{t('legal.contactSection')}</Text>
           <TouchableOpacity
             style={styles.linkItem}
             onPress={() => Linking.openURL('mailto:destek@pawmatch.com.tr')}
           >
             <Ionicons name="mail" size={20} color={COLORS.primary} />
-            <Text style={styles.linkText}>destek@pawmatch.com.tr</Text>
+            <Text style={styles.linkText}>{t('legal.email')}</Text>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
           </TouchableOpacity>
           <TouchableOpacity
@@ -56,31 +57,31 @@ export default function AboutScreen() {
             onPress={() => Linking.openURL('https://www.pawmatch.com.tr')}
           >
             <Ionicons name="globe" size={20} color={COLORS.primary} />
-            <Text style={styles.linkText}>www.pawmatch.com.tr</Text>
+            <Text style={styles.linkText}>{t('legal.website')}</Text>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Yasal</Text>
+          <Text style={styles.sectionTitle}>{t('legal.legalSection')}</Text>
           <TouchableOpacity
             style={styles.linkItem}
             onPress={() => (navigation as any).navigate('LegalDocument', { doc: 'terms' })}
           >
-            <Text style={[styles.linkText, styles.linkTextNoIcon]}>Kullanım Koşulları</Text>
+            <Text style={[styles.linkText, styles.linkTextNoIcon]}>{t('legal.termsTitle')}</Text>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkItem}
             onPress={() => (navigation as any).navigate('LegalDocument', { doc: 'privacy' })}
           >
-            <Text style={[styles.linkText, styles.linkTextNoIcon]}>Gizlilik Politikası</Text>
+            <Text style={[styles.linkText, styles.linkTextNoIcon]}>{t('legal.privacyTitle')}</Text>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>© 2026 PawMatch. Tüm hakları saklıdır.</Text>
+          <Text style={styles.footerText}>{t('legal.copyright')}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -15,6 +15,7 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { useRoute, useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useChatStore } from '@/application/stores/chatStore';
@@ -24,6 +25,7 @@ import { socketService } from '@/infrastructure/api/socket.service';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function ChatScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
   const insets = useSafeAreaInsets();
@@ -97,8 +99,8 @@ export default function ChatScreen() {
             style={styles.headerAvatar}
           />
           <View>
-            <Text style={styles.headerName}>{match?.pet?.name || 'PawMatch'} 🐶</Text>
-            <Text style={styles.headerStatus}>Çevrimiçi</Text>
+            <Text style={styles.headerName}>{match?.pet?.name || t('chat.fallbackName')} 🐶</Text>
+            <Text style={styles.headerStatus}>{t('chat.online')}</Text>
           </View>
         </View>
       </View>
@@ -120,7 +122,7 @@ export default function ChatScreen() {
         <View style={[styles.inputBar, { paddingBottom: insets.bottom + 10 }]}>
           <TextInput
             style={[styles.input, inputFocused && styles.inputFocused]}
-            placeholder="Mesaj yazın..."
+            placeholder={t('chat.inputPlaceholder')}
             placeholderTextColor={COLORS.textMuted}
             value={inputText}
             onChangeText={setInputText}

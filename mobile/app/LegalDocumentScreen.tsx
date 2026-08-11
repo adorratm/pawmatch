@@ -2,65 +2,21 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from 'expo-router/react-navigation';
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 
-const DOCS: Record<string, { title: string; body: string }> = {
-  terms: {
-    title: 'Kullanım Koşulları',
-    body: `Son güncelleme: 2026
-
-1. Kabul
-PawMatch uygulamasını kullanarak bu koşulları kabul etmiş olursunuz.
-
-2. Hizmet
-PawMatch, hayvan sahipleri arasında eşleşme ve iletişim sağlayan bir platformdur. Kullanıcılar kendi içeriklerinden sorumludur.
-
-3. Hesap
-Doğru bilgi vermek, hesabınızı güvende tutmak ve yasalara uygun davranmak sizin sorumluluğunuzdadır. 18 yaşından küçüklerin ebeveyn onayı olmadan kullanması önerilmez.
-
-4. Yasaklı davranışlar
-Taciz, spam, sahte profil, yasa dışı içerik ve başkalarının haklarını ihlal eden paylaşımlar yasaktır. İhlalde hesap askıya alınabilir veya silinebilir.
-
-5. Sorumluluk reddi
-Platform "olduğu gibi" sunulur. Eşleşme sonuçları veya kullanıcı davranışlarından PawMatch sorumlu tutulamaz.
-
-6. Değişiklikler
-Koşullar güncellenebilir. Uygulamayı kullanmaya devam etmeniz güncel koşulları kabul ettiğiniz anlamına gelir.
-
-Sorularınız için: destek@pawmatch.com.tr`,
-  },
-  privacy: {
-    title: 'Gizlilik Politikası',
-    body: `Son güncelleme: 2026
-
-1. Topladığımız veriler
-Hesap bilgileri (ad, e-posta), profil ve konum tercihleri, mesajlaşma ve kullanım verileri, cihaz bildirim token'ları.
-
-2. Kullanım amacı
-Hizmeti sağlamak, eşleşme ve güvenlik, destek taleplerini yanıtlamak, yasal yükümlülükleri yerine getirmek.
-
-3. Paylaşım
-Verileriniz, yasal zorunluluk veya hizmet sağlayıcıları (barındırma, bildirim) dışında üçüncü taraflara satılmaz.
-
-4. Saklama
-Hesabınız aktifken veriler saklanır. Hesap silindiğinde kişisel veriler anonimleştirilir veya silinir.
-
-5. Haklarınız
-Profilinizi güncelleyebilir, hesabınızı silebilir, destek üzerinden veri talebinde bulunabilirsiniz.
-
-6. İletişim
-Gizlilik soruları: destek@pawmatch.com.tr`,
-  },
-};
-
 export default function LegalDocumentScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
   const docKey = ((route.params as { doc?: string } | undefined)?.doc || 'terms') as
     | 'terms'
     | 'privacy';
-  const doc = DOCS[docKey] || DOCS.terms;
+  const doc =
+    docKey === 'privacy'
+      ? { title: t('legal.privacyTitle'), body: t('legal.privacyBody') }
+      : { title: t('legal.termsTitle'), body: t('legal.termsBody') };
 
   return (
     <SafeAreaView style={styles.container}>

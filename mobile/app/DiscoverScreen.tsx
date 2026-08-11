@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from "expo-router/react-navigation";
+import { useNavigation, useFocusEffect } from 'expo-router/react-navigation';
 import { favoritesService } from '@/infrastructure/api/favorites.service';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
@@ -24,12 +24,15 @@ import {
   type DiscoverFiltersSaved,
 } from '@/infrastructure/api/discoverFilters';
 import { PawmatchAdBanner } from '@/presentation/components/PawmatchAdBanner';
+import { useTranslation } from 'react-i18next';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_HORIZONTAL_PADDING = 16;
 const CARD_INNER_WIDTH = SCREEN_WIDTH - CARD_HORIZONTAL_PADDING * 2;
 
 export default function DiscoverScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { user } = useAuthStore();
   const {
@@ -44,12 +47,17 @@ export default function DiscoverScreen() {
     myPetsForLike,
     likerPetId,
     setLikerPetId,
+    discoverMode,
+    setDiscoverMode,
   } = usePetStore();
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [bootstrapped, setBootstrapped] = useState(false);
 
-  useEffect(() => {
-    void loadMyPetsForLike();
-  }, [loadMyPetsForLike]);
+  useFocusEffect(
+    useCallback(() => {
+      void loadMyPetsForLike();
+    }, [loadMyPetsForLike]),
+  );
 
   useEffect(() => {
     setPhotoIndex(0);
@@ -59,20 +67,26 @@ export default function DiscoverScreen() {
     let alive = true;
     (async () => {
       try {
+        await loadMyPetsForLike();
         const u = await userRepository.getCurrentUser();
-        const raw = (u?.profile?.preferences as Record<string, unknown> | undefined)
-          ?.discoverFilters as DiscoverFiltersSaved | undefined;
+        const prefs = (u?.profile?.preferences as Record<string, unknown> | undefined) ?? {};
+        const raw = prefs.discoverFilters as DiscoverFiltersSaved | undefined;
+        const mode =
+          prefs.discoverMode === 'adoption' || prefs.discoverMode === 'playmate'
+            ? prefs.discoverMode
+            : 'playmate';
         const coords = await resolveDiscoverCoordinates(raw ?? undefined);
         if (!alive) return;
-        if (raw && typeof raw === 'object') {
-          const params = buildDiscoverApiParams(raw, coords);
-          setActiveDiscoverFilters(params);
-          await loadPets(params);
-        } else {
-          await loadPets();
-        }
+        const params =
+          raw && typeof raw === 'object'
+            ? { ...buildDiscoverApiParams(raw, coords), mode }
+            : { mode };
+        setActiveDiscoverFilters(params);
+        await loadPets(params);
       } catch {
-        if (alive) await loadPets();
+        if (alive) await loadPets({ mode: 'playmate' });
+      } finally {
+        if (alive) setBootstrapped(true);
       }
     })();
     return () => {
@@ -81,6 +95,7 @@ export default function DiscoverScreen() {
   }, []);
 
   const currentPet = pets[currentIndex];
+  const needsPlaymatePet = discoverMode === 'playmate' && myPetsForLike.length === 0;
 
   const galleryPhotos = useMemo(() => {
     if (!currentPet?.photos?.length) {
@@ -93,7 +108,88 @@ export default function DiscoverScreen() {
     return currentPet.photos.map((p: { url: string }) => ({ url: p.url }));
   }, [currentPet]);
 
-  if (loading && pets.length === 0) {
+  const modeToggle = (
+    <View style={styles.modeRow}>
+      <TouchableOpacity
+        style={[styles.modeChip, discoverMode === 'playmate' && styles.modeChipActive]}
+        onPress={() => void setDiscoverMode('playmate')}
+      >
+        <Text
+          style={[styles.modeChipText, discoverMode === 'playmate' && styles.modeChipTextActive]}
+        >
+          {t('discover.modePlaymate')}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.modeChip, discoverMode === 'adoption' && styles.modeChipActive]}
+        onPress={() => void setDiscoverMode('adoption')}
+      >
+        <Text
+          style={[styles.modeChipText, discoverMode === 'adoption' && styles.modeChipTextActive]}
+        >
+          {t('discover.modeAdopt')}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const header = (
+    <View style={styles.header}>
+      <TouchableOpacity
+        style={styles.profileButton}
+        onPress={() => (navigation as any).navigate('Profile')}
+      >
+        <Image
+          source={{
+            uri:
+              user?.profile?.photoUrl ||
+              'https://lh3.googleusercontent.com/aida-public/AB6AXuCG3B8xe_3c4vII4DM0h6bfLId7eOc8O3pVJtHKhJXQpNP05XDFgW4FI8XycNBFd0MeKsZUzfHjpDWF6RONaYYJCUvxC0k54YFJliAYlAfR0f7VZGmEaZsdUFS9uFTjuPygy9LAEBjBatQ0Twnsr4nZwGcm8SeOgMMgroiLDvR7UoItHV_-7nCqPD7tIkw8_Cing7Ed-B_ZnydmhSKwgDZEgaeDBS3iZTJVAzBZBJLQVJ1b-7NBSzD1Sw8AQUn6f3RzkJ3jC4nMPBt8',
+          }}
+          style={styles.profileImage}
+        />
+      </TouchableOpacity>
+      <View style={styles.headerToggle}>
+        <TouchableOpacity style={[styles.toggleItem, styles.toggleItemActive]}>
+          <Text style={[styles.toggleText, styles.toggleTextActive]}>{t('nav.discover')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.toggleItem}
+          onPress={() => (navigation as any).navigate('DiscoverMap')}
+        >
+          <Ionicons name="map-outline" size={14} color="#888" style={{ marginRight: 4 }} />
+          <Text style={styles.toggleText}>{t('nav.map')}</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.headerActions}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => (navigation as any).navigate('Filter')}
+        >
+          <Ionicons name="options-outline" size={22} color={COLORS.text} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => (navigation as any).navigate('NotificationsInbox')}
+        >
+          <Ionicons name="notifications-outline" size={22} color={COLORS.primary} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => (navigation as any).navigate('IncomingLikes')}
+        >
+          <Ionicons name="paw-outline" size={22} color={COLORS.primary} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => (navigation as any).navigate('Favorites')}
+        >
+          <Ionicons name="heart-outline" size={22} color={COLORS.primary} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  if ((!bootstrapped || loading) && pets.length === 0 && !needsPlaymatePet) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
         <ActivityIndicator size="large" color={COLORS.primary} />
@@ -101,20 +197,54 @@ export default function DiscoverScreen() {
     );
   }
 
-  if (!currentPet) {
+  if (needsPlaymatePet) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        {header}
+        {modeToggle}
         <View style={styles.emptyContainer}>
           <MaterialIcons name="pets" size={64} color="#eee" />
-          <Text style={styles.emptyText}>Daha fazla hayvan yok</Text>
+          <Text style={styles.emptyText}>{t('discover.emptyNoPlaymatePet')}</Text>
+          <Text style={styles.emptyHint}>
+            {t('discover.emptyNoPlaymatePetHint')}
+          </Text>
+          <TouchableOpacity
+            style={styles.refreshBtn}
+            onPress={() => (navigation as any).navigate('MyPets')}
+          >
+            <Text style={styles.refreshBtnText}>{t('discover.myPets')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.refreshBtn, { marginTop: 12, backgroundColor: '#f5f5f5' }]}
+            onPress={() => (navigation as any).navigate('CreatePetProfile')}
+          >
+            <Text style={[styles.refreshBtnText, { color: COLORS.primary }]}>{t('discover.addPet')}</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!currentPet) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        {header}
+        {modeToggle}
+        <View style={styles.emptyContainer}>
+          <MaterialIcons name="pets" size={64} color="#eee" />
+          <Text style={styles.emptyText}>
+            {discoverMode === 'adoption'
+              ? t('discover.emptyNoAdoption')
+              : t('discover.emptyNoMorePlaymates')}
+          </Text>
           <TouchableOpacity style={styles.refreshBtn} onPress={() => loadPets()}>
-            <Text style={styles.refreshBtnText}>Yeniden Dene</Text>
+            <Text style={styles.refreshBtnText}>{t('common.retry')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.refreshBtn, { marginTop: 12, backgroundColor: '#f5f5f5' }]}
             onPress={() => (navigation as any).navigate('Filter')}
           >
-            <Text style={[styles.refreshBtnText, { color: COLORS.primary }]}>Filtreleri Aç</Text>
+            <Text style={[styles.refreshBtnText, { color: COLORS.primary }]}>{t('discover.openFilters')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -123,58 +253,17 @@ export default function DiscoverScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.profileButton}
-          onPress={() => (navigation as any).navigate('Profile')}
-        >
-          <Image
-            source={{
-              uri:
-                user?.profile?.photoUrl ||
-                'https://lh3.googleusercontent.com/aida-public/AB6AXuCG3B8xe_3c4vII4DM0h6bfLId7eOc8O3pVJtHKhJXQpNP05XDFgW4FI8XycNBFd0MeKsZUzfHjpDWF6RONaYYJCUvxC0k54YFJliAYlAfR0f7VZGmEaZsdUFS9uFTjuPygy9LAEBjBatQ0Twnsr4nZwGcm8SeOgMMgroiLDvR7UoItHV_-7nCqPD7tIkw8_Cing7Ed-B_ZnydmhSKwgDZEgaeDBS3iZTJVAzBZBJLQVJ1b-7NBSzD1Sw8AQUn6f3RzkJ3jC4nMPBt8',
-            }}
-            style={styles.profileImage}
-          />
-        </TouchableOpacity>
-        <View style={styles.headerToggle}>
-          <TouchableOpacity style={[styles.toggleItem, styles.toggleItemActive]}>
-            <Text style={[styles.toggleText, styles.toggleTextActive]}>Keşfet</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.toggleItem}
-            onPress={() => (navigation as any).navigate('DiscoverMap')}
-          >
-            <Ionicons name="map-outline" size={14} color="#888" style={{ marginRight: 4 }} />
-            <Text style={styles.toggleText}>Harita</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.headerActions}>
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={() => (navigation as any).navigate('Filter')}
-          >
-            <Ionicons name="options-outline" size={22} color={COLORS.text} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={() => (navigation as any).navigate('IncomingLikes')}
-          >
-            <Ionicons name="people-outline" size={22} color={COLORS.primary} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={() => (navigation as any).navigate('Favorites')}
-          >
-            <Ionicons name="heart-outline" size={22} color={COLORS.primary} />
-          </TouchableOpacity>
-        </View>
-      </View>
+      {header}
+      {modeToggle}
 
-      {myPetsForLike.length > 1 ? (
+      {discoverMode === 'playmate' && myPetsForLike.length > 0 ? (
         <View style={styles.likerRow}>
-          <Text style={styles.likerLabel}>Beğenen:</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.likerChips}>
+          <Text style={styles.likerLabel}>{t('discover.likerLabel')}</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.likerChips}
+          >
             {myPetsForLike.map((p) => {
               const active = likerPetId === p.id;
               return (
@@ -183,7 +272,10 @@ export default function DiscoverScreen() {
                   style={[styles.likerChip, active && styles.likerChipActive]}
                   onPress={() => void setLikerPetId(p.id)}
                 >
-                  <Text style={[styles.likerChipText, active && styles.likerChipTextActive]} numberOfLines={1}>
+                  <Text
+                    style={[styles.likerChipText, active && styles.likerChipTextActive]}
+                    numberOfLines={1}
+                  >
                     {p.name}
                   </Text>
                 </TouchableOpacity>
@@ -236,15 +328,19 @@ export default function DiscoverScreen() {
             <View style={styles.cardInfoRow}>
               <View style={{ flex: 1 }}>
                 <View style={styles.nameRow}>
-                  <Text style={styles.petName}>{currentPet.name}, {currentPet.age}</Text>
+                  <Text style={styles.petName}>
+                    {currentPet.name}, {currentPet.age}
+                  </Text>
                   <View style={styles.matchBadge}>
-                    <Text style={styles.matchText}>Pati Score 98%</Text>
+                    <Text style={styles.matchText}>
+                      {discoverMode === 'adoption' ? t('discover.modeAdopt') : t('discover.patiScore')}
+                    </Text>
                   </View>
                 </View>
                 <View style={styles.breedRow}>
                   <View style={styles.statusDot} />
                   <Text style={styles.breedText}>
-                    {currentPet.breed} • {currentPet.distance || '2.4'}km uzakta
+                    {t('discover.distanceAway', { breed: currentPet.breed, distance: currentPet.distance || '2.4' })}
                   </Text>
                 </View>
               </View>
@@ -255,8 +351,13 @@ export default function DiscoverScreen() {
                 (navigation as any).navigate('PetDetail', { id: String(currentPet.id) })
               }
             >
-              <Ionicons name="information-circle-outline" size={18} color="#fff" style={{ marginRight: 6 }} />
-              <Text style={styles.suggestButtonText}>Detayları Görüntüle</Text>
+              <Ionicons
+                name="information-circle-outline"
+                size={18}
+                color="#fff"
+                style={{ marginRight: 6 }}
+              />
+              <Text style={styles.suggestButtonText}>{t('discover.viewDetails')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -271,7 +372,7 @@ export default function DiscoverScreen() {
             try {
               await dislikePet(currentPet.id);
             } catch (e: any) {
-              Alert.alert('Hata', e?.response?.data?.message || 'İşlem başarısız.');
+              Alert.alert(t('common.error'), e?.response?.data?.message || t('discover.alertActionFailed'));
             }
           }}
         >
@@ -283,7 +384,7 @@ export default function DiscoverScreen() {
             try {
               await likePet(currentPet.id, { isSuperLike: true });
             } catch (e: any) {
-              Alert.alert('Süper beğeni', e?.response?.data?.message || 'Gönderilemedi.');
+              Alert.alert(t('discover.alertSuperLike'), e?.response?.data?.message || t('discover.alertSuperLikeFailed'));
             }
           }}
         >
@@ -295,7 +396,7 @@ export default function DiscoverScreen() {
             try {
               await likePet(currentPet.id);
             } catch (e: any) {
-              Alert.alert('Beğeni', e?.response?.data?.message || 'İşlem başarısız.');
+              Alert.alert(t('discover.alertLike'), e?.response?.data?.message || t('discover.alertActionFailed'));
             }
           }}
         >
@@ -306,9 +407,9 @@ export default function DiscoverScreen() {
           onPress={async () => {
             try {
               await favoritesService.add(currentPet.id);
-              Alert.alert('Favoriler', `${currentPet.name} favorilere eklendi.`);
+              Alert.alert(t('discover.alertFavorites'), t('discover.alertFavoriteAdded', { name: currentPet.name }));
             } catch (e: any) {
-              Alert.alert('Hata', e?.response?.data?.message || 'Eklenemedi.');
+              Alert.alert(t('common.error'), e?.response?.data?.message || t('discover.alertFavoriteFailed'));
             }
           }}
         >
@@ -359,11 +460,7 @@ const styles = StyleSheet.create({
   },
   toggleItemActive: {
     backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 4, opacity: 0.1, elevation: 2 }),
   },
   toggleText: {
     fontSize: 12,
@@ -378,6 +475,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+  },
+  modeRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+    gap: 8,
+  },
+  modeChip: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 12,
+    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  modeChipActive: {
+    backgroundColor: 'rgba(106, 63, 42, 0.12)',
+    borderColor: COLORS.primary,
+  },
+  modeChipText: {
+    fontSize: 13,
+    fontFamily: 'Ubuntu-Bold',
+    color: '#888',
+  },
+  modeChipTextActive: {
+    color: COLORS.primary,
   },
   likerRow: {
     flexDirection: 'row',
@@ -438,11 +562,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 32,
     backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 5,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 10, blur: 20, opacity: 0.1, elevation: 5 }),
     overflow: 'hidden',
   },
   cardImageArea: {
@@ -573,11 +693,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 8,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 8, blur: 12, opacity: 0.3, elevation: 8 }),
   },
   emptyContainer: {
     flex: 1,
@@ -591,6 +707,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Ubuntu-Bold',
     color: '#181611',
     textAlign: 'center',
+  },
+  emptyHint: {
+    fontSize: 14,
+    fontFamily: 'Ubuntu-Medium',
+    color: COLORS.textMuted,
+    textAlign: 'center',
+    marginTop: -4,
   },
   refreshBtn: {
     paddingHorizontal: 24,

@@ -11,8 +11,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from 'expo-router/react-navigation';
 import { COLORS, FONTS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 export default function WelcomeScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
 
@@ -29,7 +31,7 @@ export default function WelcomeScreen() {
           <View style={styles.logo}>
             <Ionicons name="paw" size={22} color="#fff" />
           </View>
-          <Text style={styles.logoText}>PawMatch</Text>
+          <Text style={styles.logoText}>{t('onboarding.welcomeBrand')}</Text>
         </View>
       </View>
 
@@ -52,12 +54,11 @@ export default function WelcomeScreen() {
 
         <View style={styles.textContainer}>
           <Text style={styles.title}>
-            Mükemmel Eşleşmeni{'\n'}
-            <Text style={styles.titleHighlight}>Keşfet</Text>
+            {t('onboarding.welcomeTitle')}{'\n'}
+            <Text style={styles.titleHighlight}>{t('onboarding.welcomeTitleHighlight')}</Text>
           </Text>
           <Text style={styles.description}>
-            İster yeni bir en iyi arkadaş sahiplen, ister köpeğin için bir oyun
-            arkadaşı bul. Sevgi dolu patiler burada.
+            {t('onboarding.welcomeDescription')}
           </Text>
         </View>
       </View>
@@ -67,7 +68,7 @@ export default function WelcomeScreen() {
           style={styles.primaryButton}
           onPress={() => navigation.navigate('Onboarding1' as never)}
         >
-          <Text style={styles.primaryButtonText}>Hadi Başlayalım</Text>
+          <Text style={styles.primaryButtonText}>{t('onboarding.ctaStart')}</Text>
           <Ionicons name="arrow-forward" size={20} color="#fff" />
         </TouchableOpacity>
         <TouchableOpacity
@@ -75,7 +76,7 @@ export default function WelcomeScreen() {
           onPress={() => navigation.navigate('Login' as never)}
         >
           <Text style={styles.secondaryButtonText}>
-            Zaten hesabın var mı? Giriş yap
+            {t('auth.alreadyHaveAccount')}
           </Text>
         </TouchableOpacity>
       </View>

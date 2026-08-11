@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, IsEnum, IsNumber, IsBoolean, IsOptional, IsArray } from 'class-validator';
-import { PetSpecies, PetGender } from '../../database/entities/pet.entity';
+import { PetSpecies, PetGender, PetPurpose } from '../../database/entities/pet.entity';
 
 export class CreatePetDto {
   @IsString()
@@ -40,6 +40,8 @@ export class CreatePetDto {
   @IsArray()
   @IsString({ each: true })
   temperaments?: string[];
+
+  /** Listing intent — playmate or adoption (one at a time) */
+  @IsEnum(PetPurpose)
+  purpose: PetPurpose;
 }
-
-

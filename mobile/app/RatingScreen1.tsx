@@ -10,12 +10,16 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '@/presentation/components/forms/Input';
 import { ratingsService } from '@/infrastructure/api/ratings.service';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
+
 export default function RatingScreen1() {
+  const { t } = useTranslation();
   const route = useRoute();
   const navigation = useNavigation();
   const { userId } = route.params as any;
@@ -29,13 +33,13 @@ export default function RatingScreen1() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Değerlendir</Text>
+        <Text style={styles.headerTitle}>{t('vet.ratingTitle')}</Text>
         <View style={styles.spacer} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.ratingSection}>
-          <Text style={styles.sectionTitle}>Genel Değerlendirme</Text>
+          <Text style={styles.sectionTitle}>{t('vet.ratingOverall')}</Text>
           <View style={styles.starsContainer}>
             {[1, 2, 3, 4, 5].map((star) => (
               <TouchableOpacity
@@ -53,23 +57,23 @@ export default function RatingScreen1() {
           </View>
           <Text style={styles.ratingText}>
             {rating === 0
-              ? 'Değerlendirme seç'
+              ? t('vet.ratingSelect')
               : rating === 1
-                ? 'Çok Kötü'
+                ? t('vet.ratingVeryBad')
                 : rating === 2
-                  ? 'Kötü'
+                  ? t('vet.ratingBad')
                   : rating === 3
-                    ? 'Orta'
+                    ? t('vet.ratingOk')
                     : rating === 4
-                      ? 'İyi'
-                      : 'Mükemmel'}
+                      ? t('vet.ratingGood')
+                      : t('vet.ratingExcellent')}
           </Text>
         </View>
 
         <View style={styles.commentSection}>
           <Input
-            label="Yorumunuz (Opsiyonel)"
-            placeholder="Deneyiminizi paylaşın..."
+            label={t('vet.ratingCommentOptional')}
+            placeholder={t('vet.ratingPlaceholder')}
             value={comment}
             onChangeText={setComment}
             multiline
@@ -89,10 +93,10 @@ export default function RatingScreen1() {
             setSubmitting(true);
             try {
               await ratingsService.rateUser(Number(userId), rating, comment.trim() || undefined);
-              Alert.alert('Teşekkürler', 'Değerlendirmen kaydedildi.');
+              Alert.alert(t('vet.ratingThanks'), t('vet.ratingSavedUser'));
               navigation.goBack();
             } catch (e: any) {
-              Alert.alert('Hata', e?.response?.data?.message || 'Gönderilemedi.');
+              Alert.alert(t('common.error'), e?.response?.data?.message || t('vet.ratingFailed'));
             } finally {
               setSubmitting(false);
             }
@@ -101,7 +105,7 @@ export default function RatingScreen1() {
           {submitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.submitButtonText}>Gönder</Text>
+            <Text style={styles.submitButtonText}>{t('vet.ratingSubmit')}</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -174,15 +178,11 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 4, blur: 8, opacity: 0.3, elevation: 5 }),
   },
   submitButtonDisabled: {
     backgroundColor: '#e5e5e5',
-    shadowOpacity: 0,
+    ...shadowStyle({ none: true }),
   },
   submitButtonText: {
     color: '#fff',

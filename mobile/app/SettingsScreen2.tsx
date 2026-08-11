@@ -9,13 +9,16 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from 'expo-router/react-navigation';
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { userRepository } from '@/infrastructure/repositories/ApiUserRepository';
 import { mergeAndSavePreferences } from '@/infrastructure/api/userPreferences';
 import { confirmDeleteAccount } from '@/presentation/utils/accountActions';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 export default function SettingsScreen2() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [showAge, setShowAge] = useState(true);
   const [showDistance, setShowDistance] = useState(true);
@@ -49,14 +52,14 @@ export default function SettingsScreen2() {
 
   useEffect(() => {
     if (!hydrated) return;
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       mergeAndSavePreferences({
         showAge,
         showDistance,
         allowMessagesFromAnyone: allowMessages,
       }).catch(() => {});
     }, 400);
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
   }, [hydrated, showAge, showDistance, allowMessages]);
 
   return (
@@ -65,18 +68,18 @@ export default function SettingsScreen2() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Gizlilik Ayarları</Text>
+        <Text style={styles.headerTitle}>{t('settings.privacyTitle')}</Text>
         <View style={styles.spacer} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Profil Görünürlüğü</Text>
+          <Text style={styles.sectionTitle}>{t('settings.visibilitySection')}</Text>
           <View style={styles.settingsList}>
             <View style={styles.settingItem}>
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>Yaşımı Göster</Text>
-                <Text style={styles.settingSubtitle}>Profilinde yaşını göster</Text>
+                <Text style={styles.settingTitle}>{t('settings.showAge')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.showAgeHint')}</Text>
               </View>
               <Switch
                 value={showAge}
@@ -87,8 +90,8 @@ export default function SettingsScreen2() {
             </View>
             <View style={styles.settingItem}>
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>Mesafemi Göster</Text>
-                <Text style={styles.settingSubtitle}>Yakınlık mesafesini göster</Text>
+                <Text style={styles.settingTitle}>{t('settings.showDistance')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.showDistanceHint')}</Text>
               </View>
               <Switch
                 value={showDistance}
@@ -101,12 +104,12 @@ export default function SettingsScreen2() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Mesajlaşma</Text>
+          <Text style={styles.sectionTitle}>{t('settings.messagingSection')}</Text>
           <View style={styles.settingsList}>
             <View style={styles.settingItem}>
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>Herkes Mesaj Gönderebilir</Text>
-                <Text style={styles.settingSubtitle}>Eşleşmeden önce mesaj alabilirsin</Text>
+                <Text style={styles.settingTitle}>{t('settings.allowAnyoneMessage')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.allowAnyoneMessageHint')}</Text>
               </View>
               <Switch
                 value={allowMessages}
@@ -119,11 +122,11 @@ export default function SettingsScreen2() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Hesap</Text>
+          <Text style={styles.sectionTitle}>{t('settings.sectionAccount')}</Text>
           <View style={styles.settingsList}>
             <TouchableOpacity style={styles.settingItem} onPress={confirmDeleteAccount}>
               <Ionicons name="trash" size={24} color="#ef4444" />
-              <Text style={[styles.settingTitle, styles.dangerText]}>Hesabı Sil</Text>
+              <Text style={[styles.settingTitle, styles.dangerText]}>{t('settings.deleteAccount')}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
           </View>
@@ -177,11 +180,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     borderRadius: 16,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 8, opacity: 0.1, elevation: 3 }),
   },
   settingItem: {
     flexDirection: 'row',

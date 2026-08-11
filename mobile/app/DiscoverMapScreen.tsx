@@ -21,7 +21,9 @@ import { favoritesService } from '@/infrastructure/api/favorites.service';
 import { usePetStore } from '@/application/stores/petStore';
 import { PawmatchAdBanner } from '@/presentation/components/PawmatchAdBanner';
 import { showAlert, showConfirm } from '@/presentation/utils/dialog';
+import { useTranslation } from 'react-i18next';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 type MapPet = {
   id: number;
   name: string;
@@ -43,6 +45,7 @@ function pickCoordinate(p: MapPet): { latitude: number; longitude: number } | nu
 }
 
 export default function DiscoverMapScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const activeDiscoverFilters = usePetStore((s) => s.activeDiscoverFilters);
   const likerPetId = usePetStore((s) => s.likerPetId);
@@ -93,7 +96,7 @@ export default function DiscoverMapScreen() {
         return withCoords[0] ?? null;
       });
     } catch (e: any) {
-      Alert.alert('Harita', e?.response?.data?.message || 'Yakındaki hayvanlar yüklenemedi.');
+      Alert.alert(t('discover.mapTitle'), e?.response?.data?.message || t('discover.mapLoadFailed'));
     } finally {
       setLoading(false);
     }
@@ -134,9 +137,9 @@ export default function DiscoverMapScreen() {
                   {p.name}
                 </Text>
                 <Text style={styles.calloutSub} numberOfLines={1}>
-                  {p.breed || 'Patili dost'} {p.age != null ? `• ${p.age} yaş` : ''}
+                  {p.breed || t('discover.petFallback')} {p.age != null ? `• ${t('common.ageYears', { age: p.age })}` : ''}
                 </Text>
-                <Text style={styles.calloutLink}>Detay için dokun</Text>
+                <Text style={styles.calloutLink}>{t('discover.mapCalloutTap')}</Text>
               </View>
             </Callout>
           </Marker>
@@ -151,10 +154,10 @@ export default function DiscoverMapScreen() {
         ...(superLike ? { isSuperLike: true } : {}),
         ...(likerPetId != null ? { likerPetId } : {}),
       });
-      Alert.alert(superLike ? 'Süper beğeni' : 'Beğeni', `${p.name} kaydedildi.`);
+      Alert.alert(superLike ? t('discover.incomingSuperLike') : t('discover.alertLike'), t('discover.mapSaved', { name: p.name }));
       void load();
     } catch (e: any) {
-      Alert.alert('Hata', e?.response?.data?.message || 'İşlem başarısız.');
+      Alert.alert(t('common.error'), e?.response?.data?.message || t('discover.alertActionFailed'));
     }
   };
 
@@ -164,27 +167,27 @@ export default function DiscoverMapScreen() {
       setSelected(null);
       void load();
     } catch (e: any) {
-      Alert.alert('Hata', e?.response?.data?.message || 'İşlem başarısız.');
+      Alert.alert(t('common.error'), e?.response?.data?.message || t('discover.alertActionFailed'));
     }
   };
 
   const runUnmatch = (p: MapPet) => {
     showConfirm({
-      title: 'Eşleşmeyi kaldır',
-      message: 'Bu hayvanla eşleşmen kaldırılacak.',
-      confirmLabel: 'Kaldır',
+      title: t('discover.unmatchTitle'),
+      message: t('discover.unmatchMessage'),
+      confirmLabel: t('common.remove'),
       icon: 'unlink-outline',
       variant: 'destructive',
       onConfirm: async () => {
         try {
           await matchesService.unmatchByPet(p.id);
           queueMicrotask(() =>
-            showAlert('Tamam', 'Eşleşme kaldırıldı.', { variant: 'success' }),
+            showAlert(t('common.ok'), t('discover.unmatchDone'), { variant: 'success' }),
           );
           void load();
         } catch (e: any) {
           queueMicrotask(() =>
-            showAlert('Hata', e?.response?.data?.message || 'Kaldırılamadı.', {
+            showAlert(t('common.error'), e?.response?.data?.message || t('discover.unmatchFailed'), {
               variant: 'destructive',
             }),
           );
@@ -203,8 +206,8 @@ export default function DiscoverMapScreen() {
           onPress={() => (navigation as any).navigate('Main', { screen: 'Discover' })}
           style={{ flex: 1, alignItems: 'center' }}
         >
-          <Text style={styles.headerTitle}>Harita</Text>
-          <Text style={styles.headerSub}>Listeye geç</Text>
+          <Text style={styles.headerTitle}>{t('discover.mapTitle')}</Text>
+          <Text style={styles.headerSub}>{t('nav.switchToList')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.filterButton}
@@ -235,7 +238,7 @@ export default function DiscoverMapScreen() {
         <View style={styles.handle} />
         <PawmatchAdBanner variant="compact" />
         <View style={styles.sheetHeaderRow}>
-          <Text style={styles.sheetTitle}>Yakındaki hayvanlar</Text>
+          <Text style={styles.sheetTitle}>{t('discover.mapNearbyTitle')}</Text>
           <TouchableOpacity onPress={() => void load()}>
             <Ionicons name="refresh" size={22} color={COLORS.primary} />
           </TouchableOpacity>
@@ -277,8 +280,8 @@ export default function DiscoverMapScreen() {
               <View style={{ flex: 1 }}>
                 <Text style={styles.petName}>{selected.name}</Text>
                 <Text style={styles.petDetails}>
-                  {selected.breed || 'Patili dost'}
-                  {selected.distance != null ? ` • ${selected.distance} km` : ''}
+                  {selected.breed || t('discover.petFallback')}
+                  {selected.distance != null ? ` • ${t('common.km', { n: selected.distance })}` : ''}
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={22} color={COLORS.primary} />
@@ -298,9 +301,9 @@ export default function DiscoverMapScreen() {
                 onPress={async () => {
                   try {
                     await favoritesService.add(selected.id);
-                    Alert.alert('Favoriler', `${selected.name} kaydedildi.`);
+                    Alert.alert(t('discover.alertFavorites'), t('discover.mapSaved', { name: selected.name }));
                   } catch (e: any) {
-                    Alert.alert('Hata', e?.response?.data?.message || 'Eklenemedi.');
+                    Alert.alert(t('common.error'), e?.response?.data?.message || t('discover.alertFavoriteFailed'));
                   }
                 }}
               >
@@ -312,7 +315,7 @@ export default function DiscoverMapScreen() {
             </View>
           </View>
         ) : (
-          <Text style={styles.emptyHint}>Konumu olan bir profile dokunarak seç.</Text>
+          <Text style={styles.emptyHint}>{t('discover.mapEmptyHint')}</Text>
         )}
       </View>
     </SafeAreaView>
@@ -412,11 +415,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
     padding: 16,
     paddingBottom: 28,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 12,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: -4, blur: 8, opacity: 0.12, elevation: 12 }),
     maxHeight: '42%',
   },
   handle: {

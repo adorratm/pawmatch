@@ -3,6 +3,7 @@ import {
   type DialogConfig,
   type DialogVariant,
 } from '@/application/stores/dialogStore';
+import { t } from '@/i18n';
 
 function defaultIcon(variant: DialogVariant = 'default') {
   switch (variant) {
@@ -26,8 +27,8 @@ export function showConfirm(
     variant,
     icon: config.icon ?? defaultIcon(variant),
     showCancel: config.showCancel ?? true,
-    cancelLabel: config.cancelLabel ?? 'İptal',
-    confirmLabel: config.confirmLabel ?? 'Onayla',
+    cancelLabel: config.cancelLabel ?? t('common.cancel'),
+    confirmLabel: config.confirmLabel ?? t('common.confirm'),
   });
 }
 
@@ -42,7 +43,7 @@ export function showAlert(
     variant: options?.variant ?? 'info',
     icon: options?.icon ?? defaultIcon(options?.variant ?? 'info'),
     showCancel: false,
-    confirmLabel: options?.confirmLabel ?? 'Tamam',
+    confirmLabel: options?.confirmLabel ?? t('common.ok'),
     onConfirm: options?.onConfirm,
   });
 }

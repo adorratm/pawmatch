@@ -11,8 +11,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from 'expo-router/react-navigation';
 import { COLORS, FONTS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 export default function Onboarding1Screen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { width, height } = useWindowDimensions();
 
@@ -30,7 +32,7 @@ export default function Onboarding1Screen() {
           style={styles.skipButton}
           onPress={() => navigation.navigate('Login' as never)}
         >
-          <Text style={styles.skipText}>Atla</Text>
+          <Text style={styles.skipText}>{t('common.skip')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -47,15 +49,14 @@ export default function Onboarding1Screen() {
 
         <View style={styles.textContainer}>
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>HOŞ GELDİNİZ</Text>
+            <Text style={styles.badgeText}>{t('onboarding.badgeWelcome')}</Text>
           </View>
           <Text style={styles.title}>
-            En İyi Dostunuz{'\n'}
-            <Text style={styles.titleHighlight}>Sizi Bekliyor</Text>
+            {t('onboarding.ob1Title')}{'\n'}
+            <Text style={styles.titleHighlight}>{t('onboarding.ob1TitleHighlight')}</Text>
           </Text>
           <Text style={styles.description}>
-            Sahiplenmek veya oyun arkadaşı bulmak için sağa kaydırın. Evcil
-            hayvanlar için en güvenilir topluluğa katılın.
+            {t('onboarding.ob1Description')}
           </Text>
         </View>
       </View>
@@ -70,7 +71,7 @@ export default function Onboarding1Screen() {
           style={styles.nextButton}
           onPress={() => navigation.navigate('Onboarding2' as never)}
         >
-          <Text style={styles.nextButtonText}>İleri</Text>
+          <Text style={styles.nextButtonText}>{t('common.next')}</Text>
           <Ionicons name="arrow-forward" size={20} color="#fff" />
         </TouchableOpacity>
       </View>

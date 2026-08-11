@@ -9,13 +9,17 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '@/presentation/components/forms/Input';
 import api from '@/infrastructure/api/api';
 import { petsService } from '@/infrastructure/api/pets.service';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
+
 export default function AppointmentManagementScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
   const clinicId = (route.params as { clinicId?: string } | undefined)?.clinicId;
@@ -38,7 +42,7 @@ export default function AppointmentManagementScreen() {
       loadClinic();
     } else {
       setClinic(null);
-      setClinicError('Klinik seçilmedi.');
+      setClinicError(t('appointments.clinicNotSelected'));
     }
   }, [clinicId]);
 
@@ -64,8 +68,8 @@ export default function AppointmentManagementScreen() {
       setClinic(null);
       setClinicError(
         error?.response?.status === 404
-          ? 'Bu klinik bulunamadı.'
-          : 'Klinik bilgileri yüklenemedi.',
+          ? t('appointments.clinicNotFound')
+          : t('appointments.clinicLoadFailed'),
       );
     }
   };
@@ -75,7 +79,7 @@ export default function AppointmentManagementScreen() {
   const handleBookAppointment = async () => {
     if (!clinicId || !selectedPetId || !selectedService || !selectedDate || !selectedTime) {
       if (!selectedPetId) {
-        Alert.alert('Pet gerekli', 'Randevu için önce bir pet profilin olmalı. Pet ekle ekranından oluşturabilirsin.');
+        Alert.alert(t('appointments.petRequiredTitle'), t('appointments.petRequiredMsg'));
       }
       return;
     }
@@ -93,11 +97,11 @@ export default function AppointmentManagementScreen() {
         notes: notes || undefined,
       });
 
-      Alert.alert('Randevu', 'Randevun kaydedildi.');
+      Alert.alert(t('appointments.bookedTitle'), t('appointments.bookedMsg'));
       navigation.goBack();
     } catch (error: any) {
       console.error('Error booking appointment:', error);
-      Alert.alert('Hata', error?.response?.data?.message || 'Randevu oluşturulamadı.');
+      Alert.alert(t('common.error'), error?.response?.data?.message || t('appointments.bookFailed'));
     }
   };
 
@@ -107,7 +111,7 @@ export default function AppointmentManagementScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Randevu Al</Text>
+        <Text style={styles.headerTitle}>{t('appointments.bookTitle')}</Text>
         <View style={styles.spacer} />
       </View>
 
@@ -120,10 +124,10 @@ export default function AppointmentManagementScreen() {
             <Text style={styles.clinicName}>{clinic.name}</Text>
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Hangi pet için?</Text>
+              <Text style={styles.sectionTitle}>{t('appointments.whichPet')}</Text>
               {myPets.length === 0 ? (
                 <Text style={styles.hintText}>
-                  Kayıtlı pet yok. Önce pet profili oluşturmalısın.
+                  {t('appointments.noPetsHint')}
                 </Text>
               ) : (
                 myPets.map((p: any) => (
@@ -143,7 +147,7 @@ export default function AppointmentManagementScreen() {
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Hizmet Seç</Text>
+              <Text style={styles.sectionTitle}>{t('appointments.selectService')}</Text>
               {clinic.services?.map((service: any) => (
                 <TouchableOpacity
                   key={service.id}
@@ -156,15 +160,15 @@ export default function AppointmentManagementScreen() {
                   <View style={styles.serviceInfo}>
                     <Text style={styles.serviceName}>{service.name}</Text>
                     <Text style={styles.serviceDescription}>{service.description}</Text>
-                    <Text style={styles.serviceDuration}>{service.duration} dakika</Text>
+                    <Text style={styles.serviceDuration}>{t('common.minutes', { n: service.duration })}</Text>
                   </View>
-                  <Text style={styles.servicePrice}>{service.price} ₺</Text>
+                  <Text style={styles.servicePrice}>{t('common.priceTry', { price: service.price })}</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Tarih Seç</Text>
+              <Text style={styles.sectionTitle}>{t('appointments.selectDate')}</Text>
               <TouchableOpacity
                 style={styles.dateButton}
                 onPress={() => {
@@ -177,13 +181,13 @@ export default function AppointmentManagementScreen() {
                 <Text style={styles.dateButtonText}>
                   {selectedDate
                     ? selectedDate.toLocaleDateString('tr-TR')
-                    : 'Tarih seç'}
+                    : t('appointments.pickDate')}
                 </Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Saat Seç</Text>
+              <Text style={styles.sectionTitle}>{t('appointments.selectTime')}</Text>
               <View style={styles.timeGrid}>
                 {availableTimes.map((time) => (
                   <TouchableOpacity
@@ -209,8 +213,8 @@ export default function AppointmentManagementScreen() {
 
             <View style={styles.section}>
               <Input
-                label="Notlar (Opsiyonel)"
-                placeholder="Randevu ile ilgili notlarınız..."
+                label={t('appointments.notesLabel')}
+                placeholder={t('appointments.notesPlaceholder')}
                 value={notes}
                 onChangeText={setNotes}
                 multiline
@@ -231,7 +235,7 @@ export default function AppointmentManagementScreen() {
           onPress={handleBookAppointment}
           disabled={!selectedPetId || !selectedService || !selectedDate || !selectedTime}
         >
-          <Text style={styles.bookButtonText}>Randevu Al</Text>
+          <Text style={styles.bookButtonText}>{t('appointments.bookCta')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -373,15 +377,11 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 4, blur: 8, opacity: 0.3, elevation: 5 }),
   },
   bookButtonDisabled: {
     backgroundColor: '#e5e5e5',
-    shadowOpacity: 0,
+    ...shadowStyle({ none: true }),
   },
   bookButtonText: {
     color: '#fff',

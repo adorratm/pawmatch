@@ -2,10 +2,13 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 export default function VeterinarianDetailScreen2() {
+  const { t } = useTranslation();
   const route = useRoute();
   const navigation = useNavigation();
   const { clinicId } = route.params as any;
@@ -16,13 +19,13 @@ export default function VeterinarianDetailScreen2() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Veteriner Detayı</Text>
+        <Text style={styles.headerTitle}>{t('vet.detailTitle')}</Text>
         <View style={styles.spacer} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.reviewsSection}>
-          <Text style={styles.sectionTitle}>Yorumlar</Text>
+          <Text style={styles.sectionTitle}>{t('vet.reviewsSection')}</Text>
           {[1, 2, 3, 4, 5].map((index) => (
             <View key={index} style={styles.reviewCard}>
               <View style={styles.reviewHeader}>
@@ -31,7 +34,7 @@ export default function VeterinarianDetailScreen2() {
                     <Ionicons name="person" size={20} color={COLORS.primary} />
                   </View>
                   <View>
-                    <Text style={styles.reviewerName}>Kullanıcı {index}</Text>
+                    <Text style={styles.reviewerName}>{t('vet.reviewerName', { index })}</Text>
                     <View style={styles.reviewStars}>
                       {[1, 2, 3, 4, 5].map((star) => (
                         <Ionicons
@@ -44,10 +47,10 @@ export default function VeterinarianDetailScreen2() {
                     </View>
                   </View>
                 </View>
-                <Text style={styles.reviewDate}>2 gün önce</Text>
+                <Text style={styles.reviewDate}>{t('vet.reviewDaysAgo')}</Text>
               </View>
               <Text style={styles.reviewText}>
-                Çok profesyonel ve ilgili bir klinik. Hayvanımız çok iyi bakıldı.
+                {t('vet.reviewSample')}
               </Text>
             </View>
           ))}
@@ -63,7 +66,7 @@ export default function VeterinarianDetailScreen2() {
             })
           }
         >
-          <Text style={styles.bookButtonText}>Randevu Al</Text>
+          <Text style={styles.bookButtonText}>{t('vet.book')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -163,11 +166,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 4, blur: 8, opacity: 0.3, elevation: 5 }),
   },
   bookButtonText: {
     color: '#fff',

@@ -4,6 +4,7 @@ import { useNavigation } from "expo-router/react-navigation";
 import { COLORS } from '@/presentation/styles/config';
 import { isPatiGoldFromProfile } from '@/application/subscription';
 import { useAuthStore } from '@/application/stores/authStore';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   /** Gold iken tamamen gizlenir */
@@ -15,6 +16,7 @@ type Props = {
  * İleride AdMob vb. buraya bağlanır.
  */
 export function PawmatchAdBanner({ variant = 'compact' }: Props) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const user = useAuthStore((s) => s.user);
   if (isPatiGoldFromProfile(user?.profile ?? null)) {
@@ -24,15 +26,15 @@ export function PawmatchAdBanner({ variant = 'compact' }: Props) {
   if (variant === 'card') {
     return (
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Sponsor alanı</Text>
+        <Text style={styles.cardTitle}>{t('settings.adSponsorTitle')}</Text>
         <Text style={styles.cardSub}>
-          Pati Gold ile reklamsız deneyim ve öne çıkan profiller.
+          {t('settings.adSponsorSub')}
         </Text>
         <TouchableOpacity
           style={styles.cta}
           onPress={() => (navigation as any).navigate('InAppPurchases')}
         >
-          <Text style={styles.ctaText}>Pati Gold</Text>
+          <Text style={styles.ctaText}>{t('purchases.tierGold')}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -40,9 +42,9 @@ export function PawmatchAdBanner({ variant = 'compact' }: Props) {
 
   return (
     <View style={styles.compact}>
-      <Text style={styles.compactText}>Reklam</Text>
+      <Text style={styles.compactText}>{t('settings.adLabel')}</Text>
       <TouchableOpacity onPress={() => (navigation as any).navigate('InAppPurchases')}>
-        <Text style={styles.compactLink}>Kaldır</Text>
+        <Text style={styles.compactLink}>{t('settings.adRemove')}</Text>
       </TouchableOpacity>
     </View>
   );

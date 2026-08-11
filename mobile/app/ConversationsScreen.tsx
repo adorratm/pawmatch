@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '@/presentation/components/forms/Input';
@@ -16,6 +17,7 @@ import api from '@/infrastructure/api/api';
 import { PawmatchAdBanner } from '@/presentation/components/PawmatchAdBanner';
 
 export default function ConversationsScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [conversations, setConversations] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -77,7 +79,7 @@ export default function ConversationsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Mesajlar</Text>
+        <Text style={styles.headerTitle}>{t('chat.messagesTitle')}</Text>
         <TouchableOpacity
           style={styles.filterButton}
           onPress={() => (navigation as any).navigate('Filter')}
@@ -89,7 +91,7 @@ export default function ConversationsScreen() {
       <Input
         size="search"
         leftIcon="search"
-        placeholder="Eşleşmelerde ara..."
+        placeholder={t('chat.searchPlaceholder')}
         value={searchQuery}
         onChangeText={setSearchQuery}
         containerStyle={styles.searchInputContainer}
@@ -104,7 +106,7 @@ export default function ConversationsScreen() {
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Henüz mesajınız yok</Text>
+            <Text style={styles.emptyText}>{t('chat.empty')}</Text>
           </View>
         }
       />

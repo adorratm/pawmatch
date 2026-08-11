@@ -11,11 +11,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useChatStore } from '@/application/stores/chatStore';
 
 export default function MatchesScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { matches, loading, loadMatches } = useChatStore();
 
@@ -65,7 +67,7 @@ export default function MatchesScreen() {
 
         <View style={styles.waitingMsgRow}>
           <MaterialCommunityIcons name="chat-processing-outline" size={14} color={COLORS.primary} style={{ marginRight: 4 }} />
-          <Text style={styles.waitingMsgText}>Mesaj Bekliyor</Text>
+          <Text style={styles.waitingMsgText}>{t('matches.waitingMessage')}</Text>
         </View>
       </View>
 
@@ -90,13 +92,13 @@ export default function MatchesScreen() {
         >
           <Ionicons name="arrow-back" size={24} color="#181611" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Eşleşmelerim</Text>
+        <Text style={styles.headerTitle}>{t('matches.title')}</Text>
         <View style={{ flexDirection: 'row', gap: 4 }}>
           <TouchableOpacity
             style={styles.headerBtn}
             onPress={() => (navigation as any).navigate('IncomingLikes')}
           >
-            <Ionicons name="people-outline" size={22} color="#181611" />
+            <Ionicons name="paw-outline" size={22} color="#181611" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.headerBtn}
@@ -110,9 +112,9 @@ export default function MatchesScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Yeni Eşleşmeler</Text>
+            <Text style={styles.sectionTitle}>{t('matches.newSection')}</Text>
             <View style={styles.newCountBadge}>
-              <Text style={styles.newCountText}>{matches.length} Yeni</Text>
+              <Text style={styles.newCountText}>{t('matches.newCount', { count: matches.length })}</Text>
             </View>
           </View>
           <FlatList
@@ -127,7 +129,7 @@ export default function MatchesScreen() {
 
         <View style={styles.convSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Sohbetler</Text>
+            <Text style={styles.sectionTitle}>{t('matches.chatsSection')}</Text>
           </View>
 
           <FlatList
@@ -139,8 +141,8 @@ export default function MatchesScreen() {
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <MaterialCommunityIcons name="heart-plus-outline" size={64} color="#eee" />
-                <Text style={styles.emptyText}>Henüz sohbet yok</Text>
-                <Text style={styles.emptySub}>Keşfet ekranından yeni eşleşmeler bulabilirsin!</Text>
+                <Text style={styles.emptyText}>{t('matches.emptyChats')}</Text>
+                <Text style={styles.emptySub}>{t('matches.emptyChatsHint')}</Text>
               </View>
             }
           />

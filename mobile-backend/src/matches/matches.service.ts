@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { EntityManager, In } from 'typeorm';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { EntityManager, In, IsNull } from 'typeorm';
 import { Match } from '../database/entities/match.entity';
 import { MatchLike } from '../database/entities/match-like.entity';
 import { MatchDislike } from '../database/entities/match-dislike.entity';
-import { Pet } from '../database/entities/pet.entity';
+import { Pet, PetPurpose } from '../database/entities/pet.entity';
 import { Conversation } from '../database/entities/conversation.entity';
 import { User } from '../database/entities/user.entity';
 import { UserProfile } from '../database/entities/user-profile.entity';
@@ -25,14 +25,17 @@ export class MatchesService {
   ) {}
 
   async discover(userId: number, filters: any) {
+    const mode: PetPurpose =
+      filters.mode === 'adoption' ? PetPurpose.ADOPTION : PetPurpose.PLAYMATE;
+
     const userPets = await this.entityManager.find(Pet, {
-      where: { ownerId: userId, isActive: true },
+      where: { ownerId: userId, isActive: true, isAdopted: false },
     });
 
     const userPetIds = userPets.map((p) => p.id);
-
     let excludedPetIds: number[] = [];
-    if (userPetIds.length > 0) {
+
+    if (mode === PetPurpose.PLAYMATE && userPetIds.length > 0) {
       const likedPets = await this.entityManager.find(MatchLike, {
         where: { likerPetId: In(userPetIds) },
       });
@@ -45,7 +48,18 @@ export class MatchesService {
       ];
     }
 
-    const isAdoptedFilter = filters.mode === 'adoption';
+    if (mode === PetPurpose.ADOPTION) {
+      const likedPets = await this.entityManager.find(MatchLike, {
+        where: { likerUserId: userId, likerPetId: IsNull() },
+      });
+      const dislikedPets = await this.entityManager.find(MatchDislike, {
+        where: { dislikerUserId: userId, dislikerPetId: IsNull() },
+      });
+      excludedPetIds = [
+        ...likedPets.map((l) => l.likedPetId),
+        ...dislikedPets.map((d) => d.dislikedPetId),
+      ];
+    }
 
     const query = this.entityManager
       .createQueryBuilder(Pet, 'pet')
@@ -55,7 +69,8 @@ export class MatchesService {
       .leftJoinAndSelect('owner.profile', 'ownerProfile')
       .leftJoinAndSelect('pet.temperaments', 'temperaments')
       .where('pet.isActive = :isActive', { isActive: true })
-      .andWhere('pet.isAdopted = :isAdopted', { isAdopted: isAdoptedFilter })
+      .andWhere('pet.isAdopted = :isAdopted', { isAdopted: false })
+      .andWhere('pet.purpose = :purpose', { purpose: mode })
       .andWhere('pet.ownerId != :discoverUserId', { discoverUserId: userId });
 
     if (excludedPetIds.length > 0) {
@@ -161,8 +176,10 @@ export class MatchesService {
           : null,
         distance: pet.distance != null ? Math.round(pet.distance * 10) / 10 : null,
         matchScore: 98,
+        purpose: pet.purpose,
       })),
       hasMore: pets.length === (filters.limit || 20),
+      mode,
     };
   }
 
@@ -176,77 +193,248 @@ export class MatchesService {
       if (!likedPet) {
         throw new NotFoundException('Pet not found');
       }
-
-      const userPets = await manager.find(Pet, {
-        where: { ownerId: userId, isActive: true },
-        order: { createdAt: 'ASC' },
-      });
-
-      if (userPets.length === 0) {
-        throw new NotFoundException('You need to have at least one pet');
+      if (likedPet.isAdopted || !likedPet.isActive) {
+        throw new BadRequestException('Bu pati artık listelenmiyor');
+      }
+      if (likedPet.ownerId === userId) {
+        throw new ForbiddenException('Kendi patini beğenemezsin');
       }
 
-      let likerPet = userPets[0];
-      if (dto?.likerPetId != null) {
-        const chosen = userPets.find((p) => p.id === dto.likerPetId);
-        if (!chosen) {
-          throw new ForbiddenException('Geçersiz hayvan profili');
-        }
-        likerPet = chosen;
-      }
-      const likerPetId = likerPet.id;
-
-      const isSuperLike = dto?.isSuperLike === true;
-      if (isSuperLike) {
-        await this.assertSuperlikeAllowed(manager, userId);
+      if (likedPet.purpose === PetPurpose.ADOPTION) {
+        return this.likeAdoption(manager, likedPet, userId, dto);
       }
 
-      const existingLike = await manager.findOne(MatchLike, {
-        where: { likerPetId, likedPetId: petId },
-      });
+      return this.likePlaymate(manager, likedPet, userId, dto);
+    });
+  }
 
-      if (existingLike) {
-        return { isMatch: false };
-      }
+  private async likeAdoption(
+    manager: EntityManager,
+    likedPet: Pet,
+    userId: number,
+    dto?: LikePetDto,
+  ) {
+    const isSuperLike = dto?.isSuperLike === true;
+    if (isSuperLike) {
+      await this.assertSuperlikeAllowed(manager, userId);
+    }
 
-      const like = manager.create(MatchLike, {
-        likerPetId,
-        likedPetId: petId,
+    const existingLike = await manager.findOne(MatchLike, {
+      where: { likerUserId: userId, likedPetId: likedPet.id, likerPetId: IsNull() },
+    });
+    if (existingLike) {
+      return { isMatch: false };
+    }
+
+    const like = manager.create(MatchLike, {
+      likerPetId: null,
+      likerUserId: userId,
+      likedPetId: likedPet.id,
+      isSuperLike,
+      acceptedAt: null,
+    });
+    const savedLike = await manager.save(like);
+
+    if (isSuperLike) {
+      await this.incrementSuperlikeUsage(manager, userId);
+    }
+
+    await this.notificationsService.create({
+      userId: likedPet.ownerId,
+      type: 'like',
+      title: 'Sahiplenme ilgisi',
+      body: `${likedPet.name} için yeni bir sahiplenme ilgisi var.`,
+      data: {
+        matchLikeId: savedLike.id,
+        likedPetId: likedPet.id,
+        isAdoption: true,
         isSuperLike,
-      });
-      const savedLike = await manager.save(like);
+      },
+    });
 
-      if (isSuperLike) {
-        await this.incrementSuperlikeUsage(manager, userId);
+    return { isMatch: false, likeId: savedLike.id };
+  }
+
+  private async likePlaymate(
+    manager: EntityManager,
+    likedPet: Pet,
+    userId: number,
+    dto?: LikePetDto,
+  ) {
+    if (likedPet.purpose !== PetPurpose.PLAYMATE) {
+      throw new BadRequestException('Bu pati oyun arkadaşı için listelenmiyor');
+    }
+
+    const userPets = await manager.find(Pet, {
+      where: {
+        ownerId: userId,
+        isActive: true,
+        isAdopted: false,
+        purpose: PetPurpose.PLAYMATE,
+      },
+      order: { createdAt: 'ASC' },
+    });
+
+    if (userPets.length === 0) {
+      throw new BadRequestException('Oyun arkadaşı için aktif bir patin olmalı');
+    }
+
+    let likerPet = userPets[0];
+    if (dto?.likerPetId != null) {
+      const chosen = userPets.find((p) => p.id === dto.likerPetId);
+      if (!chosen) {
+        throw new ForbiddenException('Geçersiz hayvan profili');
+      }
+      likerPet = chosen;
+    }
+    const likerPetId = likerPet.id;
+
+    const isSuperLike = dto?.isSuperLike === true;
+    if (isSuperLike) {
+      await this.assertSuperlikeAllowed(manager, userId);
+    }
+
+    const existingLike = await manager.findOne(MatchLike, {
+      where: { likerPetId, likedPetId: likedPet.id },
+    });
+    if (existingLike) {
+      return { isMatch: false };
+    }
+
+    const like = manager.create(MatchLike, {
+      likerPetId,
+      likerUserId: userId,
+      likedPetId: likedPet.id,
+      isSuperLike,
+    });
+    const savedLike = await manager.save(like);
+
+    if (isSuperLike) {
+      await this.incrementSuperlikeUsage(manager, userId);
+    }
+
+    const mutualLike = await manager.findOne(MatchLike, {
+      where: {
+        likerPetId: likedPet.id,
+        likedPetId: likerPetId,
+      },
+    });
+
+    if (mutualLike) {
+      const match = manager.create(Match, {
+        pet1Id: likerPetId,
+        pet2Id: likedPet.id,
+        user1Id: userId,
+        matchedAt: new Date(),
+      });
+      const savedMatch = await manager.save(match);
+
+      const conversation = manager.create(Conversation, {
+        matchId: savedMatch.id,
+        pet1Id: likerPetId,
+        pet2Id: likedPet.id,
+        user1Id: userId,
+      });
+      const savedConversation = await manager.save(conversation);
+
+      await this.notificationsService.create({
+        userId: likedPet.ownerId,
+        type: 'match',
+        title: 'Yeni Eşleşme!',
+        body: `${likerPet.name} ile eşleştiniz!`,
+        data: { matchId: savedMatch.id, conversationId: savedConversation.id },
+      });
+
+      return {
+        isMatch: true,
+        matchId: savedMatch.id,
+        conversationId: savedConversation.id,
+      };
+    }
+
+    await this.notificationsService.create({
+      userId: likedPet.ownerId,
+      type: 'like',
+      title: 'Yeni beğeni',
+      body: `${likerPet.name}, ${likedPet.name} profilini beğendi.`,
+      data: {
+        matchLikeId: savedLike.id,
+        likerPetId,
+        likedPetId: likedPet.id,
+        isSuperLike,
+      },
+    });
+
+    return { isMatch: false };
+  }
+
+  async acceptIncomingLike(likeId: number, ownerUserId: number) {
+    return this.entityManager.transaction(async (manager) => {
+      const like = await manager.findOne(MatchLike, {
+        where: { id: likeId },
+        relations: { likedPet: true, likerUser: true, likerPet: true },
+      });
+      if (!like) {
+        throw new NotFoundException('Beğeni bulunamadı');
+      }
+      if (like.likedPet.ownerId !== ownerUserId) {
+        throw new ForbiddenException('Bu beğeniyi kabul edemezsin');
+      }
+      if (like.likedPet.isAdopted) {
+        throw new BadRequestException('Bu pati zaten sahiplendirildi');
+      }
+      if (like.acceptedAt) {
+        throw new BadRequestException('Bu ilgi zaten kabul edildi');
       }
 
-      const mutualLike = await manager.findOne(MatchLike, {
-        where: {
-          likerPetId: petId,
-          likedPetId: likerPetId,
-        },
-      });
+      // Adoption interest (no liker pet)
+      if (like.likerPetId == null) {
+        if (!like.likerUserId) {
+          throw new BadRequestException('Geçersiz sahiplenme ilgisi');
+        }
 
-      if (mutualLike) {
+        const existingMatch = await manager.findOne(Match, {
+          where: {
+            user1Id: like.likerUserId,
+            pet2Id: like.likedPetId,
+            isActive: true,
+          },
+        });
+        if (existingMatch) {
+          const conv = await manager.findOne(Conversation, {
+            where: { matchId: existingMatch.id },
+          });
+          return {
+            isMatch: true,
+            matchId: existingMatch.id,
+            conversationId: conv?.id,
+          };
+        }
+
+        like.acceptedAt = new Date();
+        await manager.save(like);
+
         const match = manager.create(Match, {
-          pet1Id: likerPetId,
-          pet2Id: petId,
+          pet1Id: null,
+          pet2Id: like.likedPetId,
+          user1Id: like.likerUserId,
           matchedAt: new Date(),
         });
         const savedMatch = await manager.save(match);
 
         const conversation = manager.create(Conversation, {
           matchId: savedMatch.id,
-          pet1Id: likerPetId,
-          pet2Id: petId,
+          pet1Id: null,
+          pet2Id: like.likedPetId,
+          user1Id: like.likerUserId,
         });
         const savedConversation = await manager.save(conversation);
 
         await this.notificationsService.create({
-          userId: likedPet.ownerId,
+          userId: like.likerUserId,
           type: 'match',
-          title: 'Yeni Eşleşme!',
-          body: `${likerPet.name} ile eşleştiniz!`,
+          title: 'Sahiplenme eşleşmesi!',
+          body: `${like.likedPet.name} için ilgin kabul edildi.`,
           data: { matchId: savedMatch.id, conversationId: savedConversation.id },
         });
 
@@ -257,34 +445,99 @@ export class MatchesService {
         };
       }
 
-      if (likedPet.ownerId !== userId) {
+      // Playmate: accept by creating reverse like if missing, then match
+      const reverse = await manager.findOne(MatchLike, {
+        where: {
+          likerPetId: like.likedPetId,
+          likedPetId: like.likerPetId,
+        },
+      });
+      if (!reverse) {
+        await manager.save(
+          manager.create(MatchLike, {
+            likerPetId: like.likedPetId,
+            likedPetId: like.likerPetId!,
+            likerUserId: ownerUserId,
+            isSuperLike: false,
+          }),
+        );
+      }
+
+      like.acceptedAt = new Date();
+      await manager.save(like);
+
+      const match = manager.create(Match, {
+        pet1Id: like.likerPetId,
+        pet2Id: like.likedPetId,
+        user1Id: like.likerUserId,
+        matchedAt: new Date(),
+      });
+      const savedMatch = await manager.save(match);
+
+      const conversation = manager.create(Conversation, {
+        matchId: savedMatch.id,
+        pet1Id: like.likerPetId,
+        pet2Id: like.likedPetId,
+        user1Id: like.likerUserId,
+      });
+      const savedConversation = await manager.save(conversation);
+
+      if (like.likerUserId) {
         await this.notificationsService.create({
-          userId: likedPet.ownerId,
-          type: 'like',
-          title: 'Yeni beğeni',
-          body: `${likerPet.name}, ${likedPet.name} profilini beğendi.`,
-          data: {
-            matchLikeId: savedLike.id,
-            likerPetId,
-            likedPetId: petId,
-            isSuperLike,
-          },
+          userId: like.likerUserId,
+          type: 'match',
+          title: 'Yeni Eşleşme!',
+          body: `${like.likedPet.name} ile eşleştiniz!`,
+          data: { matchId: savedMatch.id, conversationId: savedConversation.id },
         });
       }
 
-      return { isMatch: false };
+      return {
+        isMatch: true,
+        matchId: savedMatch.id,
+        conversationId: savedConversation.id,
+      };
     });
   }
 
   async dislike(petId: number, userId: number, dislikerPetId?: number) {
     return this.entityManager.transaction(async (manager) => {
+      const target = await manager.findOne(Pet, { where: { id: petId } });
+      if (!target) {
+        throw new NotFoundException('Pet not found');
+      }
+
+      if (target.purpose === PetPurpose.ADOPTION) {
+        const existing = await manager.findOne(MatchDislike, {
+          where: {
+            dislikerUserId: userId,
+            dislikedPetId: petId,
+            dislikerPetId: IsNull(),
+          },
+        });
+        if (existing) return { success: true };
+        await manager.save(
+          manager.create(MatchDislike, {
+            dislikerPetId: null,
+            dislikerUserId: userId,
+            dislikedPetId: petId,
+          }),
+        );
+        return { success: true };
+      }
+
       const userPets = await manager.find(Pet, {
-        where: { ownerId: userId, isActive: true },
+        where: {
+          ownerId: userId,
+          isActive: true,
+          isAdopted: false,
+          purpose: PetPurpose.PLAYMATE,
+        },
         order: { createdAt: 'ASC' },
       });
 
       if (userPets.length === 0) {
-        throw new NotFoundException('You need to have at least one pet');
+        throw new BadRequestException('Oyun arkadaşı için aktif bir patin olmalı');
       }
 
       let dislikerPet = userPets[0];
@@ -305,11 +558,13 @@ export class MatchesService {
         return { success: true };
       }
 
-      const dislike = manager.create(MatchDislike, {
-        dislikerPetId: dpId,
-        dislikedPetId: petId,
-      });
-      await manager.save(dislike);
+      await manager.save(
+        manager.create(MatchDislike, {
+          dislikerPetId: dpId,
+          dislikerUserId: userId,
+          dislikedPetId: petId,
+        }),
+      );
 
       return { success: true };
     });
@@ -321,30 +576,44 @@ export class MatchesService {
         where: { ownerId: userId, isActive: true },
       });
       const userPetIds = userPets.map((p) => p.id);
-      if (userPetIds.length === 0) {
-        throw new NotFoundException('You need to have at least one pet');
-      }
 
-      const match = await manager.findOne(Match, {
-        where: [
+      const where: any[] = [{ user1Id: userId, pet2Id: targetPetId, isActive: true }];
+      if (userPetIds.length) {
+        where.push(
           { pet1Id: In(userPetIds), pet2Id: targetPetId, isActive: true },
           { pet2Id: In(userPetIds), pet1Id: targetPetId, isActive: true },
-        ],
+          { pet2Id: targetPetId, isActive: true },
+        );
+      }
+
+      const candidates = await manager.find(Match, {
+        where,
         relations: { conversation: true },
       });
 
-      if (!match) {
+      const found = candidates.find((m) => {
+        if (m.user1Id === userId && m.pet2Id === targetPetId) return true;
+        if (m.pet1Id != null && userPetIds.includes(m.pet1Id) && m.pet2Id === targetPetId)
+          return true;
+        if (m.pet1Id != null && userPetIds.includes(m.pet2Id) && m.pet1Id === targetPetId)
+          return true;
+        // owner of listed pet (adoption)
+        if (m.pet2Id === targetPetId && userPetIds.includes(m.pet2Id)) return true;
+        return false;
+      });
+
+      if (!found) {
         throw new NotFoundException('Eşleşme bulunamadı');
       }
 
-      match.isActive = false;
-      await manager.save(match);
+      found.isActive = false;
+      await manager.save(found);
 
-      if (match.conversation) {
-        match.conversation.isActive = false;
-        await manager.save(match.conversation);
-      } else if (match.id) {
-        const conv = await manager.findOne(Conversation, { where: { matchId: match.id } });
+      if (found.conversation) {
+        found.conversation.isActive = false;
+        await manager.save(found.conversation);
+      } else {
+        const conv = await manager.findOne(Conversation, { where: { matchId: found.id } });
         if (conv) {
           conv.isActive = false;
           await manager.save(conv);
@@ -359,18 +628,18 @@ export class MatchesService {
     const userPets = await this.entityManager.find(Pet, {
       where: { ownerId: userId },
     });
-
-    if (userPets.length === 0) {
-      return { matches: [] };
-    }
-
     const userPetIds = userPets.map((p) => p.id);
 
-    const matches = await this.entityManager.find(Match, {
-      where: [
+    const where: any[] = [{ user1Id: userId, isActive: true }];
+    if (userPetIds.length) {
+      where.push(
         { pet1Id: In(userPetIds), isActive: true },
         { pet2Id: In(userPetIds), isActive: true },
-      ],
+      );
+    }
+
+    const matches = await this.entityManager.find(Match, {
+      where,
       relations: {
         pet1: { photos: true },
         pet2: { photos: true },
@@ -379,27 +648,35 @@ export class MatchesService {
       order: { matchedAt: 'DESC' },
     });
 
+    const seen = new Set<number>();
+    const unique = matches.filter((m) => {
+      if (seen.has(m.id)) return false;
+      seen.add(m.id);
+      return true;
+    });
+
     return {
-      matches: matches.map((match) => {
-        const otherPet = userPetIds.includes(match.pet1Id) ? match.pet2 : match.pet1;
+      matches: unique.map((match) => {
+        const isAdoption = match.pet1Id == null;
+        const iOwnPet1 = match.pet1Id != null && userPetIds.includes(match.pet1Id);
+        const otherPet = iOwnPet1 ? match.pet2 : match.pet1Id ? match.pet1 : match.pet2;
         return {
           id: match.id,
-          pet: {
-            id: otherPet.id,
-            name: otherPet.name,
-            photos: otherPet.photos,
-          },
+          pet: otherPet
+            ? {
+                id: otherPet.id,
+                name: otherPet.name,
+                photos: otherPet.photos,
+              }
+            : null,
           matchedAt: match.matchedAt,
           conversationId: match.conversation?.id,
+          isAdoption,
         };
       }),
     };
   }
 
-  /**
-   * Hayvanlarımı beğenenler (karşılıklı eşleşme oluşmamış tek yönlü beğeniler).
-   * Pati Gold: tümü görünür. Ücretsiz: Pazartesi UTC takvim haftasına göre kümülatif +1 profil / hafta.
-   */
   async getIncomingLikes(userId: number) {
     const user = await this.entityManager.findOne(User, {
       where: { id: userId },
@@ -413,7 +690,7 @@ export class MatchesService {
     );
 
     const myPets = await this.entityManager.find(Pet, {
-      where: { ownerId: userId, isActive: true },
+      where: { ownerId: userId, isActive: true, isAdopted: false },
     });
     const myPetIds = myPets.map((p) => p.id);
     if (myPetIds.length === 0) {
@@ -433,22 +710,38 @@ export class MatchesService {
       relations: {
         likerPet: { photos: true, owner: true },
         likedPet: { photos: true },
+        likerUser: { profile: true },
       },
       order: { createdAt: 'ASC' },
     });
 
     const activeMatches = await this.entityManager.find(Match, {
       where: [
-        { pet1Id: In(myPetIds), isActive: true },
         { pet2Id: In(myPetIds), isActive: true },
+        { pet1Id: In(myPetIds), isActive: true },
       ],
     });
-    const pairKey = (a: number, b: number) => `${Math.min(a, b)}_${Math.max(a, b)}`;
-    const matchedPairs = new Set(activeMatches.map((m) => pairKey(m.pet1Id, m.pet2Id)));
 
-    const incoming = likes.filter(
-      (l) => !matchedPairs.has(pairKey(l.likerPetId, l.likedPetId)),
+    const matchedPetPairs = new Set(
+      activeMatches
+        .filter((m) => m.pet1Id != null)
+        .map((m) => `${Math.min(m.pet1Id!, m.pet2Id)}_${Math.max(m.pet1Id!, m.pet2Id)}`),
     );
+    const matchedAdoptionUsers = new Set(
+      activeMatches
+        .filter((m) => m.pet1Id == null && m.user1Id != null)
+        .map((m) => `${m.user1Id}_${m.pet2Id}`),
+    );
+
+    const incoming = likes.filter((l) => {
+      if (l.acceptedAt) return false;
+      if (l.likerPetId == null) {
+        return !matchedAdoptionUsers.has(`${l.likerUserId}_${l.likedPetId}`);
+      }
+      return !matchedPetPairs.has(
+        `${Math.min(l.likerPetId, l.likedPetId)}_${Math.max(l.likerPetId, l.likedPetId)}`,
+      );
+    });
 
     const weeksElapsedCalendarUtc = calendarUtcWeeksElapsedSinceSignup(
       new Date(user.createdAt),
@@ -475,12 +768,6 @@ export class MatchesService {
         : undefined,
     });
 
-    const mapMyPetMin = (pet: Pet) => ({
-      id: pet.id,
-      name: pet.name,
-      photos: pet.photos,
-    });
-
     return {
       isGold: gold,
       visibleSlots,
@@ -490,13 +777,36 @@ export class MatchesService {
       currentWeekMondayUtc: mondayUtcWeekKey(),
       items: incoming.map((like, index) => {
         const visible = gold || index < visibleSlots;
+        const isAdoption = like.likerPetId == null;
         return {
           id: like.id,
           createdAt: like.createdAt,
           visible,
           isSuperLike: like.isSuperLike,
-          myPet: mapMyPetMin(like.likedPet),
-          likerPet: visible ? mapLikerPublic(like.likerPet) : { id: like.likerPetId, hidden: true },
+          isAdoption,
+          myPet: {
+            id: like.likedPet.id,
+            name: like.likedPet.name,
+            photos: like.likedPet.photos,
+            purpose: like.likedPet.purpose,
+          },
+          likerPet:
+            isAdoption || !like.likerPet
+              ? null
+              : visible
+                ? mapLikerPublic(like.likerPet)
+                : { id: like.likerPetId, hidden: true },
+          likerUser:
+            isAdoption && like.likerUser
+              ? visible
+                ? {
+                    id: like.likerUser.id,
+                    firstName: like.likerUser.firstName,
+                    lastName: like.likerUser.lastName,
+                    avatar: like.likerUser.profile?.avatar ?? null,
+                  }
+                : { id: like.likerUserId, hidden: true }
+              : null,
         };
       }),
     };

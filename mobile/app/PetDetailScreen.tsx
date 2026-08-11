@@ -22,11 +22,13 @@ import { matchesService } from '@/infrastructure/api/matches.service';
 import { favoritesService } from '@/infrastructure/api/favorites.service';
 import { usePetStore } from '@/application/stores/petStore';
 import { showAlert, showConfirm } from '@/presentation/utils/dialog';
+import { useTranslation } from 'react-i18next';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const IMAGE_HEIGHT = SCREEN_WIDTH * 1.25;
 
 export default function PetDetailScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const likerPetId = usePetStore((s) => s.likerPetId);
   const route = useRoute();
@@ -178,7 +180,10 @@ export default function PetDetailScreen() {
             <View style={styles.locationRow}>
               <Ionicons name="location" size={16} color={COLORS.primary} style={{ marginRight: 4 }} />
               <Text style={styles.locationText}>
-                {pet.distance || '5'}km away • {pet.locationName || 'Istanbul, TR'}
+                {t('pets.detailLocationFallback', {
+                  distance: pet.distance || '5',
+                  location: pet.locationName || t('pets.detailLocationDefault'),
+                })}
               </Text>
             </View>
           </View>
@@ -188,22 +193,22 @@ export default function PetDetailScreen() {
               <View style={[styles.statIconWrap, { backgroundColor: '#fff3e0' }]}>
                 <MaterialCommunityIcons name="paw" size={24} color="#e67e22" />
               </View>
-              <Text style={styles.statLabel}>Breed</Text>
-              <Text style={styles.statValue} numberOfLines={1}>{pet.breed?.split(' ')?.[0] || 'Unknown'}</Text>
+              <Text style={styles.statLabel}>{t('pets.detailBreed')}</Text>
+              <Text style={styles.statValue} numberOfLines={1}>{pet.breed?.split(' ')?.[0] || t('pets.detailUnknown')}</Text>
             </View>
             <View style={styles.statCard}>
               <View style={[styles.statIconWrap, { backgroundColor: '#e8f5e9' }]}>
                 <MaterialCommunityIcons name="scale-bathroom" size={24} color="#27ae60" />
               </View>
-              <Text style={styles.statLabel}>Weight</Text>
+              <Text style={styles.statLabel}>{t('pets.detailWeight')}</Text>
               <Text style={styles.statValue}>{pet.weight || '32'} kg</Text>
             </View>
             <View style={styles.statCard}>
               <View style={[styles.statIconWrap, { backgroundColor: 'rgba(106, 63, 42, 0.1)' }]}>
                 <MaterialCommunityIcons name="lightning-bolt" size={24} color={COLORS.primary} />
               </View>
-              <Text style={styles.statLabel}>Energy</Text>
-              <Text style={styles.statValue}>{pet.energyLevel || 'High'}</Text>
+              <Text style={styles.statLabel}>{t('pets.detailEnergy')}</Text>
+              <Text style={styles.statValue}>{pet.energyLevel || t('pets.detailEnergyHigh')}</Text>
             </View>
           </View>
 
@@ -216,10 +221,10 @@ export default function PetDetailScreen() {
           </View>
 
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Health Status</Text>
+            <Text style={styles.sectionTitle}>{t('pets.detailHealthStatus')}</Text>
             <View style={styles.verifiedBadge}>
               <MaterialCommunityIcons name="shield-check" size={14} color="#27ae60" style={{ marginRight: 4 }} />
-              <Text style={styles.verifiedText}>Vet Checked</Text>
+              <Text style={styles.verifiedText}>{t('pets.detailVetChecked')}</Text>
             </View>
           </View>
 
@@ -229,8 +234,8 @@ export default function PetDetailScreen() {
                 <MaterialCommunityIcons name="needle" size={20} color={COLORS.primary} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.healthLabel}>Vaccinations</Text>
-                <Text style={styles.healthSub}>{pet.isVaccinated ? 'Up to date' : 'Aşıları eksik'}</Text>
+                <Text style={styles.healthLabel}>{t('pets.detailVaccinations')}</Text>
+                <Text style={styles.healthSub}>{pet.isVaccinated ? t('pets.detailVaccinatedUpToDate') : t('pets.detailVaccinatedMissing')}</Text>
               </View>
               <Ionicons name="checkmark-circle" size={20} color="#27ae60" />
             </View>
@@ -239,17 +244,17 @@ export default function PetDetailScreen() {
                 <MaterialCommunityIcons name="bandage" size={20} color={COLORS.primary} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.healthLabel}>Spayed / Neutered</Text>
-                <Text style={styles.healthSub}>{pet.isSpayed ? 'Completed' : 'Not completed'}</Text>
+                <Text style={styles.healthLabel}>{t('pets.detailSpayed')}</Text>
+                <Text style={styles.healthSub}>{pet.isSpayed ? t('pets.detailSpayedCompleted') : t('pets.detailSpayedNotCompleted')}</Text>
               </View>
               <Ionicons name="checkmark-circle" size={20} color="#27ae60" />
             </View>
           </View>
 
           <View style={styles.aboutSection}>
-            <Text style={styles.sectionTitle}>About {pet.name}</Text>
+            <Text style={styles.sectionTitle}>{t('pets.detailAbout', { name: pet.name })}</Text>
             <Text style={styles.aboutText}>
-              {pet.bio || `Hi! I'm ${pet.name}, the happiest ${pet.breed} you'll ever meet. I love long walks, chasing toys, and spending time with my family! 🐾`}
+              {pet.bio || t('pets.detailDefaultBio', { name: pet.name, breed: pet.breed })}
             </Text>
           </View>
         </View>
@@ -267,7 +272,7 @@ export default function PetDetailScreen() {
               );
               navigation.goBack();
             } catch (e: any) {
-              Alert.alert('Hata', e?.response?.data?.message || 'İşlem başarısız.');
+              Alert.alert(t('common.error'), e?.response?.data?.message || t('discover.alertActionFailed'));
             }
           }}
         >
@@ -281,9 +286,9 @@ export default function PetDetailScreen() {
                 isSuperLike: true,
                 ...(likerPetId != null ? { likerPetId } : {}),
               });
-              Alert.alert('Süper beğeni', 'Gönderildi.');
+              Alert.alert(t('discover.alertSuperLike'), t('pets.detailSuperLikeSent'));
             } catch (e: any) {
-              Alert.alert('Süper beğeni', e?.response?.data?.message || 'Gönderilemedi.');
+              Alert.alert(t('discover.alertSuperLike'), e?.response?.data?.message || t('discover.alertSuperLikeFailed'));
             }
           }}
         >
@@ -298,10 +303,10 @@ export default function PetDetailScreen() {
               });
               if (r?.isMatch && r?.conversationId) {
                 showConfirm({
-                  title: 'Eşleşme!',
-                  message: 'Sohbete geçmek ister misin?',
-                  confirmLabel: 'Sohbet',
-                  cancelLabel: 'Kapat',
+                  title: t('pets.detailMatchTitle'),
+                  message: t('pets.detailMatchMessage'),
+                  confirmLabel: t('pets.detailMatchChat'),
+                  cancelLabel: t('common.close'),
                   icon: 'heart',
                   variant: 'success',
                   onCancel: () => navigation.goBack(),
@@ -309,10 +314,10 @@ export default function PetDetailScreen() {
                     (navigation as any).navigate('Chat', { id: String(r.conversationId) }),
                 });
               } else {
-                showAlert('Beğeni', 'Kaydedildi.', { variant: 'success', icon: 'heart-outline' });
+                showAlert(t('discover.alertLike'), t('pets.detailLikeSaved'), { variant: 'success', icon: 'heart-outline' });
               }
             } catch (e: any) {
-              showAlert('Beğeni', e?.response?.data?.message || 'İşlem başarısız.', {
+              showAlert(t('discover.alertLike'), e?.response?.data?.message || t('discover.alertActionFailed'), {
                 variant: 'destructive',
               });
             }
@@ -325,9 +330,9 @@ export default function PetDetailScreen() {
           onPress={async () => {
             try {
               await favoritesService.add(parseInt(String(id), 10));
-              Alert.alert('Favoriler', 'Eklendi.');
+              Alert.alert(t('discover.alertFavorites'), t('pets.detailFavoriteAdded'));
             } catch (e: any) {
-              Alert.alert('Hata', e?.response?.data?.message || 'Eklenemedi.');
+              Alert.alert(t('common.error'), e?.response?.data?.message || t('discover.alertFavoriteFailed'));
             }
           }}
         >
@@ -338,9 +343,9 @@ export default function PetDetailScreen() {
             style={styles.actionBtnSmall}
             onPress={() => {
               showConfirm({
-                title: 'Eşleşmeyi kaldır',
-                message: 'Bu hayvanla eşleşmen kaldırılacak.',
-                confirmLabel: 'Kaldır',
+                title: t('discover.unmatchTitle'),
+                message: t('discover.unmatchMessage'),
+                confirmLabel: t('common.remove'),
                 icon: 'unlink-outline',
                 variant: 'destructive',
                 onConfirm: async () => {
@@ -348,14 +353,14 @@ export default function PetDetailScreen() {
                     await matchesService.unmatchByPet(parseInt(String(id), 10));
                     setHasMatch(false);
                     queueMicrotask(() =>
-                      showAlert('Tamam', 'Eşleşme kaldırıldı.', {
+                      showAlert(t('common.ok'), t('discover.unmatchDone'), {
                         variant: 'success',
                         onConfirm: () => navigation.goBack(),
                       }),
                     );
                   } catch (e: any) {
                     queueMicrotask(() =>
-                      showAlert('Hata', e?.response?.data?.message || 'Kaldırılamadı.', {
+                      showAlert(t('common.error'), e?.response?.data?.message || t('discover.unmatchFailed'), {
                         variant: 'destructive',
                       }),
                     );

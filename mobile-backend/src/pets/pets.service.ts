@@ -17,16 +17,17 @@ export class PetsService {
 
   async create(ownerId: number, createPetDto: CreatePetDto) {
     const { temperaments: temperamentNames, ...petData } = createPetDto;
-    
+
     return this.entityManager.transaction(async (manager) => {
       const pet = manager.create(Pet, {
         ...petData,
         ownerId,
+        isAdopted: false,
+        purpose: petData.purpose,
       });
 
       const savedPet = await manager.save(pet);
 
-      // Handle temperaments
       if (temperamentNames && temperamentNames.length > 0) {
         const temperaments = await manager.find(Temperament, {
           where: { name: In(temperamentNames) },
@@ -79,11 +80,26 @@ export class PetsService {
         throw new ForbiddenException('You can only update your own pets');
       }
 
-      Object.assign(pet, updatePetDto);
+      if (pet.isAdopted && updatePetDto.isAdopted !== true) {
+        throw new ForbiddenException('Bu pati sahiplendirildi; artık düzenlenemez');
+      }
 
-      if (updatePetDto.temperaments) {
+      const { temperaments: temperamentNames, ...rest } = updatePetDto;
+
+      if (rest.isAdopted === true) {
+        pet.isAdopted = true;
+        pet.purpose = null;
+        pet.isActive = true;
+      } else {
+        Object.assign(pet, rest);
+        if (rest.purpose !== undefined) {
+          pet.purpose = rest.purpose;
+        }
+      }
+
+      if (temperamentNames) {
         const temperaments = await manager.find(Temperament, {
-          where: { name: In(updatePetDto.temperaments) },
+          where: { name: In(temperamentNames) },
         });
         pet.temperaments = temperaments;
       }
@@ -122,6 +138,10 @@ export class PetsService {
 
       if (pet.ownerId !== ownerId) {
         throw new ForbiddenException('You can only add photos to your own pets');
+      }
+
+      if (pet.isAdopted) {
+        throw new ForbiddenException('Bu pati sahiplendirildi; fotoğraf eklenemez');
       }
 
       const url = await this.uploadsService.uploadFile(file);

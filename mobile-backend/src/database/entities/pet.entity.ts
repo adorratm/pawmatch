@@ -27,9 +27,16 @@ export enum PetGender {
   FEMALE = 'female',
 }
 
+/** Listing intent — only one at a time; null = not listed */
+export enum PetPurpose {
+  PLAYMATE = 'playmate',
+  ADOPTION = 'adoption',
+}
+
 @Entity('pets')
 @Index(['ownerId'])
 @Index(['species'])
+@Index(['purpose'])
 export class Pet {
   @PrimaryGeneratedColumn()
   id: number;
@@ -73,8 +80,17 @@ export class Pet {
   @Column({ default: true })
   isActive: boolean;
 
+  /** True when rehomed — pet is locked from further listing/matching */
   @Column({ default: false })
   isAdopted: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: PetPurpose,
+    nullable: true,
+    default: null,
+  })
+  purpose: PetPurpose | null;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -100,5 +116,3 @@ export class Pet {
   })
   temperaments: Temperament[];
 }
-
-

@@ -20,11 +20,14 @@ import * as Google from 'expo-auth-session/providers/google';
 import * as Facebook from 'expo-auth-session/providers/facebook';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
+import { useTranslation } from 'react-i18next';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 // Web redirect / popup dönüşünde oturumu tamamlamak için gerekli
 WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen() {
+  const { t } = useTranslation();
   const { login, register, checkAuth, applyOAuthSession } = useAuthStore();
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
@@ -98,7 +101,7 @@ export default function LoginScreen() {
     const message = Array.isArray(data?.message)
       ? data.message.join('\n')
       : data?.message || (error as any)?.message || fallbackMessage;
-    showAuthAlert('Giriş Hatası', String(message));
+    showAuthAlert(t('auth.errorTitle'), String(message));
   };
 
   const clearOAuthUrlParams = () => {
@@ -120,7 +123,7 @@ export default function LoginScreen() {
         if (result.type === 'error') {
           handleOAuthError(
             result.error ?? new Error('Google auth error'),
-            'Google ile giriş başarısız.',
+            t('auth.googleFailed'),
           );
         }
         return;
@@ -142,7 +145,7 @@ export default function LoginScreen() {
 
       const dedupeKey = String(authorizationCode || idToken || accessToken || '');
       if (!dedupeKey) {
-        handleOAuthError(new Error('Google token missing'), 'Google token alınamadı.');
+        handleOAuthError(new Error('Google token missing'), t('auth.googleTokenMissing'));
         return;
       }
       if (googleHandledRef.current === dedupeKey) return;
@@ -179,7 +182,7 @@ export default function LoginScreen() {
         }
       } catch (error) {
         googleHandledRef.current = null;
-        handleOAuthError(error, 'Google ile giriş başarısız.');
+        handleOAuthError(error, t('auth.googleFailed'));
       } finally {
         setLoading(false);
       }
@@ -190,6 +193,7 @@ export default function LoginScreen() {
       googleRedirectUri,
       googleRequest?.codeVerifier,
       googleRuntimeClientId,
+      t,
     ],
   );
 
@@ -209,7 +213,7 @@ export default function LoginScreen() {
     if (!hasPlatformClient) {
       return handleOAuthError(
         new Error('Missing GOOGLE platform client id'),
-        'Google platform client id ayarlı değil.',
+        t('auth.googleClientMissing'),
       );
     }
 
@@ -220,7 +224,7 @@ export default function LoginScreen() {
         await finishGoogleAuth(result);
       }
     } catch (error) {
-      handleOAuthError(error, 'Google ile giriş başarısız.');
+      handleOAuthError(error, t('auth.googleFailed'));
     } finally {
       setLoading(false);
     }
@@ -228,7 +232,7 @@ export default function LoginScreen() {
 
   const handleFacebookLogin = async () => {
     if (!facebookAppId) {
-      return handleOAuthError(new Error('Missing Facebook app id'), 'Facebook app id ayarlı değil.');
+      return handleOAuthError(new Error('Missing Facebook app id'), t('auth.facebookAppMissing'));
     }
 
     setLoading(true);
@@ -252,7 +256,7 @@ export default function LoginScreen() {
         await checkAuth();
       }
     } catch (error) {
-      handleOAuthError(error, 'Facebook ile giriş başarısız.');
+      handleOAuthError(error, t('auth.facebookFailed'));
     } finally {
       setLoading(false);
     }
@@ -287,7 +291,7 @@ export default function LoginScreen() {
         await checkAuth();
       }
     } catch (error) {
-      handleOAuthError(error, 'Apple ile giriş başarısız.');
+      handleOAuthError(error, t('auth.appleFailed'));
     } finally {
       setLoading(false);
     }
@@ -305,15 +309,15 @@ export default function LoginScreen() {
   const handleSubmit = async () => {
     const trimmedEmail = email.trim();
     if (!trimmedEmail || !password) {
-      showAuthAlert('Eksik bilgi', 'E-posta ve şifre gerekli.');
+      showAuthAlert(t('auth.missingInfoTitle'), t('auth.missingFields'));
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-      showAuthAlert('Geçersiz e-posta', 'Lütfen geçerli bir e-posta adresi girin.');
+      showAuthAlert(t('auth.invalidEmailTitle'), t('auth.invalidEmail'));
       return;
     }
     if (mode === 'signup' && (!firstName.trim() || !lastName.trim())) {
-      showAuthAlert('Eksik bilgi', 'Ad ve soyad gerekli.');
+      showAuthAlert(t('auth.missingInfoTitle'), t('auth.missingName'));
       return;
     }
 
@@ -337,10 +341,10 @@ export default function LoginScreen() {
           : undefined;
       if (detail) console.error('Auth error body:', detail);
       showAuthAlert(
-        mode === 'login' ? 'Giriş başarısız' : 'Kayıt başarısız',
+        mode === 'login' ? t('auth.loginFailed') : t('auth.signupFailed'),
         getAuthErrorMessage(
           error,
-          mode === 'login' ? 'E-posta veya şifre hatalı.' : 'Kayıt tamamlanamadı.',
+          mode === 'login' ? t('auth.wrongCredentials') : t('auth.signupIncomplete'),
         ),
       );
     } finally {
@@ -360,20 +364,20 @@ export default function LoginScreen() {
         </View>
 
         <View style={styles.content}>
-          <Text style={styles.title}>Pati Arkadaşını Bul</Text>
-          <Text style={styles.subtitle}>Hayatına neşe katacak tüylü dostunla tanış.</Text>
+          <Text style={styles.title}>{t('auth.title')}</Text>
+          <Text style={styles.subtitle}>{t('auth.subtitle')}</Text>
 
           <View style={styles.toggleContainer}>
             <View style={styles.toggleBackground}>
               <View style={[styles.toggleSlider, mode === 'login' && styles.toggleSliderActive]} />
               <TouchableOpacity style={styles.toggleButton} onPress={() => setMode('login')}>
                 <Text style={[styles.toggleText, mode === 'login' && styles.toggleTextActive]}>
-                  Giriş Yap
+                  {t('auth.login')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.toggleButton} onPress={() => setMode('signup')}>
                 <Text style={[styles.toggleText, mode === 'signup' && styles.toggleTextActive]}>
-                  Kayıt Ol
+                  {t('auth.signup')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -382,16 +386,16 @@ export default function LoginScreen() {
           {mode === 'signup' && (
             <>
               <Input
-                label="Ad"
-                placeholder="Adınız"
+                label={t('auth.labelFirstName')}
+                placeholder={t('auth.placeholderFirstName')}
                 value={firstName}
                 onChangeText={setFirstName}
                 autoCapitalize="words"
                 textContentType="givenName"
               />
               <Input
-                label="Soyad"
-                placeholder="Soyadınız"
+                label={t('auth.labelLastName')}
+                placeholder={t('auth.placeholderLastName')}
                 value={lastName}
                 onChangeText={setLastName}
                 autoCapitalize="words"
@@ -401,8 +405,8 @@ export default function LoginScreen() {
           )}
 
           <Input
-            label="E-posta Adresi"
-            placeholder="ornek@email.com"
+            label={t('auth.labelEmail')}
+            placeholder={t('auth.placeholderEmail')}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -413,8 +417,8 @@ export default function LoginScreen() {
           />
 
           <Input
-            label="Şifre"
-            placeholder="******"
+            label={t('auth.labelPassword')}
+            placeholder={t('auth.placeholderPassword')}
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!showPassword}
@@ -425,7 +429,7 @@ export default function LoginScreen() {
 
           {mode === 'login' && (
             <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Şifremi Unuttum?</Text>
+              <Text style={styles.forgotPasswordText}>{t('auth.forgotPassword')}</Text>
             </TouchableOpacity>
           )}
 
@@ -435,14 +439,14 @@ export default function LoginScreen() {
             disabled={loading}
           >
             <Text style={styles.submitButtonText}>
-              {mode === 'login' ? 'Giriş Yap' : 'Kayıt Ol'}
+              {mode === 'login' ? t('auth.login') : t('auth.signup')}
             </Text>
             <Ionicons name="arrow-forward" size={20} color="#fff" />
           </TouchableOpacity>
 
           <View style={styles.divider}>
             <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>veya şununla devam et</Text>
+            <Text style={styles.dividerText}>{t('auth.orContinueWith')}</Text>
             <View style={styles.dividerLine} />
           </View>
 
@@ -526,11 +530,7 @@ const styles = StyleSheet.create({
     width: '48%',
     backgroundColor: '#fff',
     borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 4, opacity: 0.1, elevation: 2 }),
   },
   toggleSliderActive: {
     left: '52%',
@@ -568,11 +568,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     marginTop: 8,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 4, blur: 8, opacity: 0.3, elevation: 5 }),
   },
   submitButtonDisabled: {
     opacity: 0.6,

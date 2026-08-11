@@ -9,16 +9,19 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import api from '@/infrastructure/api/api';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 function formatRating(value: unknown, fallback = '4.5') {
   const n = typeof value === 'number' ? value : Number(value);
   return Number.isFinite(n) ? n.toFixed(1) : fallback;
 }
 
 export default function VeterinariansScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [clinics, setClinics] = useState<any[]>([]);
 
@@ -53,9 +56,9 @@ export default function VeterinariansScreen() {
             <Ionicons name="star" size={16} color="#fbbf24" />
             <Text style={styles.rating}>{formatRating(item.rating)}</Text>
           </View>
-          <Text style={styles.reviews}>{item.reviewCount || 0} Yorum</Text>
+          <Text style={styles.reviews}>{t('vet.reviewsCount', { count: item.reviewCount || 0 })}</Text>
           <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>AÇIK</Text>
+            <Text style={styles.statusText}>{t('vet.openNow')}</Text>
           </View>
         </View>
         <View style={styles.clinicLocation}>
@@ -72,7 +75,7 @@ export default function VeterinariansScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Yakın Veterinerler</Text>
+        <Text style={styles.headerTitle}>{t('vet.listTitle')}</Text>
         <TouchableOpacity onPress={() => (navigation as any).navigate('VeterinariansMap')}>
           <Ionicons name="map" size={24} color={COLORS.primary} />
         </TouchableOpacity>
@@ -86,7 +89,7 @@ export default function VeterinariansScreen() {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="medical-outline" size={64} color={COLORS.textMuted} />
-            <Text style={styles.emptyText}>Yakınınızda veteriner bulunamadı</Text>
+            <Text style={styles.emptyText}>{t('vet.emptyNearby')}</Text>
           </View>
         }
       />
@@ -120,11 +123,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 8, opacity: 0.1, elevation: 3 }),
   },
   clinicImage: {
     width: '100%',

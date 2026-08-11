@@ -1,5 +1,6 @@
+import { Type } from 'class-transformer';
 import { IsString, IsEnum, IsNumber, IsBoolean, IsOptional, IsArray } from 'class-validator';
-import { PetSpecies, PetGender } from '../../database/entities/pet.entity';
+import { PetSpecies, PetGender, PetPurpose } from '../../database/entities/pet.entity';
 
 export class UpdatePetDto {
   @IsOptional()
@@ -15,6 +16,7 @@ export class UpdatePetDto {
   breed?: string;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   age?: number;
 
@@ -42,6 +44,13 @@ export class UpdatePetDto {
   @IsArray()
   @IsString({ each: true })
   temperaments?: string[];
+
+  @IsOptional()
+  @IsEnum(PetPurpose)
+  purpose?: PetPurpose | null;
+
+  /** Mark as rehomed — locks the pet */
+  @IsOptional()
+  @IsBoolean()
+  isAdopted?: boolean;
 }
-
-

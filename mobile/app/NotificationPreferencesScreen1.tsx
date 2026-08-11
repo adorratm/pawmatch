@@ -9,12 +9,15 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { userRepository } from '@/infrastructure/repositories/ApiUserRepository';
 import { mergeAndSavePreferences } from '@/infrastructure/api/userPreferences';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 export default function NotificationPreferencesScreen1() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [newMatches, setNewMatches] = useState(true);
   const [messages, setMessages] = useState(true);
@@ -50,7 +53,7 @@ export default function NotificationPreferencesScreen1() {
 
   useEffect(() => {
     if (!hydrated) return;
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       mergeAndSavePreferences({
         notifications: {
           types: {
@@ -62,7 +65,7 @@ export default function NotificationPreferencesScreen1() {
         },
       }).catch(() => {});
     }, 500);
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
   }, [hydrated, newMatches, messages, likes, appointments]);
 
   return (
@@ -71,21 +74,21 @@ export default function NotificationPreferencesScreen1() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Bildirim Tercihleri</Text>
+        <Text style={styles.headerTitle}>{t('settings.notifTypesTitle')}</Text>
         <View style={styles.spacer} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Bildirim Türleri</Text>
+          <Text style={styles.sectionTitle}>{t('settings.notifTypesSection')}</Text>
           <View style={styles.settingsList}>
             <View style={styles.settingItem}>
               <View style={styles.settingIcon}>
                 <Ionicons name="heart" size={24} color={COLORS.primary} />
               </View>
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>Yeni Eşleşmeler</Text>
-                <Text style={styles.settingSubtitle}>Eşleştiğinizde bildirim al</Text>
+                <Text style={styles.settingTitle}>{t('settings.notifNewMatches')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.notifNewMatchesHint')}</Text>
               </View>
               <Switch
                 value={newMatches}
@@ -99,8 +102,8 @@ export default function NotificationPreferencesScreen1() {
                 <Ionicons name="chatbubble" size={24} color={COLORS.primary} />
               </View>
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>Yeni Mesajlar</Text>
-                <Text style={styles.settingSubtitle}>Mesaj geldiğinde bildirim al</Text>
+                <Text style={styles.settingTitle}>{t('settings.notifNewMessages')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.notifNewMessagesHint')}</Text>
               </View>
               <Switch
                 value={messages}
@@ -114,8 +117,8 @@ export default function NotificationPreferencesScreen1() {
                 <Ionicons name="thumbs-up" size={24} color={COLORS.primary} />
               </View>
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>Beğeniler</Text>
-                <Text style={styles.settingSubtitle}>Profilin beğenildiğinde bildirim al</Text>
+                <Text style={styles.settingTitle}>{t('settings.notifLikes')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.notifLikesHint')}</Text>
               </View>
               <Switch
                 value={likes}
@@ -129,8 +132,8 @@ export default function NotificationPreferencesScreen1() {
                 <Ionicons name="calendar" size={24} color={COLORS.primary} />
               </View>
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>Randevular</Text>
-                <Text style={styles.settingSubtitle}>Randevu hatırlatmaları</Text>
+                <Text style={styles.settingTitle}>{t('settings.notifAppointments')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.notifAppointmentsHint')}</Text>
               </View>
               <Switch
                 value={appointments}
@@ -189,11 +192,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     borderRadius: 16,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 8, opacity: 0.1, elevation: 3 }),
   },
   settingItem: {
     flexDirection: 'row',

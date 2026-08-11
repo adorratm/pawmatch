@@ -3,10 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MapView, Marker } from '@/presentation/components/maps/RNMaps';
 import { useNavigation } from 'expo-router/react-navigation';
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { veterinariansService } from '@/infrastructure/api/veterinarians.service';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 type ClinicMarker = {
   id: number;
   name: string;
@@ -16,6 +18,7 @@ type ClinicMarker = {
 };
 
 export default function VeterinariansMapScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [clinics, setClinics] = useState<ClinicMarker[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +61,7 @@ export default function VeterinariansMapScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Veteriner Haritası</Text>
+        <Text style={styles.headerTitle}>{t('vet.mapTitle')}</Text>
         <View style={styles.spacer} />
       </View>
 
@@ -91,11 +94,11 @@ export default function VeterinariansMapScreen() {
 
       <View style={styles.bottomSheet}>
         <View style={styles.handle} />
-        <Text style={styles.sheetTitle}>Yakındaki Veterinerler</Text>
+        <Text style={styles.sheetTitle}>{t('vet.nearbySheet')}</Text>
         {loading ? (
           <ActivityIndicator color={COLORS.primary} style={{ marginVertical: 24 }} />
         ) : clinics.length === 0 ? (
-          <Text style={styles.emptyText}>Yakınınızda veteriner bulunamadı</Text>
+          <Text style={styles.emptyText}>{t('vet.emptyNearby')}</Text>
         ) : (
           clinics.map((clinic) => (
             <TouchableOpacity
@@ -114,8 +117,8 @@ export default function VeterinariansMapScreen() {
                 <Text style={styles.clinicName}>{clinic.name}</Text>
                 <Text style={styles.clinicDistance}>
                   {clinic.distance != null && Number.isFinite(clinic.distance)
-                    ? `${clinic.distance.toFixed(1)} km uzaklıkta`
-                    : 'Konum mevcut'}
+                    ? t('common.kmAway', { distance: clinic.distance.toFixed(1) })
+                    : t('pets.detailUnknown')}
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
@@ -172,11 +175,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
     padding: 24,
     maxHeight: '40%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 10,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: -4, blur: 8, opacity: 0.1, elevation: 10 }),
   },
   handle: {
     width: 40,
@@ -205,11 +204,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 8, opacity: 0.1, elevation: 3 }),
   },
   clinicIcon: {
     width: 40,

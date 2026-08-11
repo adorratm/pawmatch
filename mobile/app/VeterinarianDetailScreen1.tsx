@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from 'expo-router/react-navigation';
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import api from '@/infrastructure/api/api';
@@ -19,6 +20,7 @@ import api from '@/infrastructure/api/api';
 const { width } = Dimensions.get('window');
 
 export default function VeterinarianDetailScreen1() {
+  const { t } = useTranslation();
   const route = useRoute();
   const navigation = useNavigation();
   const { clinicId } = (route.params as { clinicId?: string | number } | undefined) ?? {};
@@ -34,7 +36,7 @@ export default function VeterinarianDetailScreen1() {
   const loadClinic = async () => {
     if (clinicId == null || clinicId === '') {
       setClinic(null);
-      setError('Klinik bilgisi bulunamadı.');
+      setError(t('vet.notFound'));
       setLoading(false);
       return;
     }
@@ -49,8 +51,8 @@ export default function VeterinarianDetailScreen1() {
       setClinic(null);
       setError(
         status === 404
-          ? 'Bu klinik bulunamadı veya artık mevcut değil.'
-          : 'Klinik yüklenirken bir hata oluştu.',
+          ? t('vet.notFoundOrGone')
+          : t('vet.loadError'),
       );
     } finally {
       setLoading(false);
@@ -62,7 +64,7 @@ export default function VeterinarianDetailScreen1() {
       <SafeAreaView style={styles.container}>
         <View style={styles.centered}>
           <ActivityIndicator color={COLORS.primary} size="large" />
-          <Text style={styles.statusText}>Yükleniyor...</Text>
+          <Text style={styles.statusText}>{t('common.loading')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -75,14 +77,14 @@ export default function VeterinarianDetailScreen1() {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Veteriner Detayı</Text>
+          <Text style={styles.headerTitle}>{t('vet.detailTitle')}</Text>
           <View style={styles.spacer} />
         </View>
         <View style={styles.centered}>
           <Ionicons name="alert-circle-outline" size={48} color={COLORS.textMuted} />
-          <Text style={styles.statusText}>{error || 'Klinik bulunamadı.'}</Text>
+          <Text style={styles.statusText}>{error || t('vet.notFound')}</Text>
           <TouchableOpacity style={styles.retryButton} onPress={loadClinic}>
-            <Text style={styles.retryButtonText}>Tekrar dene</Text>
+            <Text style={styles.retryButtonText}>{t('common.retryShort')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -95,7 +97,7 @@ export default function VeterinarianDetailScreen1() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Detail</Text>
+        <Text style={styles.headerTitle}>{t('vet.detailTitleAlt')}</Text>
         <TouchableOpacity>
           <Ionicons name="heart-outline" size={24} color={COLORS.primary} />
         </TouchableOpacity>
@@ -132,20 +134,20 @@ export default function VeterinarianDetailScreen1() {
                 })()}
               </Text>
             </View>
-            <Text style={styles.reviews}>{clinic.reviewCount || 120} Reviews</Text>
+            <Text style={styles.reviews}>{t('vet.reviewsCountEn', { count: clinic.reviewCount || 120 })}</Text>
             <View style={styles.statusBadge}>
-              <Text style={styles.statusText}>OPEN NOW</Text>
+              <Text style={styles.statusText}>{t('vet.openNowEn')}</Text>
             </View>
           </View>
 
           <View style={styles.actions}>
             <TouchableOpacity style={styles.actionButton}>
               <Ionicons name="call" size={20} color={COLORS.primary} />
-              <Text style={styles.actionText}>Ara</Text>
+              <Text style={styles.actionText}>{t('vet.call')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.actionButton}>
               <Ionicons name="location" size={20} color={COLORS.primary} />
-              <Text style={styles.actionText}>Yol Tarifi</Text>
+              <Text style={styles.actionText}>{t('vet.directions')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.actionButton, styles.primaryAction]}
@@ -156,7 +158,7 @@ export default function VeterinarianDetailScreen1() {
               }
             >
               <Ionicons name="calendar" size={20} color="#fff" />
-              <Text style={[styles.actionText, styles.primaryActionText]}>Randevu Al</Text>
+              <Text style={[styles.actionText, styles.primaryActionText]}>{t('vet.book')}</Text>
             </TouchableOpacity>
           </View>
 
@@ -167,17 +169,17 @@ export default function VeterinarianDetailScreen1() {
             }
           >
             <Ionicons name="star-outline" size={22} color={COLORS.primary} />
-            <Text style={styles.rateClinicText}>Kliniği değerlendir</Text>
+            <Text style={styles.rateClinicText}>{t('vet.rateClinic')}</Text>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
           </TouchableOpacity>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Hakkında</Text>
-            <Text style={styles.sectionText}>{clinic.veterinarian?.bio || 'Modern ve donanımlı veteriner kliniği.'}</Text>
+            <Text style={styles.sectionTitle}>{t('vet.about')}</Text>
+            <Text style={styles.sectionText}>{clinic.veterinarian?.bio || t('vet.aboutDefault')}</Text>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>İletişim</Text>
+            <Text style={styles.sectionTitle}>{t('vet.contact')}</Text>
             <View style={styles.contactItem}>
               <Ionicons name="location" size={20} color={COLORS.primary} />
               <Text style={styles.contactText}>{clinic.address}</Text>
@@ -194,11 +196,11 @@ export default function VeterinarianDetailScreen1() {
 
           {clinic.services && clinic.services.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Hizmetler</Text>
+              <Text style={styles.sectionTitle}>{t('vet.services')}</Text>
               {clinic.services.map((service: any) => (
                 <View key={service.id} style={styles.serviceItem}>
                   <Text style={styles.serviceName}>{service.name}</Text>
-                  <Text style={styles.servicePrice}>{service.price} ₺</Text>
+                  <Text style={styles.servicePrice}>{t('common.priceTry', { price: service.price })}</Text>
                 </View>
               ))}
             </View>

@@ -1,4 +1,14 @@
-import { Controller, Get, Put, Post, Delete, Body, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Put,
+  Post,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { PushNotificationService } from './push-notification.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -20,12 +30,35 @@ export class NotificationsController {
     return this.notificationsService.getUserNotifications(user.id);
   }
 
+  @Get('unread-count')
+  async unreadCount(@CurrentUser() user: User) {
+    return this.notificationsService.getUnreadCount(user.id);
+  }
+
+  @Put('read-all')
+  async markAllRead(@CurrentUser() user: User) {
+    return this.notificationsService.markAllAsRead(user.id);
+  }
+
+  @Delete()
+  async deleteAll(@CurrentUser() user: User) {
+    return this.notificationsService.deleteAll(user.id);
+  }
+
   @Put(':id/read')
   async markAsRead(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: User,
   ) {
     return this.notificationsService.markAsRead(id, user.id);
+  }
+
+  @Delete(':id')
+  async deleteOne(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+  ) {
+    return this.notificationsService.deleteNotification(id, user.id);
   }
 
   @Post('push-token')

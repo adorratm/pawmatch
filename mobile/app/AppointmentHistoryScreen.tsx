@@ -8,11 +8,14 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import api from '@/infrastructure/api/api';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 export default function AppointmentHistoryScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [appointments, setAppointments] = useState<any[]>([]);
 
@@ -47,13 +50,13 @@ export default function AppointmentHistoryScreen() {
   const getStatusText = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return 'Onaylandı';
+        return t('appointments.statusConfirmed');
       case 'pending':
-        return 'Beklemede';
+        return t('appointments.statusPending');
       case 'cancelled':
-        return 'İptal Edildi';
+        return t('appointments.statusCancelled');
       case 'completed':
-        return 'Tamamlandı';
+        return t('appointments.statusCompleted');
       default:
         return status;
     }
@@ -63,7 +66,7 @@ export default function AppointmentHistoryScreen() {
     <TouchableOpacity style={styles.appointmentCard}>
       <View style={styles.appointmentHeader}>
         <View style={styles.appointmentInfo}>
-          <Text style={styles.clinicName}>{item.clinic?.name || 'Veteriner Kliniği'}</Text>
+          <Text style={styles.clinicName}>{item.clinic?.name || t('appointments.clinicFallback')}</Text>
           <View style={styles.appointmentMeta}>
             <Ionicons name="calendar" size={16} color={COLORS.textMuted} />
             <Text style={styles.appointmentDate}>
@@ -104,7 +107,7 @@ export default function AppointmentHistoryScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Randevu Geçmişi</Text>
+        <Text style={styles.headerTitle}>{t('appointments.historyTitle')}</Text>
         <View style={styles.spacer} />
       </View>
 
@@ -116,7 +119,7 @@ export default function AppointmentHistoryScreen() {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="calendar-outline" size={64} color={COLORS.textMuted} />
-            <Text style={styles.emptyText}>Henüz randevunuz yok</Text>
+            <Text style={styles.emptyText}>{t('appointments.historyEmpty')}</Text>
           </View>
         }
       />
@@ -153,11 +156,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 8, opacity: 0.1, elevation: 3 }),
   },
   appointmentHeader: {
     flexDirection: 'row',

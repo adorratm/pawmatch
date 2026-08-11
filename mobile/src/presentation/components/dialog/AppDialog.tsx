@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS } from '@/presentation/styles/config';
 import { useDialogStore } from '@/application/stores/dialogStore';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 const VARIANT_COLOR: Record<string, string> = {
   default: COLORS.primary,
   destructive: '#c45c26',
@@ -160,11 +161,7 @@ const styles = StyleSheet.create({
         boxShadow: '0 24px 48px rgba(44, 37, 32, 0.18)',
       },
       default: {
-        shadowColor: '#2c2520',
-        shadowOffset: { width: 0, height: 16 },
-        shadowOpacity: 0.2,
-        shadowRadius: 24,
-        elevation: 12,
+        ...shadowStyle({ color: '#2c2520', offsetX: 0, offsetY: 16, blur: 24, opacity: 0.2, elevation: 12 }),
       },
     }),
   },

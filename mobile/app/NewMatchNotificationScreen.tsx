@@ -2,10 +2,13 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 export default function NewMatchNotificationScreen() {
+  const { t } = useTranslation();
   const route = useRoute();
   const navigation = useNavigation();
   const { match } = route.params as any;
@@ -19,9 +22,9 @@ export default function NewMatchNotificationScreen() {
           </View>
         </View>
 
-        <Text style={styles.title}>Eşleştiniz! 🎉</Text>
+        <Text style={styles.title}>{t('matches.newMatchTitle')}</Text>
         <Text style={styles.subtitle}>
-          {match?.pet?.name || 'Yeni bir eşleşme'} ile eşleştiniz. Sohbet etmeye başlayabilirsiniz!
+          {t('matches.newMatchSubtitle', { name: match?.pet?.name || t('matches.newMatchFallbackName') })}
         </Text>
 
         {match?.pet?.photos?.[0] && (
@@ -36,13 +39,13 @@ export default function NewMatchNotificationScreen() {
             onPress={() => (navigation as any).navigate('Chat', { id: match.conversationId.toString() })}
           >
             <Ionicons name="chatbubble" size={20} color="#171515ff" />
-            <Text style={styles.chatButtonText}>Sohbet Et</Text>
+            <Text style={styles.chatButtonText}>{t('matches.startChat')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.continueButton}
             onPress={() => navigation.goBack()}
           >
-            <Text style={styles.continueButtonText}>Devam Et</Text>
+            <Text style={styles.continueButtonText}>{t('matches.keepSwiping')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -71,11 +74,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 10,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 8, blur: 16, opacity: 0.3, elevation: 10 }),
   },
   title: {
     fontSize: 32,
@@ -116,11 +115,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 4, blur: 8, opacity: 0.3, elevation: 5 }),
   },
   chatButtonText: {
     color: '#fff',

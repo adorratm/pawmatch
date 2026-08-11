@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from 'expo-router/react-navigation';
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '@/presentation/components/forms/Input';
@@ -27,6 +28,7 @@ function showAlert(title: string, message: string) {
 }
 
 export default function EditProfileScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { user, setUser } = useAuthStore();
   const [firstName, setFirstName] = useState(user?.firstName || '');
@@ -36,7 +38,7 @@ export default function EditProfileScreen() {
 
   const handleSave = async () => {
     if (!firstName.trim() || !lastName.trim()) {
-      showAlert('Eksik bilgi', 'Ad ve soyad gerekli.');
+      showAlert(t('auth.missingInfoTitle'), t('profile.missingInfo'));
       return;
     }
     setSaving(true);
@@ -47,10 +49,10 @@ export default function EditProfileScreen() {
         bio: bio.trim(),
       });
       setUser(User.fromJSON(updated));
-      showAlert('Kaydedildi', 'Profilin güncellendi.');
+      showAlert(t('profile.savedTitle'), t('profile.savedMsg'));
       navigation.goBack();
     } catch (e: any) {
-      showAlert('Hata', e?.response?.data?.message || 'Profil güncellenemedi.');
+      showAlert(t('common.error'), e?.response?.data?.message || t('profile.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -62,44 +64,44 @@ export default function EditProfileScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profili Düzenle</Text>
+        <Text style={styles.headerTitle}>{t('profile.editTitle')}</Text>
         <TouchableOpacity onPress={handleSave} disabled={saving}>
           {saving ? (
             <ActivityIndicator color={COLORS.primary} />
           ) : (
-            <Text style={styles.saveText}>Kaydet</Text>
+            <Text style={styles.saveText}>{t('common.save')}</Text>
           )}
         </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <Input
-          label="Ad"
+          label={t('profile.labelFirstName')}
           value={firstName}
           onChangeText={setFirstName}
           autoCapitalize="words"
           textContentType="givenName"
         />
         <Input
-          label="Soyad"
+          label={t('profile.labelLastName')}
           value={lastName}
           onChangeText={setLastName}
           autoCapitalize="words"
           textContentType="familyName"
         />
         <Input
-          label="E-posta"
+          label={t('profile.labelEmail')}
           value={user?.email || ''}
           editable={false}
           containerStyle={styles.disabledField}
         />
         <Input
-          label="Hakkımda"
+          label={t('profile.labelBio')}
           value={bio}
           onChangeText={setBio}
           multiline
           numberOfLines={4}
-          placeholder="Kendinden bahset..."
+          placeholder={t('profile.placeholderBio')}
           maxLength={300}
           hint={`${bio.length}/300`}
         />

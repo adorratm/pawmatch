@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import type { PurchasesPackage } from 'react-native-purchases';
 import Purchases from 'react-native-purchases';
 import { COLORS } from '@/presentation/styles/config';
@@ -22,13 +23,7 @@ import {
 } from '@/infrastructure/purchases/revenueCat.service';
 import { syncPatiSubscriptionToBackendProfile } from '@/infrastructure/api/patiSubscriptionSync';
 
-const FEATURES = [
-  'Sınırsız beğeni',
-  'Kimlerin beğendiğini gör',
-  'Reklamsız deneyim',
-  'Öncelikli destek',
-];
-
+import { shadowStyle } from '@/presentation/styles/shadow';
 function isUserCancelled(e: unknown): boolean {
   const err = e as { code?: string | number; userCancelled?: boolean };
   if (err.userCancelled === true) return true;
@@ -39,6 +34,7 @@ function isUserCancelled(e: unknown): boolean {
 }
 
 export default function InAppPurchasesScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [tierLabel, setTierLabel] = useState<string | null>(null);
   const [keyModeLabel, setKeyModeLabel] = useState<string | null>(null);
@@ -47,16 +43,23 @@ export default function InAppPurchasesScreen() {
   const [purchasingId, setPurchasingId] = useState<string | null>(null);
   const [restoring, setRestoring] = useState(false);
 
+  const FEATURES = [
+    t('purchases.featureUnlimitedLikes'),
+    t('purchases.featureSeeWhoLiked'),
+    t('purchases.featureAdFree'),
+    t('purchases.featurePrioritySupport'),
+  ];
+
   const refreshStatus = useCallback(async () => {
     try {
       const s = await subscriptionsService.getMySubscription();
-      setTierLabel(s.isActive ? (s.tier === 'gold' ? 'Pati Gold' : s.tier) : 'Ücretsiz');
+      setTierLabel(s.isActive ? (s.tier === 'gold' ? t('purchases.tierGold') : s.tier) : t('purchases.tierFree'));
       setKeyModeLabel(s.keyMode ?? null);
     } catch {
       setTierLabel(null);
       setKeyModeLabel(null);
     }
-  }, []);
+  }, [t]);
 
   const loadOfferings = useCallback(async () => {
     if (!revenueCatIsNativeSupported() || !revenueCatHasApiKeyInEnv()) {
@@ -82,7 +85,7 @@ export default function InAppPurchasesScreen() {
 
   const onPurchase = async (pkg: PurchasesPackage) => {
     if (!revenueCatService.isConfigured()) {
-      Alert.alert('Kurulum', 'RevenueCat API anahtarlarını .env içinde tanımlayıp uygulamayı yeniden derleyin.');
+      Alert.alert(t('purchases.setupTitle'), t('purchases.setupMsg'));
       return;
     }
     setPurchasingId(pkg.identifier);
@@ -90,11 +93,11 @@ export default function InAppPurchasesScreen() {
       await revenueCatService.purchasePackage(pkg);
       await refreshStatus();
       await syncPatiSubscriptionToBackendProfile();
-      Alert.alert('Teşekkürler', 'Pati Gold aboneliğin aktifleştirildi.');
+      Alert.alert(t('purchases.thanksTitle'), t('purchases.thanksMsg'));
     } catch (e: unknown) {
       if (isUserCancelled(e)) return;
-      const msg = (e as { message?: string })?.message ?? 'Satın alma tamamlanamadı.';
-      Alert.alert('Hata', msg);
+      const msg = (e as { message?: string })?.message ?? t('purchases.purchaseFailed');
+      Alert.alert(t('common.error'), msg);
     } finally {
       setPurchasingId(null);
     }
@@ -107,10 +110,10 @@ export default function InAppPurchasesScreen() {
       await revenueCatService.restorePurchases();
       await refreshStatus();
       await syncPatiSubscriptionToBackendProfile();
-      Alert.alert('Geri yükleme', 'Satın alımlar senkronize edildi.');
+      Alert.alert(t('purchases.restoreTitle'), t('purchases.restoreMsg'));
     } catch (e: unknown) {
-      const msg = (e as { message?: string })?.message ?? 'Geri yükleme başarısız.';
-      Alert.alert('Hata', msg);
+      const msg = (e as { message?: string })?.message ?? t('purchases.restoreFailed');
+      Alert.alert(t('common.error'), msg);
     } finally {
       setRestoring(false);
     }
@@ -125,7 +128,7 @@ export default function InAppPurchasesScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Pati Gold</Text>
+        <Text style={styles.headerTitle}>{t('purchases.title')}</Text>
         <View style={styles.spacer} />
       </View>
 
@@ -134,27 +137,26 @@ export default function InAppPurchasesScreen() {
           <View style={styles.iconContainer}>
             <Ionicons name="star" size={48} color={COLORS.primary} />
           </View>
-          <Text style={styles.heroTitle}>Pati Gold'a Geç</Text>
+          <Text style={styles.heroTitle}>{t('purchases.heroTitle')}</Text>
           <Text style={styles.heroSubtitle}>
-            Sınırsız beğeni hakkı kazan ve seni kimlerin beğendiğini anında gör.
+            {t('purchases.heroSubtitle')}
           </Text>
           {tierLabel !== null && (
-            <Text style={styles.currentPlanHint}>Mevcut plan: {tierLabel}</Text>
+            <Text style={styles.currentPlanHint}>{t('purchases.currentPlan', { tier: tierLabel })}</Text>
           )}
           {keyModeLabel === 'sandbox' && (
             <View style={styles.sandboxBadge}>
               <Text style={styles.sandboxBadgeText}>
-                Mağaza: Sandbox (EXPO_PUBLIC_REVENUECAT_KEY_MODE=sandbox veya geliştirme)
+                {t('purchases.sandboxHint')}
               </Text>
             </View>
           )}
           {keyModeLabel === 'production' && rcReady && (
-            <Text style={styles.prodHint}>Mağaza: Production anahtarı</Text>
+            <Text style={styles.prodHint}>{t('purchases.productionHint')}</Text>
           )}
           {!revenueCatHasApiKeyInEnv() && revenueCatIsNativeSupported() && (
             <Text style={styles.warningHint}>
-              RevenueCat API anahtarı yok — .env içine EXPO_PUBLIC_REVENUECAT_IOS_API_KEY (ve Android için
-              ANDROID) ekleyin.
+              {t('purchases.missingApiKey')}
             </Text>
           )}
         </View>
@@ -164,8 +166,7 @@ export default function InAppPurchasesScreen() {
         ) : packages.length === 0 ? (
           <View style={styles.emptyOfferings}>
             <Text style={styles.emptyOfferingsText}>
-              RevenueCat teklifleri bulunamadı. Dashboard&apos;da Offering (varsayılan) ve ürünleri
-              bağladığınızdan emin olun; ardından yeniden derleyin.
+              {t('purchases.noOfferings')}
             </Text>
           </View>
         ) : (
@@ -183,7 +184,7 @@ export default function InAppPurchasesScreen() {
                 >
                   {isAnnual && (
                     <View style={styles.popularBadge}>
-                      <Text style={styles.popularText}>EN POPÜLER</Text>
+                      <Text style={styles.popularText}>{t('purchases.mostPopular')}</Text>
                     </View>
                   )}
                   <View style={styles.planHeader}>
@@ -214,7 +215,7 @@ export default function InAppPurchasesScreen() {
                           isAnnual && styles.subscribeButtonTextPopular,
                         ]}
                       >
-                        Abone Ol
+                        {t('purchases.subscribe')}
                       </Text>
                     )}
                   </TouchableOpacity>
@@ -232,14 +233,13 @@ export default function InAppPurchasesScreen() {
           {restoring ? (
             <ActivityIndicator color={COLORS.primary} />
           ) : (
-            <Text style={styles.restoreText}>Satın alımları geri yükle</Text>
+            <Text style={styles.restoreText}>{t('purchases.restore')}</Text>
           )}
         </TouchableOpacity>
 
         <View style={styles.infoSection}>
           <Text style={styles.infoText}>
-            Abonelik otomatik olarak yenilenir. İstediğiniz zaman App Store / Play Store üzerinden iptal
-            edebilirsiniz.
+            {t('purchases.renewInfo')}
           </Text>
         </View>
       </ScrollView>
@@ -362,11 +362,7 @@ const styles = StyleSheet.create({
   },
   planCardPopular: {
     borderColor: COLORS.primary,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 4, blur: 8, opacity: 0.2, elevation: 5 }),
   },
   popularBadge: {
     position: 'absolute',
@@ -420,11 +416,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 4, blur: 8, opacity: 0.3, elevation: 5 }),
   },
   subscribeButtonPopular: {
     backgroundColor: COLORS.primary,

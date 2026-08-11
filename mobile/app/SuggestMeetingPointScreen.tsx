@@ -9,19 +9,22 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MapView, Marker } from '@/presentation/components/maps/RNMaps';
 import { useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 export default function SuggestMeetingPointScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [selectedLocation, setSelectedLocation] = useState({
     latitude: 41.0082,
     longitude: 28.9784,
   });
   const [suggestedPlaces] = useState([
-    { id: 1, name: 'Kadıköy Sahil Parkı', address: 'Kadıköy, İstanbul' },
-    { id: 2, name: 'Maçka Parkı', address: 'Beşiktaş, İstanbul' },
-    { id: 3, name: 'Emirgan Korusu', address: 'Sarıyer, İstanbul' },
+    { id: 1, name: t('chat.placeKadikoy'), address: t('chat.placeKadikoyAddr') },
+    { id: 2, name: t('chat.placeMacka'), address: t('chat.placeMackaAddr') },
+    { id: 3, name: t('chat.placeEmirgan'), address: t('chat.placeEmirganAddr') },
   ]);
 
   return (
@@ -30,7 +33,7 @@ export default function SuggestMeetingPointScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Buluşma Noktası Öner</Text>
+        <Text style={styles.headerTitle}>{t('chat.suggestMeetingTitle')}</Text>
         <View style={styles.spacer} />
       </View>
 
@@ -51,7 +54,7 @@ export default function SuggestMeetingPointScreen() {
 
       <View style={styles.bottomSheet}>
         <View style={styles.handle} />
-        <Text style={styles.sheetTitle}>Önerilen Güvenli Yerler</Text>
+        <Text style={styles.sheetTitle}>{t('chat.suggestSafePlaces')}</Text>
         <ScrollView showsVerticalScrollIndicator={false}>
           {suggestedPlaces.map((place) => (
             <TouchableOpacity key={place.id} style={styles.placeCard}>
@@ -68,7 +71,7 @@ export default function SuggestMeetingPointScreen() {
         </ScrollView>
 
         <TouchableOpacity style={styles.suggestButton}>
-          <Text style={styles.suggestButtonText}>Bu Konumu Öner</Text>
+          <Text style={styles.suggestButtonText}>{t('chat.suggestThisLocation')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -120,11 +123,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
     padding: 24,
     maxHeight: '50%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 10,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: -4, blur: 8, opacity: 0.1, elevation: 10 }),
   },
   handle: {
     width: 40,
@@ -147,11 +146,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 8, opacity: 0.1, elevation: 3 }),
   },
   placeIcon: {
     width: 48,
@@ -182,11 +177,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 16,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 4, blur: 8, opacity: 0.3, elevation: 5 }),
   },
   suggestButtonText: {
     color: '#fff',

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { userRepository } from '@/infrastructure/repositories/ApiUserRepository';
@@ -18,7 +19,9 @@ import {
   unregisterPushTokenFromBackend,
 } from '@/infrastructure/push/expoPushRegistration';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 export default function NotificationPreferencesScreen2() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [pushNotifications, setPushNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(false);
@@ -61,7 +64,7 @@ export default function NotificationPreferencesScreen2() {
 
   useEffect(() => {
     if (!hydrated) return;
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       void (async () => {
         try {
           await mergeAndSavePreferences({
@@ -84,7 +87,7 @@ export default function NotificationPreferencesScreen2() {
         }
       })();
     }, 500);
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
   }, [hydrated, pushNotifications, emailNotifications, smsNotifications, quietHours]);
 
   return (
@@ -93,18 +96,18 @@ export default function NotificationPreferencesScreen2() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Bildirim Kanalları</Text>
+        <Text style={styles.headerTitle}>{t('settings.notifChannelsTitle')}</Text>
         <View style={styles.spacer} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Bildirim Kanalları</Text>
+          <Text style={styles.sectionTitle}>{t('settings.notifChannelsTitle')}</Text>
           <View style={styles.settingsList}>
             <View style={styles.settingItem}>
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>Push Bildirimleri</Text>
-                <Text style={styles.settingSubtitle}>Uygulama içi bildirimler</Text>
+                <Text style={styles.settingTitle}>{t('settings.notifPush')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.notifPushHint')}</Text>
               </View>
               <Switch
                 value={pushNotifications}
@@ -115,8 +118,8 @@ export default function NotificationPreferencesScreen2() {
             </View>
             <View style={styles.settingItem}>
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>E-posta Bildirimleri</Text>
-                <Text style={styles.settingSubtitle}>E-posta ile bildirim al</Text>
+                <Text style={styles.settingTitle}>{t('settings.notifEmail')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.notifEmailHint')}</Text>
               </View>
               <Switch
                 value={emailNotifications}
@@ -127,8 +130,8 @@ export default function NotificationPreferencesScreen2() {
             </View>
             <View style={styles.settingItem}>
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>SMS Bildirimleri</Text>
-                <Text style={styles.settingSubtitle}>SMS ile bildirim al</Text>
+                <Text style={styles.settingTitle}>{t('settings.notifSms')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.notifSmsHint')}</Text>
               </View>
               <Switch
                 value={smsNotifications}
@@ -141,12 +144,12 @@ export default function NotificationPreferencesScreen2() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Sessiz Saatler</Text>
+          <Text style={styles.sectionTitle}>{t('settings.quietHoursSection')}</Text>
           <View style={styles.settingsList}>
             <View style={styles.settingItem}>
               <View style={styles.settingInfo}>
-                <Text style={styles.settingTitle}>Sessiz Saatleri Aktif Et</Text>
-                <Text style={styles.settingSubtitle}>22:00 - 08:00 arası bildirim gönderme</Text>
+                <Text style={styles.settingTitle}>{t('settings.quietHoursEnable')}</Text>
+                <Text style={styles.settingSubtitle}>{t('settings.quietHoursHint')}</Text>
               </View>
               <Switch
                 value={quietHours}
@@ -205,11 +208,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     borderRadius: 16,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 8, opacity: 0.1, elevation: 3 }),
   },
   settingItem: {
     flexDirection: 'row',

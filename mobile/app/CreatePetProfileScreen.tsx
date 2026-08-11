@@ -16,11 +16,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { Input } from '@/presentation/components/forms/Input';
 import * as ImagePicker from 'expo-image-picker';
 import { petsService } from '@/infrastructure/api/pets.service';
+import { useTranslation } from 'react-i18next';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 export default function CreatePetProfileScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
+  const [purpose, setPurpose] = useState<'playmate' | 'adoption' | null>(null);
   const [name, setName] = useState('');
   const [species, setSpecies] = useState<'dog' | 'cat' | 'other'>('dog');
   const [breed, setBreed] = useState('');
@@ -44,14 +48,31 @@ export default function CreatePetProfileScreen() {
     }
   };
 
+  const handleContinue = () => {
+    if (step === 1) {
+      if (!purpose) {
+        Alert.alert(t('pets.alertPickPurposeTitle'), t('pets.alertPickPurposeMsg'));
+        return;
+      }
+      setStep(2);
+      return;
+    }
+    void handleSubmit();
+  };
+
   const handleSubmit = async () => {
+    if (!purpose) {
+      Alert.alert(t('pets.alertPickPurposeTitle'), t('pets.alertPickPurposeMsg'));
+      setStep(1);
+      return;
+    }
     const ageNum = parseInt(age, 10);
     if (!name.trim()) {
-      Alert.alert('Eksik bilgi', 'Lütfen pet adını gir.');
+      Alert.alert(t('auth.missingInfoTitle'), t('pets.alertMissingName'));
       return;
     }
     if (Number.isNaN(ageNum) || ageNum < 0) {
-      Alert.alert('Eksik bilgi', 'Geçerli bir yaş gir.');
+      Alert.alert(t('auth.missingInfoTitle'), t('pets.alertInvalidAge'));
       return;
     }
     setSubmitting(true);
@@ -65,6 +86,7 @@ export default function CreatePetProfileScreen() {
         bio: bio.trim() || undefined,
         isSpayed,
         isVaccinated,
+        purpose,
       });
       const petId = pet.id as number;
       const uris = photos.filter(Boolean);
@@ -77,8 +99,8 @@ export default function CreatePetProfileScreen() {
         const file = { uri, name: `pet-${petId}-${i}.jpg`, type: mime };
         await petsService.uploadPhoto(petId, file as any, i === 0);
       }
-      Alert.alert('Tamam', 'Pet profilin oluşturuldu.', [
-        { text: 'Devam', onPress: () => navigation.goBack() },
+      Alert.alert(t('pets.alertCreatedTitle'), t('pets.alertCreatedMsg'), [
+        { text: t('common.continue'), onPress: () => navigation.goBack() },
       ]);
     } catch (e: any) {
       const msg =
@@ -86,8 +108,8 @@ export default function CreatePetProfileScreen() {
         (Array.isArray(e?.response?.data?.message)
           ? e.response.data.message.join(', ')
           : null) ||
-        'Pet oluşturulamadı.';
-      Alert.alert('Hata', typeof msg === 'string' ? msg : 'Pet oluşturulamadı.');
+        t('pets.alertCreateFailed');
+      Alert.alert(t('common.error'), typeof msg === 'string' ? msg : t('pets.alertCreateFailed'));
     } finally {
       setSubmitting(false);
     }
@@ -96,22 +118,69 @@ export default function CreatePetProfileScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          onPress={() => {
+            if (step > 1) setStep(step - 1);
+            else navigation.goBack();
+          }}
+        >
           <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Create Profile</Text>
+        <Text style={styles.headerTitle}>{t('pets.createTitle')}</Text>
         <View style={styles.spacer} />
       </View>
 
       <View style={styles.progress}>
         <View style={[styles.progressBar, step >= 1 && styles.progressBarActive]} />
         <View style={[styles.progressBar, step >= 2 && styles.progressBarActive]} />
-        <View style={[styles.progressBar, step >= 3 && styles.progressBarActive]} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Who's the good boy/girl?</Text>
-        <Text style={styles.subtitle}>Add photos and details to find their perfect match.</Text>
+        {step === 1 ? (
+          <View>
+            <Text style={styles.title}>{t('pets.purposeTitle')}</Text>
+            <Text style={styles.subtitle}>
+              {t('pets.purposeSubtitle')}
+            </Text>
+            <TouchableOpacity
+              style={[styles.purposeCard, purpose === 'playmate' && styles.purposeCardActive]}
+              onPress={() => setPurpose('playmate')}
+            >
+              <Ionicons
+                name="tennisball-outline"
+                size={28}
+                color={purpose === 'playmate' ? COLORS.primary : COLORS.textMuted}
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.purposeTitle}>{t('pets.purposePlaymate')}</Text>
+                <Text style={styles.purposeSub}>{t('pets.purposePlaymateSub')}</Text>
+              </View>
+              {purpose === 'playmate' ? (
+                <Ionicons name="checkmark-circle" size={22} color={COLORS.primary} />
+              ) : null}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.purposeCard, purpose === 'adoption' && styles.purposeCardActive]}
+              onPress={() => setPurpose('adoption')}
+            >
+              <Ionicons
+                name="home-outline"
+                size={28}
+                color={purpose === 'adoption' ? COLORS.primary : COLORS.textMuted}
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.purposeTitle}>{t('pets.purposeAdoption')}</Text>
+                <Text style={styles.purposeSub}>{t('pets.purposeAdoptionSub')}</Text>
+              </View>
+              {purpose === 'adoption' ? (
+                <Ionicons name="checkmark-circle" size={22} color={COLORS.primary} />
+              ) : null}
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <>
+        <Text style={styles.title}>{t('pets.whoTitle')}</Text>
+        <Text style={styles.subtitle}>{t('pets.whoSubtitle')}</Text>
 
         <View style={styles.photoGrid}>
           <TouchableOpacity style={styles.mainPhotoSlot} onPress={pickImage}>
@@ -124,7 +193,7 @@ export default function CreatePetProfileScreen() {
             )}
             {photos[0] && (
               <View style={styles.mainBadge}>
-                <Text style={styles.mainBadgeText}>Main</Text>
+                <Text style={styles.mainBadgeText}>{t('pets.mainPhotoBadge')}</Text>
               </View>
             )}
           </TouchableOpacity>
@@ -141,14 +210,14 @@ export default function CreatePetProfileScreen() {
 
         <View style={styles.form}>
           <Input
-            label="Name"
-            placeholder="e.g. Charlie"
+            label={t('pets.labelName')}
+            placeholder={t('pets.placeholderName')}
             value={name}
             onChangeText={setName}
           />
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Species</Text>
+            <Text style={styles.label}>{t('pets.labelSpecies')}</Text>
             <View style={styles.speciesButtons}>
               <TouchableOpacity
                 style={[styles.speciesButton, species === 'dog' && styles.speciesButtonActive]}
@@ -156,7 +225,7 @@ export default function CreatePetProfileScreen() {
               >
                 <Text style={styles.speciesEmoji}>🐶</Text>
                 <Text style={[styles.speciesText, species === 'dog' && styles.speciesTextActive]}>
-                  Dog
+                  {t('pets.speciesDog')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -165,7 +234,7 @@ export default function CreatePetProfileScreen() {
               >
                 <Text style={styles.speciesEmoji}>🐱</Text>
                 <Text style={[styles.speciesText, species === 'cat' && styles.speciesTextActive]}>
-                  Cat
+                  {t('pets.speciesCat')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -174,7 +243,7 @@ export default function CreatePetProfileScreen() {
               >
                 <Text style={styles.speciesEmoji}>🐰</Text>
                 <Text style={[styles.speciesText, species === 'other' && styles.speciesTextActive]}>
-                  Other
+                  {t('pets.speciesOther')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -182,15 +251,15 @@ export default function CreatePetProfileScreen() {
 
           <View style={styles.row}>
             <Input
-              label="Breed"
-              placeholder="Golden Retriever"
+              label={t('pets.labelBreed')}
+              placeholder={t('pets.placeholderBreed')}
               value={breed}
               onChangeText={setBreed}
               containerStyle={styles.flex1}
             />
             <Input
-              label="Age"
-              placeholder="2"
+              label={t('pets.labelAge')}
+              placeholder={t('pets.placeholderAge')}
               value={age}
               onChangeText={setAge}
               keyboardType="numeric"
@@ -199,14 +268,14 @@ export default function CreatePetProfileScreen() {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Gender</Text>
+            <Text style={styles.label}>{t('pets.labelGender')}</Text>
             <View style={styles.genderToggle}>
               <TouchableOpacity
                 style={[styles.genderButton, gender === 'male' && styles.genderButtonActive]}
                 onPress={() => setGender('male')}
               >
                 <Text style={[styles.genderText, gender === 'male' && styles.genderTextActive]}>
-                  Boy
+                  {t('pets.genderBoy')}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -214,20 +283,20 @@ export default function CreatePetProfileScreen() {
                 onPress={() => setGender('female')}
               >
                 <Text style={[styles.genderText, gender === 'female' && styles.genderTextActive]}>
-                  Girl
+                  {t('pets.genderGirl')}
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Health Status</Text>
+            <Text style={styles.label}>{t('pets.labelHealth')}</Text>
             <View style={styles.healthItem}>
               <View style={styles.healthInfo}>
                 <Ionicons name="medical" size={20} color={COLORS.primary} />
                 <View>
-                  <Text style={styles.healthTitle}>Spayed / Neutered</Text>
-                  <Text style={styles.healthSubtitle}>Is your pet fixed?</Text>
+                  <Text style={styles.healthTitle}>{t('pets.spayedTitle')}</Text>
+                  <Text style={styles.healthSubtitle}>{t('pets.spayedHint')}</Text>
                 </View>
               </View>
               <TouchableOpacity
@@ -241,8 +310,8 @@ export default function CreatePetProfileScreen() {
               <View style={styles.healthInfo}>
                 <Ionicons name="shield-checkmark" size={20} color={COLORS.primary} />
                 <View>
-                  <Text style={styles.healthTitle}>Vaccinations</Text>
-                  <Text style={styles.healthSubtitle}>Up to date?</Text>
+                  <Text style={styles.healthTitle}>{t('pets.vaccinationsTitle')}</Text>
+                  <Text style={styles.healthSubtitle}>{t('pets.vaccinationsHint')}</Text>
                 </View>
               </View>
               <TouchableOpacity
@@ -252,11 +321,20 @@ export default function CreatePetProfileScreen() {
                 <View style={[styles.toggleThumb, isVaccinated && styles.toggleThumbActive]} />
               </TouchableOpacity>
             </View>
+            {isVaccinated ? (
+              <View style={styles.vaxInfoBox}>
+                <Ionicons name="information-circle" size={20} color={COLORS.primary} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.vaxInfoTitle}>{t('pets.vaccinationsInfoTitle')}</Text>
+                  <Text style={styles.vaxInfoBody}>{t('pets.vaccinationsInfoBody')}</Text>
+                </View>
+              </View>
+            ) : null}
           </View>
 
           <Input
-            label="Short Bio"
-            placeholder="Tell us about their favorite toys, treats, and personality..."
+            label={t('pets.labelBio')}
+            placeholder={t('pets.placeholderBio')}
             value={bio}
             onChangeText={setBio}
             multiline
@@ -265,19 +343,23 @@ export default function CreatePetProfileScreen() {
             hint={`${bio.length}/300`}
           />
         </View>
+          </>
+        )}
       </ScrollView>
 
       <View style={styles.footer}>
         <TouchableOpacity
           style={[styles.continueButton, submitting && styles.continueButtonDisabled]}
-          onPress={handleSubmit}
+          onPress={handleContinue}
           disabled={submitting}
         >
           {submitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
             <>
-              <Text style={styles.continueButtonText}>Continue</Text>
+              <Text style={styles.continueButtonText}>
+                {step === 1 ? t('common.continue') : t('common.save')}
+              </Text>
               <Ionicons name="arrow-forward" size={20} color="#fff" />
             </>
           )}
@@ -304,6 +386,32 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: COLORS.text,
+  },
+  purposeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    borderColor: '#e5e5e5',
+    backgroundColor: '#fafafa',
+    marginBottom: 12,
+  },
+  purposeCardActive: {
+    borderColor: COLORS.primary,
+    backgroundColor: 'rgba(106, 63, 42, 0.08)',
+  },
+  purposeTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: 4,
+  },
+  purposeSub: {
+    fontSize: 13,
+    color: COLORS.textMuted,
+    lineHeight: 18,
   },
   spacer: {
     width: 24,
@@ -496,6 +604,29 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.textMuted,
   },
+  vaxInfoBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    marginTop: 4,
+    marginBottom: 8,
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: 'rgba(106, 63, 42, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(106, 63, 42, 0.18)',
+  },
+  vaxInfoTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: 4,
+  },
+  vaxInfoBody: {
+    fontSize: 12,
+    lineHeight: 18,
+    color: COLORS.textMuted,
+  },
   toggle: {
     width: 44,
     height: 24,
@@ -530,11 +661,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 4, blur: 8, opacity: 0.3, elevation: 5 }),
   },
   continueButtonDisabled: {
     opacity: 0.75,

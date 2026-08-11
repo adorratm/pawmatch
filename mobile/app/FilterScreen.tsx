@@ -19,8 +19,11 @@ import {
   resolveDiscoverCoordinates,
   type DiscoverFiltersSaved,
 } from '@/infrastructure/api/discoverFilters';
+import { useTranslation } from 'react-i18next';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 export default function FilterScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const loadPets = usePetStore((s) => s.loadPets);
   const setActiveDiscoverFilters = usePetStore((s) => s.setActiveDiscoverFilters);
@@ -95,15 +98,15 @@ export default function FilterScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="close" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Filtreler</Text>
+        <Text style={styles.headerTitle}>{t('discover.filtersTitle')}</Text>
         <TouchableOpacity onPress={resetAll}>
-          <Text style={styles.resetText}>Sıfırla</Text>
+          <Text style={styles.resetText}>{t('discover.filtersReset')}</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tür</Text>
+          <Text style={styles.sectionTitle}>{t('discover.filtersSpecies')}</Text>
           <View style={styles.optionsRow}>
             {['all', 'dog', 'cat', 'other'].map((s) => (
               <TouchableOpacity
@@ -112,7 +115,13 @@ export default function FilterScreen() {
                 onPress={() => setSpecies(s as any)}
               >
                 <Text style={[styles.optionText, species === s && styles.optionTextActive]}>
-                  {s === 'all' ? 'Tümü' : s === 'dog' ? 'Köpek' : s === 'cat' ? 'Kedi' : 'Diğer'}
+                  {s === 'all'
+                    ? t('common.all')
+                    : s === 'dog'
+                      ? t('discover.filtersDog')
+                      : s === 'cat'
+                        ? t('discover.filtersCat')
+                        : t('discover.filtersOther')}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -120,7 +129,7 @@ export default function FilterScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Cinsiyet</Text>
+          <Text style={styles.sectionTitle}>{t('discover.filtersGender')}</Text>
           <View style={styles.optionsRow}>
             {['all', 'male', 'female'].map((g) => (
               <TouchableOpacity
@@ -129,7 +138,11 @@ export default function FilterScreen() {
                 onPress={() => setGender(g as any)}
               >
                 <Text style={[styles.optionText, gender === g && styles.optionTextActive]}>
-                  {g === 'all' ? 'Tümü' : g === 'male' ? 'Erkek' : 'Dişi'}
+                  {g === 'all'
+                    ? t('common.all')
+                    : g === 'male'
+                      ? t('discover.filtersMale')
+                      : t('discover.filtersFemale')}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -137,13 +150,13 @@ export default function FilterScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Yaş Aralığı</Text>
+          <Text style={styles.sectionTitle}>{t('discover.filtersAgeRange')}</Text>
           <View style={styles.rangeCard}>
             <Text style={styles.rangeValue}>
-              {minAge} – {maxAge} yaş
+              {t('common.ageRange', { min: minAge, max: maxAge })}
             </Text>
             <View style={styles.stepperRow}>
-              <Text style={styles.stepperLabel}>Min</Text>
+              <Text style={styles.stepperLabel}>{t('discover.filtersMin')}</Text>
               <View style={styles.stepperControls}>
                 <TouchableOpacity
                   style={styles.stepperBtn}
@@ -161,7 +174,7 @@ export default function FilterScreen() {
               </View>
             </View>
             <View style={styles.stepperRow}>
-              <Text style={styles.stepperLabel}>Max</Text>
+              <Text style={styles.stepperLabel}>{t('discover.filtersMax')}</Text>
               <View style={styles.stepperControls}>
                 <TouchableOpacity
                   style={styles.stepperBtn}
@@ -182,9 +195,9 @@ export default function FilterScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Maksimum Mesafe</Text>
+          <Text style={styles.sectionTitle}>{t('discover.filtersMaxDistance')}</Text>
           <View style={styles.rangeCard}>
-            <Text style={styles.rangeValue}>{maxDistance} km</Text>
+            <Text style={styles.rangeValue}>{t('common.km', { n: maxDistance })}</Text>
             <View style={styles.distanceChips}>
               {[5, 10, 25, 50, 100].map((km) => (
                 <TouchableOpacity
@@ -201,13 +214,13 @@ export default function FilterScreen() {
                       maxDistance === km && styles.distanceChipTextActive,
                     ]}
                   >
-                    {km} km
+                    {t('common.km', { n: km })}
                   </Text>
                 </TouchableOpacity>
               ))}
             </View>
             <View style={styles.stepperRow}>
-              <Text style={styles.stepperLabel}>Özel</Text>
+              <Text style={styles.stepperLabel}>{t('discover.filtersCustom')}</Text>
               <View style={styles.stepperControls}>
                 <TouchableOpacity
                   style={styles.stepperBtn}
@@ -230,8 +243,8 @@ export default function FilterScreen() {
         <View style={styles.section}>
           <View style={styles.switchItem}>
             <View>
-              <Text style={styles.switchTitle}>Sadece Aşılı</Text>
-              <Text style={styles.switchSubtitle}>Aşıları tamamlanmış hayvanları göster</Text>
+              <Text style={styles.switchTitle}>{t('discover.filtersOnlyVaccinated')}</Text>
+              <Text style={styles.switchSubtitle}>{t('discover.filtersOnlyVaccinatedHint')}</Text>
             </View>
             <Switch
               value={onlyVaccinated}
@@ -242,8 +255,8 @@ export default function FilterScreen() {
           </View>
           <View style={styles.switchItem}>
             <View>
-              <Text style={styles.switchTitle}>Sadece Kısırlaştırılmış</Text>
-              <Text style={styles.switchSubtitle}>Kısırlaştırılmış hayvanları göster</Text>
+              <Text style={styles.switchTitle}>{t('discover.filtersOnlySpayed')}</Text>
+              <Text style={styles.switchSubtitle}>{t('discover.filtersOnlySpayedHint')}</Text>
             </View>
             <Switch
               value={onlySpayed}
@@ -257,7 +270,7 @@ export default function FilterScreen() {
 
       <View style={styles.footer}>
         <TouchableOpacity style={styles.applyButton} onPress={applyFilters}>
-          <Text style={styles.applyButtonText}>Filtreleri Uygula</Text>
+          <Text style={styles.applyButtonText}>{t('discover.filtersApply')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -456,11 +469,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 4, blur: 8, opacity: 0.3, elevation: 5 }),
   },
   applyButtonText: {
     color: '#fff',

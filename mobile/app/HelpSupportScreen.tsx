@@ -12,28 +12,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from 'expo-router/react-navigation';
+import { useTranslation } from 'react-i18next';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '@/presentation/components/forms/Input';
 import { supportService } from '@/infrastructure/api/support.service';
-
-const FAQ_ITEMS = [
-  {
-    id: 1,
-    question: 'Nasıl eşleşme yapabilirim?',
-    answer: 'Keşfet ekranından hayvan profillerini beğenerek eşleşme yapabilirsiniz.',
-  },
-  {
-    id: 2,
-    question: 'Mesaj göndermek için ne yapmalıyım?',
-    answer: 'Eşleştiğiniz kullanıcılarla otomatik olarak sohbet başlatabilirsiniz.',
-  },
-  {
-    id: 3,
-    question: 'Profilimi nasıl düzenlerim?',
-    answer: 'Profil ekranından “Profili Düzenle”ye dokunarak ad, soyad ve bio güncelleyebilirsiniz.',
-  },
-];
 
 function notify(title: string, message: string) {
   if (Platform.OS === 'web' && typeof window !== 'undefined') {
@@ -44,20 +27,30 @@ function notify(title: string, message: string) {
 }
 
 export default function HelpSupportScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
+  const faqItems = useMemo(
+    () => [
+      { id: 1, question: t('help.faq1Q'), answer: t('help.faq1A') },
+      { id: 2, question: t('help.faq2Q'), answer: t('help.faq2A') },
+      { id: 3, question: t('help.faq3Q'), answer: t('help.faq3A') },
+    ],
+    [t],
+  );
+
   const filteredFaqs = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return FAQ_ITEMS;
-    return FAQ_ITEMS.filter(
+    if (!q) return faqItems;
+    return faqItems.filter(
       (item) =>
         item.question.toLowerCase().includes(q) || item.answer.toLowerCase().includes(q),
     );
-  }, [searchQuery]);
+  }, [searchQuery, faqItems]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -65,7 +58,7 @@ export default function HelpSupportScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={COLORS.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Yardım & Destek</Text>
+        <Text style={styles.headerTitle}>{t('help.title')}</Text>
         <View style={styles.spacer} />
       </View>
 
@@ -74,7 +67,7 @@ export default function HelpSupportScreen() {
           <Input
             size="search"
             leftIcon="search"
-            placeholder="Sorunuzu arayın..."
+            placeholder={t('help.searchPlaceholder')}
             value={searchQuery}
             onChangeText={setSearchQuery}
             containerStyle={styles.searchInputContainer}
@@ -82,7 +75,7 @@ export default function HelpSupportScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Sık Sorulan Sorular</Text>
+          <Text style={styles.sectionTitle}>{t('help.faqSection')}</Text>
           {filteredFaqs.map((item) => {
             const open = expandedId === item.id;
             return (
@@ -105,12 +98,12 @@ export default function HelpSupportScreen() {
             );
           })}
           {filteredFaqs.length === 0 ? (
-            <Text style={styles.emptyText}>Aramanızla eşleşen soru bulunamadı.</Text>
+            <Text style={styles.emptyText}>{t('help.faqEmpty')}</Text>
           ) : null}
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Bize Ulaşın</Text>
+          <Text style={styles.sectionTitle}>{t('help.contactSection')}</Text>
           <View style={styles.contactCard}>
             <TouchableOpacity
               style={styles.contactItem}
@@ -118,8 +111,8 @@ export default function HelpSupportScreen() {
             >
               <Ionicons name="mail" size={24} color={COLORS.primary} />
               <View style={styles.contactInfo}>
-                <Text style={styles.contactLabel}>E-posta</Text>
-                <Text style={styles.contactValue}>destek@pawmatch.com.tr</Text>
+                <Text style={styles.contactLabel}>{t('help.emailLabel')}</Text>
+                <Text style={styles.contactValue}>{t('legal.email')}</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
@@ -128,17 +121,17 @@ export default function HelpSupportScreen() {
             >
               <Ionicons name="call" size={24} color={COLORS.primary} />
               <View style={styles.contactInfo}>
-                <Text style={styles.contactLabel}>Telefon</Text>
-                <Text style={styles.contactValue}>+90 555 123 4567</Text>
+                <Text style={styles.contactLabel}>{t('help.phoneLabel')}</Text>
+                <Text style={styles.contactValue}>{t('help.phoneValue')}</Text>
               </View>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Mesaj Gönder</Text>
+          <Text style={styles.sectionTitle}>{t('help.sendMessageSection')}</Text>
           <Input
-            placeholder="Sorunuzu veya önerinizi yazın..."
+            placeholder={t('help.messagePlaceholder')}
             value={message}
             onChangeText={setMessage}
             multiline
@@ -151,11 +144,11 @@ export default function HelpSupportScreen() {
             onPress={async () => {
               setSending(true);
               try {
-                await supportService.createTicket(message.trim(), 'Yardım talebi');
-                notify('Gönderildi', 'Mesajın destek ekibimize iletildi.');
+                await supportService.createTicket(message.trim(), t('help.ticketSubject'));
+                notify(t('help.sentTitle'), t('help.sentMsg'));
                 setMessage('');
               } catch (e: any) {
-                notify('Hata', e?.response?.data?.message || 'Gönderilemedi.');
+                notify(t('common.error'), e?.response?.data?.message || t('help.sendFailed'));
               } finally {
                 setSending(false);
               }
@@ -164,7 +157,7 @@ export default function HelpSupportScreen() {
             {sending ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.sendButtonText}>Gönder</Text>
+              <Text style={styles.sendButtonText}>{t('common.send')}</Text>
             )}
           </TouchableOpacity>
         </View>

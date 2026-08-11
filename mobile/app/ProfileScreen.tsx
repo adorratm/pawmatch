@@ -9,12 +9,15 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/application/stores/authStore';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { confirmDeleteAccount, confirmLogout } from '@/presentation/utils/accountActions';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 export default function ProfileScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { user } = useAuthStore();
 
@@ -22,12 +25,16 @@ export default function ProfileScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Profil</Text>
+          <Text style={styles.headerTitle}>{t('profile.title')}</Text>
           <View style={styles.headerSpacer} />
         </View>
 
         <View style={styles.profileSection}>
-          <View style={styles.profileCard}>
+          <TouchableOpacity
+            style={styles.profileCard}
+            activeOpacity={0.7}
+            onPress={() => (navigation as any).navigate('EditProfile')}
+          >
             <Image
               source={{
                 uri:
@@ -40,23 +47,51 @@ export default function ProfileScreen() {
               <Text style={styles.profileName}>
                 {user?.firstName} {user?.lastName}
               </Text>
-              <TouchableOpacity onPress={() => (navigation as any).navigate('EditProfile')}>
-                <Text style={styles.editProfileText}>Profili Düzenle</Text>
-              </TouchableOpacity>
+              <Text style={styles.editProfileText}>{t('profile.edit')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t('profile.sectionMyPets')}</Text>
+          <View style={styles.settingsList}>
+            <TouchableOpacity
+              style={styles.settingItem}
+              onPress={() => (navigation as any).navigate('MyPets')}
+            >
+              <Ionicons name="paw-outline" size={24} color={COLORS.text} />
+              <Text style={styles.settingText}>{t('profile.sectionMyPets')}</Text>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.settingItem}
+              onPress={() => (navigation as any).navigate('CreatePetProfile')}
+            >
+              <Ionicons name="add-circle-outline" size={24} color={COLORS.text} />
+              <Text style={styles.settingText}>{t('profile.addPet')}</Text>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
+            </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Ayarlar</Text>
+          <Text style={styles.sectionTitle}>{t('profile.sectionSettings')}</Text>
           <View style={styles.settingsList}>
+            <TouchableOpacity
+              style={styles.settingItem}
+              onPress={() => (navigation as any).navigate('NotificationsInbox')}
+            >
+              <Ionicons name="notifications-outline" size={24} color={COLORS.text} />
+              <Text style={styles.settingText}>{t('inbox.openInbox')}</Text>
+              <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.settingItem}
               onPress={() => (navigation as any).navigate('NotificationPreferences1')}
             >
-              <Ionicons name="notifications-outline" size={24} color={COLORS.text} />
-              <Text style={styles.settingText}>Bildirimler</Text>
+              <Ionicons name="options-outline" size={24} color={COLORS.text} />
+              <Text style={styles.settingText}>{t('inbox.prefsShortcut')}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
             <TouchableOpacity
@@ -64,7 +99,7 @@ export default function ProfileScreen() {
               onPress={() => (navigation as any).navigate('Settings2')}
             >
               <Ionicons name="lock-closed-outline" size={24} color={COLORS.text} />
-              <Text style={styles.settingText}>Gizlilik</Text>
+              <Text style={styles.settingText}>{t('profile.privacy')}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
             <TouchableOpacity
@@ -72,7 +107,7 @@ export default function ProfileScreen() {
               onPress={() => (navigation as any).navigate('HelpSupport')}
             >
               <Ionicons name="help-circle-outline" size={24} color={COLORS.text} />
-              <Text style={styles.settingText}>Yardım & Destek</Text>
+              <Text style={styles.settingText}>{t('profile.help')}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
             <TouchableOpacity
@@ -80,7 +115,7 @@ export default function ProfileScreen() {
               onPress={() => (navigation as any).navigate('About')}
             >
               <Ionicons name="information-circle-outline" size={24} color={COLORS.text} />
-              <Text style={styles.settingText}>Hakkında</Text>
+              <Text style={styles.settingText}>{t('profile.about')}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
             <TouchableOpacity
@@ -88,7 +123,7 @@ export default function ProfileScreen() {
               onPress={() => (navigation as any).navigate('InAppPurchases')}
             >
               <Ionicons name="diamond-outline" size={24} color={COLORS.text} />
-              <Text style={styles.settingText}>Pati Gold</Text>
+              <Text style={styles.settingText}>{t('profile.patiGold')}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
             <TouchableOpacity
@@ -96,7 +131,7 @@ export default function ProfileScreen() {
               onPress={() => (navigation as any).navigate('Veterinarians')}
             >
               <Ionicons name="medical-outline" size={24} color={COLORS.text} />
-              <Text style={styles.settingText}>Yakındaki Veterinerler</Text>
+              <Text style={styles.settingText}>{t('profile.nearbyVets')}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
             <TouchableOpacity
@@ -104,7 +139,7 @@ export default function ProfileScreen() {
               onPress={() => (navigation as any).navigate('AppointmentHistory')}
             >
               <Ionicons name="calendar-outline" size={24} color={COLORS.text} />
-              <Text style={styles.settingText}>Randevu Geçmişi</Text>
+              <Text style={styles.settingText}>{t('profile.appointmentHistory')}</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
           </View>
@@ -113,16 +148,16 @@ export default function ProfileScreen() {
         <View style={styles.footerSection}>
           <TouchableOpacity style={styles.logoutButton} onPress={confirmLogout}>
             <Ionicons name="log-out-outline" size={18} color={COLORS.text} />
-            <Text style={styles.logoutText}>Çıkış Yap</Text>
+            <Text style={styles.logoutText}>{t('profile.logout')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.deleteButton} onPress={confirmDeleteAccount}>
-            <Text style={styles.deleteText}>Hesabı Sil</Text>
+            <Text style={styles.deleteText}>{t('profile.deleteAccount')}</Text>
           </TouchableOpacity>
           <View style={styles.versionWrap}>
             <View style={styles.versionIcon}>
               <Ionicons name="paw" size={12} color={COLORS.primary} />
             </View>
-            <Text style={styles.versionText}>PawMatch v2.4.0</Text>
+            <Text style={styles.versionText}>{t('profile.version')}</Text>
           </View>
         </View>
       </ScrollView>
@@ -165,11 +200,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 16,
     padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 8, opacity: 0.1, elevation: 3 }),
   },
   profileImage: {
     width: 64,
@@ -209,11 +240,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 16,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 8, opacity: 0.1, elevation: 3 }),
   },
   settingItem: {
     flexDirection: 'row',

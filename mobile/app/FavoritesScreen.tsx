@@ -15,8 +15,11 @@ import { useNavigation } from "expo-router/react-navigation";
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { favoritesService } from '@/infrastructure/api/favorites.service';
+import { useTranslation } from 'react-i18next';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 export default function FavoritesScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [pets, setPets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +31,7 @@ export default function FavoritesScreen() {
       setPets(list);
     } catch (e: any) {
       console.error(e);
-      Alert.alert('Hata', e?.response?.data?.message || 'Favoriler yüklenemedi.');
+      Alert.alert(t('common.error'), e?.response?.data?.message || t('discover.favoritesLoadFailed'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -49,7 +52,7 @@ export default function FavoritesScreen() {
       await favoritesService.remove(petId);
       setPets((p) => p.filter((x) => x.id !== petId));
     } catch (e: any) {
-      Alert.alert('Hata', e?.response?.data?.message || 'Kaldırılamadı.');
+      Alert.alert(t('common.error'), e?.response?.data?.message || t('discover.favoritesRemoveFailed'));
     }
   };
 
@@ -68,8 +71,8 @@ export default function FavoritesScreen() {
           <Ionicons name="arrow-back" size={24} color="#181611" />
         </TouchableOpacity>
         <View style={styles.headerTitleBlock}>
-          <Text style={styles.headerTitle}>Favoriler</Text>
-          <Text style={styles.headerSub}>{pets.length} kayıtlı pati</Text>
+          <Text style={styles.headerTitle}>{t('discover.favoritesTitle')}</Text>
+          <Text style={styles.headerSub}>{t('discover.favoritesCount', { count: pets.length })}</Text>
         </View>
         <View style={styles.headerBtn} />
       </View>
@@ -86,8 +89,8 @@ export default function FavoritesScreen() {
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="heart-outline" size={56} color="#e5e5e5" />
-            <Text style={styles.emptyText}>Henüz favori yok</Text>
-            <Text style={styles.emptyHint}>Keşfet ekranındaki yıldız ile kaydedebilirsin.</Text>
+            <Text style={styles.emptyText}>{t('discover.favoritesEmpty')}</Text>
+            <Text style={styles.emptyHint}>{t('discover.favoritesEmptyHint')}</Text>
           </View>
         }
         renderItem={({ item }) => (
@@ -161,9 +164,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 6,
     right: 6,
-    shadowColor: '#000',
-    shadowOpacity: 0.35,
-    shadowRadius: 4,
+    ...shadowStyle({ color: '#000', blur: 4, opacity: 0.35 }),
   },
   empty: { alignItems: 'center', paddingTop: 80, paddingHorizontal: 24 },
   emptyText: { marginTop: 16, fontSize: 17, fontWeight: '700', color: COLORS.text },

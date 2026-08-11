@@ -4,8 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
+import { shadowStyle } from '@/presentation/styles/shadow';
 export default function Onboarding2Screen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
 
   return (
@@ -16,7 +19,7 @@ export default function Onboarding2Screen() {
           style={styles.skipButton}
           onPress={() => navigation.navigate('Login' as never)}
         >
-          <Text style={styles.skipText}>Atla</Text>
+          <Text style={styles.skipText}>{t('common.skip')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -35,7 +38,7 @@ export default function Onboarding2Screen() {
                 resizeMode="cover"
               >
                 <View style={styles.cardBadge}>
-                  <Text style={styles.cardBadgeText}>🐶 Köpek</Text>
+                  <Text style={styles.cardBadgeText}>{t('onboarding.demoBadgeDog')}</Text>
                 </View>
                 <View style={styles.imageOverlay} />
               </ImageBackground>
@@ -43,12 +46,12 @@ export default function Onboarding2Screen() {
             <View style={styles.cardDetails}>
               <View>
                 <View style={styles.nameRow}>
-                  <Text style={styles.petName}>Buddy, 2</Text>
+                  <Text style={styles.petName}>{t('onboarding.demoPetName')}</Text>
                   <Ionicons name="checkmark-circle" size={20} color="#3b82f6" />
                 </View>
                 <View style={styles.locationRow}>
                   <Ionicons name="location" size={16} color={COLORS.primary} />
-                  <Text style={styles.locationText}>İstanbul, Kadıköy (3km)</Text>
+                  <Text style={styles.locationText}>{t('onboarding.demoLocation')}</Text>
                 </View>
               </View>
               <View style={styles.heartIcon}>
@@ -59,9 +62,9 @@ export default function Onboarding2Screen() {
         </View>
 
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Keşfet ve Eşleş</Text>
+          <Text style={styles.title}>{t('onboarding.ob2Title')}</Text>
           <Text style={styles.description}>
-            Sahiplenmek veya oyun arkadaşı bulmak için sağa kaydır. Eşleştiğinde hemen sohbete başla!
+            {t('onboarding.ob2Description')}
           </Text>
         </View>
       </View>
@@ -76,7 +79,7 @@ export default function Onboarding2Screen() {
           style={styles.nextButton}
           onPress={() => navigation.navigate('Login' as never)}
         >
-          <Text style={styles.nextButtonText}>Devam Et</Text>
+          <Text style={styles.nextButtonText}>{t('common.continueAction')}</Text>
           <Ionicons name="arrow-forward" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -140,10 +143,7 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '4deg' }, { translateY: 12 }],
     backgroundColor: '#ffffff',
     zIndex: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    ...shadowStyle({ color: '#000', offsetX: 0, offsetY: 2, blur: 4, opacity: 0.05 }),
   },
   mainCard: {
     width: '100%',
@@ -152,11 +152,7 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     zIndex: 3,
     overflow: 'hidden',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.15,
-    shadowRadius: 40,
-    elevation: 10,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 20, blur: 40, opacity: 0.15, elevation: 10 }),
     borderWidth: 1,
     borderColor: '#e5e7eb',
   },
@@ -226,11 +222,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 5,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 8, blur: 16, opacity: 0.15, elevation: 5 }),
     borderWidth: 1,
     borderColor: '#f3f4f6',
   },
@@ -281,11 +273,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    ...shadowStyle({ color: COLORS.primary, offsetX: 0, offsetY: 4, blur: 8, opacity: 0.3, elevation: 5 }),
   },
   nextButtonText: {
     color: '#fff',
