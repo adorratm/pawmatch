@@ -21,6 +21,7 @@ import { Pet } from '@/domain/entities/Pet';
 import { matchesService } from '@/infrastructure/api/matches.service';
 import { favoritesService } from '@/infrastructure/api/favorites.service';
 import { usePetStore } from '@/application/stores/petStore';
+import { showAlert, showConfirm } from '@/presentation/utils/dialog';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const IMAGE_HEIGHT = SCREEN_WIDTH * 1.25;
@@ -296,19 +297,24 @@ export default function PetDetailScreen() {
                 ...(likerPetId != null ? { likerPetId } : {}),
               });
               if (r?.isMatch && r?.conversationId) {
-                Alert.alert('Eşleşme!', 'Sohbete geçmek ister misin?', [
-                  { text: 'Kapat', style: 'cancel', onPress: () => navigation.goBack() },
-                  {
-                    text: 'Sohbet',
-                    onPress: () =>
-                      (navigation as any).navigate('Chat', { id: String(r.conversationId) }),
-                  },
-                ]);
+                showConfirm({
+                  title: 'Eşleşme!',
+                  message: 'Sohbete geçmek ister misin?',
+                  confirmLabel: 'Sohbet',
+                  cancelLabel: 'Kapat',
+                  icon: 'heart',
+                  variant: 'success',
+                  onCancel: () => navigation.goBack(),
+                  onConfirm: () =>
+                    (navigation as any).navigate('Chat', { id: String(r.conversationId) }),
+                });
               } else {
-                Alert.alert('Beğeni', 'Kaydedildi.');
+                showAlert('Beğeni', 'Kaydedildi.', { variant: 'success', icon: 'heart-outline' });
               }
             } catch (e: any) {
-              Alert.alert('Beğeni', e?.response?.data?.message || 'İşlem başarısız.');
+              showAlert('Beğeni', e?.response?.data?.message || 'İşlem başarısız.', {
+                variant: 'destructive',
+              });
             }
           }}
         >
@@ -331,23 +337,31 @@ export default function PetDetailScreen() {
           <TouchableOpacity
             style={styles.actionBtnSmall}
             onPress={() => {
-              Alert.alert('Eşleşmeyi kaldır', 'Bu hayvanla eşleşmen kaldırılacak.', [
-                { text: 'İptal', style: 'cancel' },
-                {
-                  text: 'Kaldır',
-                  style: 'destructive',
-                  onPress: async () => {
-                    try {
-                      await matchesService.unmatchByPet(parseInt(String(id), 10));
-                      setHasMatch(false);
-                      Alert.alert('Tamam', 'Eşleşme kaldırıldı.');
-                      navigation.goBack();
-                    } catch (e: any) {
-                      Alert.alert('Hata', e?.response?.data?.message || 'Kaldırılamadı.');
-                    }
-                  },
+              showConfirm({
+                title: 'Eşleşmeyi kaldır',
+                message: 'Bu hayvanla eşleşmen kaldırılacak.',
+                confirmLabel: 'Kaldır',
+                icon: 'unlink-outline',
+                variant: 'destructive',
+                onConfirm: async () => {
+                  try {
+                    await matchesService.unmatchByPet(parseInt(String(id), 10));
+                    setHasMatch(false);
+                    queueMicrotask(() =>
+                      showAlert('Tamam', 'Eşleşme kaldırıldı.', {
+                        variant: 'success',
+                        onConfirm: () => navigation.goBack(),
+                      }),
+                    );
+                  } catch (e: any) {
+                    queueMicrotask(() =>
+                      showAlert('Hata', e?.response?.data?.message || 'Kaldırılamadı.', {
+                        variant: 'destructive',
+                      }),
+                    );
+                  }
                 },
-              ]);
+              });
             }}
           >
             <Ionicons name="unlink-outline" size={22} color="#b45309" />

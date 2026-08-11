@@ -41,6 +41,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { COLORS, FONTS } from '@/presentation/styles/config';
 import { useAppFonts } from '@/presentation/styles/fonts';
+import { AppDialog } from '@/presentation/components/dialog/AppDialog';
 import { revenueCatService } from '@/infrastructure/purchases/revenueCat.service';
 
 const Stack = createNativeStackNavigator();
@@ -168,6 +169,7 @@ export default function AppNavigator() {
           </Stack.Navigator>
         </NavigationContainer>
       </NavigationIndependentTree>
+      <AppDialog />
     </SafeAreaProvider>
   );
 }

@@ -20,6 +20,7 @@ import { matchesService } from '@/infrastructure/api/matches.service';
 import { favoritesService } from '@/infrastructure/api/favorites.service';
 import { usePetStore } from '@/application/stores/petStore';
 import { PawmatchAdBanner } from '@/presentation/components/PawmatchAdBanner';
+import { showAlert, showConfirm } from '@/presentation/utils/dialog';
 
 type MapPet = {
   id: number;
@@ -167,23 +168,29 @@ export default function DiscoverMapScreen() {
     }
   };
 
-  const runUnmatch = async (p: MapPet) => {
-    Alert.alert('Eşleşmeyi kaldır', 'Bu hayvanla eşleşmen kaldırılacak.', [
-      { text: 'İptal', style: 'cancel' },
-      {
-        text: 'Kaldır',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await matchesService.unmatchByPet(p.id);
-            Alert.alert('Tamam', 'Eşleşme kaldırıldı.');
-            void load();
-          } catch (e: any) {
-            Alert.alert('Hata', e?.response?.data?.message || 'Kaldırılamadı.');
-          }
-        },
+  const runUnmatch = (p: MapPet) => {
+    showConfirm({
+      title: 'Eşleşmeyi kaldır',
+      message: 'Bu hayvanla eşleşmen kaldırılacak.',
+      confirmLabel: 'Kaldır',
+      icon: 'unlink-outline',
+      variant: 'destructive',
+      onConfirm: async () => {
+        try {
+          await matchesService.unmatchByPet(p.id);
+          queueMicrotask(() =>
+            showAlert('Tamam', 'Eşleşme kaldırıldı.', { variant: 'success' }),
+          );
+          void load();
+        } catch (e: any) {
+          queueMicrotask(() =>
+            showAlert('Hata', e?.response?.data?.message || 'Kaldırılamadı.', {
+              variant: 'destructive',
+            }),
+          );
+        }
       },
-    ]);
+    });
   };
 
   return (
