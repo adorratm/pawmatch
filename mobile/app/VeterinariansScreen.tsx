@@ -13,6 +13,11 @@ import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import api from '@/infrastructure/api/api';
 
+function formatRating(value: unknown, fallback = '4.5') {
+  const n = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(n) ? n.toFixed(1) : fallback;
+}
+
 export default function VeterinariansScreen() {
   const navigation = useNavigation();
   const [clinics, setClinics] = useState<any[]>([]);
@@ -46,9 +51,7 @@ export default function VeterinariansScreen() {
         <View style={styles.clinicMeta}>
           <View style={styles.ratingContainer}>
             <Ionicons name="star" size={16} color="#fbbf24" />
-            <Text style={styles.rating}>
-              {Number.isFinite(Number(item.rating)) ? Number(item.rating).toFixed(1) : '4.5'}
-            </Text>
+            <Text style={styles.rating}>{formatRating(item.rating)}</Text>
           </View>
           <Text style={styles.reviews}>{item.reviewCount || 0} Yorum</Text>
           <View style={styles.statusBadge}>

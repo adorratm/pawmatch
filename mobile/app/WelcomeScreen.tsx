@@ -1,34 +1,44 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ImageBackground,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from "expo-router/react-navigation";
-import { COLORS } from '@/presentation/styles/config';
+import { useNavigation } from 'expo-router/react-navigation';
+import { COLORS, FONTS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function WelcomeScreen() {
   const navigation = useNavigation();
+  const { width, height } = useWindowDimensions();
+
+  const imageHeight = useMemo(() => {
+    const contentWidth = width - 48;
+    const byAspect = contentWidth * (5 / 4); // 4:5 portrait
+    return Math.min(byAspect, height * 0.38, 340);
+  }, [width, height]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <View style={styles.header}>
         <View style={styles.logoContainer}>
           <View style={styles.logo}>
-            <Ionicons name="paw" size={24} color="#fff" />
+            <Ionicons name="paw" size={22} color="#fff" />
           </View>
           <Text style={styles.logoText}>PawMatch</Text>
         </View>
       </View>
 
       <View style={styles.content}>
-        <View style={styles.imageContainer}>
+        <View style={[styles.imageContainer, { height: imageHeight }]}>
           <ImageBackground
-            source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB6pW6vkFkkjdFGLXmUBx3pWzVNAqEAOOXjQJhfnweCHUkNdajc4jgC45f1hsjxsHYaNdme_cPopOu45U7wHNIoqU1sR8IBoip6U4aec5GoA3BAjraVxDvu5diW6urKugwzGXmVLAe2-aMtWmpGDoV20j7xWN3S5eGPsclXSxcjU8usmgOtSmFsgGEvmBp9yad0QWWCRqQT1MnUkaYuVFpIHCP5dLKjoUmpKFr_D9-l5R_plqF6dbkOiEmn-kfHwAsmZr0dWfYgZGvo' }}
+            source={{
+              uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB6pW6vkFkkjdFGLXmUBx3pWzVNAqEAOOXjQJhfnweCHUkNdajc4jgC45f1hsjxsHYaNdme_cPopOu45U7wHNIoqU1sR8IBoip6U4aec5GoA3BAjraVxDvu5diW6urKugwzGXmVLAe2-aMtWmpGDoV20j7xWN3S5eGPsclXSxcjU8usmgOtSmFsgGEvmBp9yad0QWWCRqQT1MnUkaYuVFpIHCP5dLKjoUmpKFr_D9-l5R_plqF6dbkOiEmn-kfHwAsmZr0dWfYgZGvo',
+            }}
             style={styles.image}
             resizeMode="cover"
           />
@@ -46,7 +56,8 @@ export default function WelcomeScreen() {
             <Text style={styles.titleHighlight}>Keşfet</Text>
           </Text>
           <Text style={styles.description}>
-            İster yeni bir en iyi arkadaş sahiplen, ister köpeğin için bir oyun arkadaşı bul. Sevgi dolu patiler burada.
+            İster yeni bir en iyi arkadaş sahiplen, ister köpeğin için bir oyun
+            arkadaşı bul. Sevgi dolu patiler burada.
           </Text>
         </View>
       </View>
@@ -63,7 +74,9 @@ export default function WelcomeScreen() {
           style={styles.secondaryButton}
           onPress={() => navigation.navigate('Login' as never)}
         >
-          <Text style={styles.secondaryButtonText}>Zaten hesabın var mı? Giriş yap</Text>
+          <Text style={styles.secondaryButtonText}>
+            Zaten hesabın var mı? Giriş yap
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -76,8 +89,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   header: {
-    paddingTop: 48,
-    paddingBottom: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
     paddingHorizontal: 16,
     alignItems: 'center',
   },
@@ -87,16 +100,16 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   logo: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: COLORS.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   logoText: {
     fontSize: 20,
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: FONTS.bold,
     color: COLORS.primary,
   },
   content: {
@@ -104,18 +117,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
+    gap: 12,
   },
   imageContainer: {
     width: '100%',
-    aspectRatio: 4 / 5,
-    borderRadius: 40,
+    borderRadius: 32,
     overflow: 'hidden',
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.2,
-    shadowRadius: 20,
-    elevation: 10,
     borderWidth: 1,
     borderColor: '#f3f4f6',
   },
@@ -126,7 +133,6 @@ const styles = StyleSheet.create({
   dots: {
     flexDirection: 'row',
     gap: 8,
-    marginBottom: 24,
   },
   dot: {
     width: 8,
@@ -140,14 +146,14 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     alignItems: 'center',
-    maxWidth: 300,
+    maxWidth: 340,
   },
   title: {
     fontSize: 24,
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: FONTS.bold,
     textAlign: 'center',
     color: COLORS.text,
-    marginBottom: 12,
+    marginBottom: 10,
     lineHeight: 32,
   },
   titleHighlight: {
@@ -155,15 +161,16 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    fontFamily: 'Ubuntu-Medium',
+    fontFamily: FONTS.medium,
     color: COLORS.textMuted,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 21,
   },
   footer: {
-    padding: 24,
-    paddingBottom: 40,
-    gap: 12,
+    paddingHorizontal: 24,
+    paddingTop: 8,
+    paddingBottom: 16,
+    gap: 8,
   },
   primaryButton: {
     backgroundColor: COLORS.primary,
@@ -173,26 +180,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
   },
   primaryButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: FONTS.bold,
   },
   secondaryButton: {
-    height: 48,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
   },
   secondaryButtonText: {
     color: COLORS.primary,
     fontSize: 14,
-    fontFamily: 'Ubuntu-Bold',
+    fontFamily: FONTS.bold,
   },
 });
-

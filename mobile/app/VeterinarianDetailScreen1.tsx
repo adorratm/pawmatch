@@ -126,7 +126,10 @@ export default function VeterinarianDetailScreen1() {
             <View style={styles.ratingBadge}>
               <Ionicons name="star" size={18} color="#fbbf24" />
               <Text style={styles.ratingText}>
-                {Number.isFinite(Number(clinic.rating)) ? Number(clinic.rating).toFixed(1) : '4.8'}
+                {(() => {
+                  const n = Number(clinic.rating);
+                  return Number.isFinite(n) ? n.toFixed(1) : '4.8';
+                })()}
               </Text>
             </View>
             <Text style={styles.reviews}>{clinic.reviewCount || 120} Reviews</Text>

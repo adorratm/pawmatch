@@ -1,0 +1,10 @@
+{
+  "name": "image-size",
+  "version": "2.0.3",
+  "description": "Metro-compatible shim over image-size-safe (fixes ICNS/JXL/HEIF DoS)",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "image-size-safe": "2.0.3"
+  }
+}

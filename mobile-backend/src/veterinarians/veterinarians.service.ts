@@ -124,7 +124,7 @@ export class VeterinariansService implements OnModuleInit {
     const clinicsWithDistance = clinics
       .map((clinic) => {
         if (clinic.latitude == null || clinic.longitude == null) {
-          return { ...clinic, distance: Number.POSITIVE_INFINITY };
+          return { ...this.serializeClinic(clinic), distance: Number.POSITIVE_INFINITY };
         }
         const distance = this.calculateDistance(
           latitude,
@@ -132,7 +132,7 @@ export class VeterinariansService implements OnModuleInit {
           parseFloat(clinic.latitude.toString()),
           parseFloat(clinic.longitude.toString()),
         );
-        return { ...clinic, distance };
+        return { ...this.serializeClinic(clinic), distance };
       })
       .filter((clinic) => clinic.distance <= radius)
       .sort((a, b) => a.distance - b.distance)
@@ -142,13 +142,27 @@ export class VeterinariansService implements OnModuleInit {
     if (clinicsWithDistance.length === 0 && clinics.length > 0) {
       return {
         clinics: clinics.slice(0, 20).map((clinic) => ({
-          ...clinic,
+          ...this.serializeClinic(clinic),
           distance: 0,
         })),
       };
     }
 
     return { clinics: clinicsWithDistance };
+  }
+
+  /** Postgres decimal columns often come back as strings — normalize for clients */
+  private serializeClinic(clinic: VeterinarianClinic) {
+    return {
+      ...clinic,
+      latitude: clinic.latitude == null ? null : Number(clinic.latitude),
+      longitude: clinic.longitude == null ? null : Number(clinic.longitude),
+      rating: clinic.rating == null ? 0 : Number(clinic.rating),
+      services: (clinic.services ?? []).map((s) => ({
+        ...s,
+        price: s.price == null ? null : Number(s.price),
+      })),
+    };
   }
 
   // Haversine formula to calculate distance
@@ -185,7 +199,7 @@ export class VeterinariansService implements OnModuleInit {
       throw new NotFoundException('Clinic not found');
     }
 
-    return clinic;
+    return this.serializeClinic(clinic);
   }
 
   async getAppointments(userId: number) {

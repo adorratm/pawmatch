@@ -69,7 +69,7 @@ export class VeterinarianClinic {
   veterinarian: Veterinarian;
 
   @OneToMany(() => VeterinarianService, (service) => service.clinic)
-  services: VeterinarianService;
+  services: VeterinarianService[];
 
   @OneToMany(() => Appointment, (appointment) => appointment.clinic)
   appointments: Appointment[];
