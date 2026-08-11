@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TextInput,
   TouchableOpacity,
   Image,
   ActivityIndicator,
@@ -14,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { Input } from '@/presentation/components/forms/Input';
 import * as ImagePicker from 'expo-image-picker';
 import { petsService } from '@/infrastructure/api/pets.service';
 
@@ -140,15 +140,12 @@ export default function CreatePetProfileScreen() {
         </View>
 
         <View style={styles.form}>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Name</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="e.g. Charlie"
-              value={name}
-              onChangeText={setName}
-            />
-          </View>
+          <Input
+            label="Name"
+            placeholder="e.g. Charlie"
+            value={name}
+            onChangeText={setName}
+          />
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Species</Text>
@@ -184,25 +181,21 @@ export default function CreatePetProfileScreen() {
           </View>
 
           <View style={styles.row}>
-            <View style={[styles.inputGroup, styles.flex1]}>
-              <Text style={styles.label}>Breed</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Golden Retriever"
-                value={breed}
-                onChangeText={setBreed}
-              />
-            </View>
-            <View style={[styles.inputGroup, styles.ageInput]}>
-              <Text style={styles.label}>Age</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="2"
-                value={age}
-                onChangeText={setAge}
-                keyboardType="numeric"
-              />
-            </View>
+            <Input
+              label="Breed"
+              placeholder="Golden Retriever"
+              value={breed}
+              onChangeText={setBreed}
+              containerStyle={styles.flex1}
+            />
+            <Input
+              label="Age"
+              placeholder="2"
+              value={age}
+              onChangeText={setAge}
+              keyboardType="numeric"
+              containerStyle={styles.ageInput}
+            />
           </View>
 
           <View style={styles.inputGroup}>
@@ -261,18 +254,16 @@ export default function CreatePetProfileScreen() {
             </View>
           </View>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Short Bio</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="Tell us about their favorite toys, treats, and personality..."
-              value={bio}
-              onChangeText={setBio}
-              multiline
-              numberOfLines={4}
-            />
-            <Text style={styles.charCount}>{bio.length}/300</Text>
-          </View>
+          <Input
+            label="Short Bio"
+            placeholder="Tell us about their favorite toys, treats, and personality..."
+            value={bio}
+            onChangeText={setBio}
+            multiline
+            numberOfLines={4}
+            maxLength={300}
+            hint={`${bio.length}/300`}
+          />
         </View>
       </ScrollView>
 
@@ -409,28 +400,9 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: COLORS.text,
     marginBottom: 8,
     marginLeft: 4,
-  },
-  input: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: COLORS.text,
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  charCount: {
-    fontSize: 12,
-    color: COLORS.textMuted,
-    textAlign: 'right',
-    marginTop: 4,
   },
   row: {
     flexDirection: 'row',

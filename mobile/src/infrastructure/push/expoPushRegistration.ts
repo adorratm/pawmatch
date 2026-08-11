@@ -77,7 +77,7 @@ export async function registerPushTokenWithBackend(): Promise<void> {
 
     await api.post('/notifications/push-token', {
       token,
-      platform: Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : 'unknown',
+      platform: Platform.OS === 'ios' ? 'ios' : 'android',
     });
     await AsyncStorage.setItem(STORAGE_KEY, token);
   } catch (e) {

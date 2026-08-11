@@ -28,6 +28,7 @@ export default function ChatScreen() {
   const route = useRoute();
   const insets = useSafeAreaInsets();
   const expoParams = useLocalSearchParams<{ id: string }>();
+  const [inputFocused, setInputFocused] = useState(false);
   const navId = (route.params as { id?: string } | undefined)?.id;
   const id = navId ?? expoParams.id;
   const { user } = useAuthStore();
@@ -118,11 +119,14 @@ export default function ChatScreen() {
 
         <View style={[styles.inputBar, { paddingBottom: insets.bottom + 10 }]}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, inputFocused && styles.inputFocused]}
             placeholder="Mesaj yazın..."
+            placeholderTextColor={COLORS.textMuted}
             value={inputText}
             onChangeText={setInputText}
             multiline
+            onFocus={() => setInputFocused(true)}
+            onBlur={() => setInputFocused(false)}
           />
           <TouchableOpacity style={styles.sendBtn} onPress={sendMessage}>
             <Ionicons name="send" size={20} color="#fff" />
@@ -161,12 +165,12 @@ const styles = StyleSheet.create({
   },
   headerName: {
     fontSize: 15,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#181611',
   },
   headerStatus: {
     fontSize: 11,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: COLORS.primary,
   },
   main: {
@@ -197,7 +201,7 @@ const styles = StyleSheet.create({
   },
   msgText: {
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-Medium',
+    fontFamily: 'Ubuntu-Medium',
   },
   msgTextThem: {
     color: '#181611',
@@ -217,10 +221,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f8f8',
     borderRadius: 24,
+    borderWidth: 1.5,
+    borderColor: COLORS.border,
     paddingHorizontal: 16,
     paddingVertical: 8,
     minHeight: 40,
     fontSize: 14,
+    color: COLORS.text,
+    ...(Platform.OS === 'web'
+      ? ({ outlineStyle: 'none', outlineWidth: 0 } as const)
+      : null),
+  },
+  inputFocused: {
+    borderColor: COLORS.primary,
   },
   sendBtn: {
     width: 44,

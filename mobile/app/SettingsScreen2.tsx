@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,15 +8,56 @@ import {
   Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from "expo-router/react-navigation";
+import { useNavigation } from 'expo-router/react-navigation';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { userRepository } from '@/infrastructure/repositories/ApiUserRepository';
+import { mergeAndSavePreferences } from '@/infrastructure/api/userPreferences';
+import { confirmDeleteAccount } from '@/presentation/utils/accountActions';
 
 export default function SettingsScreen2() {
   const navigation = useNavigation();
   const [showAge, setShowAge] = useState(true);
   const [showDistance, setShowDistance] = useState(true);
   const [allowMessages, setAllowMessages] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const u = await userRepository.getCurrentUser();
+        const p = (u?.profile?.preferences || {}) as {
+          showAge?: boolean;
+          showDistance?: boolean;
+          allowMessagesFromAnyone?: boolean;
+        };
+        if (cancelled) return;
+        if (typeof p.showAge === 'boolean') setShowAge(p.showAge);
+        if (typeof p.showDistance === 'boolean') setShowDistance(p.showDistance);
+        if (typeof p.allowMessagesFromAnyone === 'boolean') {
+          setAllowMessages(p.allowMessagesFromAnyone);
+        }
+      } finally {
+        if (!cancelled) setHydrated(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const t = setTimeout(() => {
+      mergeAndSavePreferences({
+        showAge,
+        showDistance,
+        allowMessagesFromAnyone: allowMessages,
+      }).catch(() => {});
+    }, 400);
+    return () => clearTimeout(t);
+  }, [hydrated, showAge, showDistance, allowMessages]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -80,7 +121,7 @@ export default function SettingsScreen2() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Hesap</Text>
           <View style={styles.settingsList}>
-            <TouchableOpacity style={styles.settingItem}>
+            <TouchableOpacity style={styles.settingItem} onPress={confirmDeleteAccount}>
               <Ionicons name="trash" size={24} color="#ef4444" />
               <Text style={[styles.settingTitle, styles.dangerText]}>Hesabı Sil</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
@@ -169,5 +210,3 @@ const styles = StyleSheet.create({
     color: '#ef4444',
   },
 });
-
-

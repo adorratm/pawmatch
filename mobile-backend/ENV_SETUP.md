@@ -42,7 +42,9 @@ JWT_REFRESH_EXPIRES_IN=30d
 # 1. Proje oluşturun
 # 2. APIs & Services > Credentials
 # 3. OAuth 2.0 Client ID oluşturun
-# 4. Authorized redirect URIs: http://localhost:3000/api/auth/google/callback
+# 4. Authorized redirect URIs:
+#    - Expo web: http://localhost:8081  (AuthSession — asıl web login)
+#    - Nest passport (opsiyonel): http://localhost:3000/api/auth/google/callback
 GOOGLE_CLIENT_ID=your_google_client_id_here
 GOOGLE_CLIENT_SECRET=your_google_client_secret_here
 

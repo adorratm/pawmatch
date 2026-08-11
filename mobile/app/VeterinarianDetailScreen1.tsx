@@ -8,9 +8,10 @@ import {
   TouchableOpacity,
   Dimensions,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRoute, useNavigation } from "expo-router/react-navigation";
+import { useRoute, useNavigation } from 'expo-router/react-navigation';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import api from '@/infrastructure/api/api';
@@ -20,8 +21,10 @@ const { width } = Dimensions.get('window');
 export default function VeterinarianDetailScreen1() {
   const route = useRoute();
   const navigation = useNavigation();
-  const { clinicId } = route.params as any;
+  const { clinicId } = (route.params as { clinicId?: string | number } | undefined) ?? {};
   const [clinic, setClinic] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
@@ -29,18 +32,59 @@ export default function VeterinarianDetailScreen1() {
   }, [clinicId]);
 
   const loadClinic = async () => {
+    if (clinicId == null || clinicId === '') {
+      setClinic(null);
+      setError('Klinik bilgisi bulunamadı.');
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
     try {
       const response = await api.get(`/veterinarians/${clinicId}`);
       setClinic(response.data);
-    } catch (error) {
-      console.error('Error loading clinic:', error);
+    } catch (err: any) {
+      const status = err?.response?.status;
+      setClinic(null);
+      setError(
+        status === 404
+          ? 'Bu klinik bulunamadı veya artık mevcut değil.'
+          : 'Klinik yüklenirken bir hata oluştu.',
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (!clinic) {
+  if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text>Yükleniyor...</Text>
+        <View style={styles.centered}>
+          <ActivityIndicator color={COLORS.primary} size="large" />
+          <Text style={styles.statusText}>Yükleniyor...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error || !clinic) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={[styles.header, styles.headerSolid]}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Veteriner Detayı</Text>
+          <View style={styles.spacer} />
+        </View>
+        <View style={styles.centered}>
+          <Ionicons name="alert-circle-outline" size={48} color={COLORS.textMuted} />
+          <Text style={styles.statusText}>{error || 'Klinik bulunamadı.'}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={loadClinic}>
+            <Text style={styles.retryButtonText}>Tekrar dene</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   }
@@ -81,7 +125,9 @@ export default function VeterinarianDetailScreen1() {
           <View style={styles.ratingRow}>
             <View style={styles.ratingBadge}>
               <Ionicons name="star" size={18} color="#fbbf24" />
-              <Text style={styles.ratingText}>{clinic.rating?.toFixed(1) || '4.8'}</Text>
+              <Text style={styles.ratingText}>
+                {Number.isFinite(Number(clinic.rating)) ? Number(clinic.rating).toFixed(1) : '4.8'}
+              </Text>
             </View>
             <Text style={styles.reviews}>{clinic.reviewCount || 120} Reviews</Text>
             <View style={styles.statusBadge}>
@@ -165,6 +211,33 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  centered: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    gap: 12,
+  },
+  statusText: {
+    fontSize: 15,
+    color: COLORS.textMuted,
+    textAlign: 'center',
+  },
+  retryButton: {
+    marginTop: 8,
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+  },
+  retryButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 14,
+  },
+  spacer: {
+    width: 24,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -183,6 +256,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: COLORS.text,
+  },
+  headerSolid: {
+    position: 'relative',
+    backgroundColor: COLORS.background,
   },
   heroImage: {
     width: width,

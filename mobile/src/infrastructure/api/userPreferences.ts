@@ -1,5 +1,4 @@
 import { userRepository } from '@/infrastructure/repositories/ApiUserRepository';
-import { useAuthStore } from '@/application/stores/authStore';
 
 function mergeNested(
   a: Record<string, unknown>,
@@ -34,5 +33,7 @@ export async function mergeAndSavePreferences(
     {}) as Record<string, unknown>;
   const next = mergeNested(prev, partial);
   const updated = await userRepository.updateProfile({ preferences: next });
+  // Lazy import: authStore → patiSubscriptionSync → userPreferences döngüsünü kırar
+  const { useAuthStore } = await import('@/application/stores/authStore');
   useAuthStore.getState().setUser(updated);
 }

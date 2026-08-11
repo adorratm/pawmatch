@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   logoText: {
     fontSize: 20,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     color: COLORS.primary,
   },
   content: {
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     textAlign: 'center',
     color: COLORS.text,
     marginBottom: 12,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: COLORS.textMuted,
     textAlign: 'center',
     lineHeight: 20,
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
   },
   secondaryButton: {
     height: 48,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     color: COLORS.primary,
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
   },
 });
 

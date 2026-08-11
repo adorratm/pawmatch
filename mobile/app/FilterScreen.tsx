@@ -138,15 +138,92 @@ export default function FilterScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Yaş Aralığı</Text>
-          <View style={styles.ageRange}>
-            <Text style={styles.ageText}>{minAge} - {maxAge} yaş</Text>
+          <View style={styles.rangeCard}>
+            <Text style={styles.rangeValue}>
+              {minAge} – {maxAge} yaş
+            </Text>
+            <View style={styles.stepperRow}>
+              <Text style={styles.stepperLabel}>Min</Text>
+              <View style={styles.stepperControls}>
+                <TouchableOpacity
+                  style={styles.stepperBtn}
+                  onPress={() => setMinAge((v) => Math.max(0, Math.min(v - 1, maxAge)))}
+                >
+                  <Ionicons name="remove" size={20} color={COLORS.primary} />
+                </TouchableOpacity>
+                <Text style={styles.stepperValue}>{minAge}</Text>
+                <TouchableOpacity
+                  style={styles.stepperBtn}
+                  onPress={() => setMinAge((v) => Math.min(v + 1, maxAge))}
+                >
+                  <Ionicons name="add" size={20} color={COLORS.primary} />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.stepperRow}>
+              <Text style={styles.stepperLabel}>Max</Text>
+              <View style={styles.stepperControls}>
+                <TouchableOpacity
+                  style={styles.stepperBtn}
+                  onPress={() => setMaxAge((v) => Math.max(minAge, v - 1))}
+                >
+                  <Ionicons name="remove" size={20} color={COLORS.primary} />
+                </TouchableOpacity>
+                <Text style={styles.stepperValue}>{maxAge}</Text>
+                <TouchableOpacity
+                  style={styles.stepperBtn}
+                  onPress={() => setMaxAge((v) => Math.min(20, v + 1))}
+                >
+                  <Ionicons name="add" size={20} color={COLORS.primary} />
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Maksimum Mesafe</Text>
-          <View style={styles.distanceRange}>
-            <Text style={styles.distanceText}>{maxDistance} km</Text>
+          <View style={styles.rangeCard}>
+            <Text style={styles.rangeValue}>{maxDistance} km</Text>
+            <View style={styles.distanceChips}>
+              {[5, 10, 25, 50, 100].map((km) => (
+                <TouchableOpacity
+                  key={km}
+                  style={[
+                    styles.distanceChip,
+                    maxDistance === km && styles.distanceChipActive,
+                  ]}
+                  onPress={() => setMaxDistance(km)}
+                >
+                  <Text
+                    style={[
+                      styles.distanceChipText,
+                      maxDistance === km && styles.distanceChipTextActive,
+                    ]}
+                  >
+                    {km} km
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={styles.stepperRow}>
+              <Text style={styles.stepperLabel}>Özel</Text>
+              <View style={styles.stepperControls}>
+                <TouchableOpacity
+                  style={styles.stepperBtn}
+                  onPress={() => setMaxDistance((v) => Math.max(1, v - 5))}
+                >
+                  <Ionicons name="remove" size={20} color={COLORS.primary} />
+                </TouchableOpacity>
+                <Text style={styles.stepperValue}>{maxDistance}</Text>
+                <TouchableOpacity
+                  style={styles.stepperBtn}
+                  onPress={() => setMaxDistance((v) => Math.min(200, v + 5))}
+                >
+                  <Ionicons name="add" size={20} color={COLORS.primary} />
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </View>
 
@@ -274,6 +351,78 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: COLORS.text,
+  },
+  rangeCard: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    gap: 14,
+  },
+  rangeValue: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: COLORS.text,
+    textAlign: 'center',
+  },
+  stepperRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  stepperLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.textMuted,
+  },
+  stepperControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  stepperBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepperValue: {
+    minWidth: 36,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '700',
+    color: COLORS.text,
+  },
+  distanceChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    justifyContent: 'center',
+  },
+  distanceChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  distanceChipActive: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  distanceChipText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.textMuted,
+  },
+  distanceChipTextActive: {
+    color: '#fff',
   },
   switchItem: {
     flexDirection: 'row',

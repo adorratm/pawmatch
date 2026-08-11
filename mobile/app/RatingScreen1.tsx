@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  TextInput,
   ActivityIndicator,
   Alert,
 } from 'react-native';
@@ -13,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, useNavigation } from "expo-router/react-navigation";
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { Input } from '@/presentation/components/forms/Input';
 import { ratingsService } from '@/infrastructure/api/ratings.service';
 
 export default function RatingScreen1() {
@@ -67,17 +67,16 @@ export default function RatingScreen1() {
         </View>
 
         <View style={styles.commentSection}>
-          <Text style={styles.sectionTitle}>Yorumunuz (Opsiyonel)</Text>
-          <TextInput
-            style={styles.commentInput}
+          <Input
+            label="Yorumunuz (Opsiyonel)"
             placeholder="Deneyiminizi paylaşın..."
             value={comment}
             onChangeText={setComment}
             multiline
             numberOfLines={6}
             maxLength={500}
+            hint={`${comment.length}/500`}
           />
-          <Text style={styles.charCount}>{comment.length}/500</Text>
         </View>
       </ScrollView>
 
@@ -163,23 +162,6 @@ const styles = StyleSheet.create({
   },
   commentSection: {
     marginBottom: 24,
-  },
-  commentInput: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-    fontSize: 14,
-    color: COLORS.text,
-    minHeight: 120,
-    textAlignVertical: 'top',
-  },
-  charCount: {
-    fontSize: 12,
-    color: COLORS.textMuted,
-    textAlign: 'right',
-    marginTop: 8,
   },
   footer: {
     padding: 24,

@@ -367,12 +367,12 @@ const styles = StyleSheet.create({
   },
   toggleText: {
     fontSize: 12,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#888',
   },
   toggleTextActive: {
     color: '#181611',
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
   },
   headerActions: {
     flexDirection: 'row',
@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
   },
   likerLabel: {
     fontSize: 11,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: COLORS.textMuted,
   },
   likerChips: {
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
   },
   likerChipText: {
     fontSize: 12,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#666',
   },
   likerChipTextActive: {
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
   },
   petName: {
     fontSize: 24,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#181611',
   },
   matchBadge: {
@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
   },
   matchText: {
     fontSize: 10,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: COLORS.primary,
   },
   breedRow: {
@@ -531,7 +531,7 @@ const styles = StyleSheet.create({
   },
   breedText: {
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: '#666',
   },
   suggestButton: {
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
   suggestButtonText: {
     color: '#fff',
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
   },
   actions: {
     flexDirection: 'row',
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#181611',
     textAlign: 'center',
   },
@@ -601,6 +601,6 @@ const styles = StyleSheet.create({
   refreshBtnText: {
     color: '#fff',
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
   },
 });

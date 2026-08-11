@@ -1,6 +1,10 @@
-import type { MapStyleElement } from 'react-native-maps';
-
 /** Google Maps benzeri açık tema (react-native-maps customMapStyle) */
+type MapStyleElement = {
+  elementType?: string;
+  featureType?: string;
+  stylers: Record<string, string>[];
+};
+
 export const GOOGLE_MAP_LIGHT_STYLE: MapStyleElement[] = [
   { elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
   { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },

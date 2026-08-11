@@ -6,12 +6,12 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-  TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { Input } from '@/presentation/components/forms/Input';
 import api from '@/infrastructure/api/api';
 import { PawmatchAdBanner } from '@/presentation/components/PawmatchAdBanner';
 
@@ -86,16 +86,14 @@ export default function ConversationsScreen() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color={COLORS.textMuted} style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Eşleşmelerde ara..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholderTextColor={COLORS.textMuted}
-        />
-      </View>
+      <Input
+        size="search"
+        leftIcon="search"
+        placeholder="Eşleşmelerde ara..."
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        containerStyle={styles.searchInputContainer}
+      />
 
       <PawmatchAdBanner />
 
@@ -142,25 +140,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e5e5e5',
   },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+  searchInputContainer: {
     marginHorizontal: 24,
     marginBottom: 16,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-  },
-  searchIcon: {
-    marginRight: 12,
-  },
-  searchInput: {
-    flex: 1,
-    height: 48,
-    fontSize: 14,
-    color: COLORS.text,
   },
   listContent: {
     paddingHorizontal: 24,

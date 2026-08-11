@@ -1,30 +1,63 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  TextInput,
   ActivityIndicator,
   Alert,
+  Linking,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from "expo-router/react-navigation";
+import { useNavigation } from 'expo-router/react-navigation';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { Input } from '@/presentation/components/forms/Input';
 import { supportService } from '@/infrastructure/api/support.service';
+
+const FAQ_ITEMS = [
+  {
+    id: 1,
+    question: 'Nasıl eşleşme yapabilirim?',
+    answer: 'Keşfet ekranından hayvan profillerini beğenerek eşleşme yapabilirsiniz.',
+  },
+  {
+    id: 2,
+    question: 'Mesaj göndermek için ne yapmalıyım?',
+    answer: 'Eşleştiğiniz kullanıcılarla otomatik olarak sohbet başlatabilirsiniz.',
+  },
+  {
+    id: 3,
+    question: 'Profilimi nasıl düzenlerim?',
+    answer: 'Profil ekranından “Profili Düzenle”ye dokunarak ad, soyad ve bio güncelleyebilirsiniz.',
+  },
+];
+
+function notify(title: string, message: string) {
+  if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    window.alert(`${title}\n\n${message}`);
+  } else {
+    Alert.alert(title, message);
+  }
+}
 
 export default function HelpSupportScreen() {
   const navigation = useNavigation();
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
-  const faqItems = [
-    { id: 1, question: 'Nasıl eşleşme yapabilirim?', answer: 'Keşfet ekranından hayvan profillerini beğenerek eşleşme yapabilirsiniz.' },
-    { id: 2, question: 'Mesaj göndermek için ne yapmalıyım?', answer: 'Eşleştiğiniz kullanıcılarla otomatik olarak sohbet başlatabilirsiniz.' },
-    { id: 3, question: 'Profilimi nasıl düzenlerim?', answer: 'Profil ekranından ayarlar bölümüne giderek profil bilgilerinizi düzenleyebilirsiniz.' },
-  ];
+  const filteredFaqs = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return FAQ_ITEMS;
+    return FAQ_ITEMS.filter(
+      (item) =>
+        item.question.toLowerCase().includes(q) || item.answer.toLowerCase().includes(q),
+    );
+  }, [searchQuery]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -38,56 +71,79 @@ export default function HelpSupportScreen() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.searchSection}>
-          <View style={styles.searchContainer}>
-            <Ionicons name="search" size={20} color={COLORS.textMuted} style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Sorunuzu arayın..."
-              placeholderTextColor={COLORS.textMuted}
-            />
-          </View>
+          <Input
+            size="search"
+            leftIcon="search"
+            placeholder="Sorunuzu arayın..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            containerStyle={styles.searchInputContainer}
+          />
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Sık Sorulan Sorular</Text>
-          {faqItems.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.faqItem}>
-              <Text style={styles.faqQuestion}>{item.question}</Text>
-              <Ionicons name="chevron-down" size={20} color={COLORS.textMuted} />
-            </TouchableOpacity>
-          ))}
+          {filteredFaqs.map((item) => {
+            const open = expandedId === item.id;
+            return (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.faqItem}
+                onPress={() => setExpandedId(open ? null : item.id)}
+                activeOpacity={0.8}
+              >
+                <View style={styles.faqHeader}>
+                  <Text style={styles.faqQuestion}>{item.question}</Text>
+                  <Ionicons
+                    name={open ? 'chevron-up' : 'chevron-down'}
+                    size={20}
+                    color={COLORS.textMuted}
+                  />
+                </View>
+                {open ? <Text style={styles.faqAnswer}>{item.answer}</Text> : null}
+              </TouchableOpacity>
+            );
+          })}
+          {filteredFaqs.length === 0 ? (
+            <Text style={styles.emptyText}>Aramanızla eşleşen soru bulunamadı.</Text>
+          ) : null}
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Bize Ulaşın</Text>
           <View style={styles.contactCard}>
-            <View style={styles.contactItem}>
+            <TouchableOpacity
+              style={styles.contactItem}
+              onPress={() => Linking.openURL('mailto:destek@pawmatch.com.tr')}
+            >
               <Ionicons name="mail" size={24} color={COLORS.primary} />
               <View style={styles.contactInfo}>
                 <Text style={styles.contactLabel}>E-posta</Text>
-                <Text style={styles.contactValue}>destek@pawmatch.com</Text>
+                <Text style={styles.contactValue}>destek@pawmatch.com.tr</Text>
               </View>
-            </View>
-            <View style={styles.contactItem}>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.contactItem, styles.contactItemLast]}
+              onPress={() => Linking.openURL('tel:+905551234567')}
+            >
               <Ionicons name="call" size={24} color={COLORS.primary} />
               <View style={styles.contactInfo}>
                 <Text style={styles.contactLabel}>Telefon</Text>
                 <Text style={styles.contactValue}>+90 555 123 4567</Text>
               </View>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Mesaj Gönder</Text>
-          <TextInput
-            style={styles.messageInput}
+          <Input
             placeholder="Sorunuzu veya önerinizi yazın..."
             value={message}
             onChangeText={setMessage}
             multiline
             numberOfLines={6}
-            placeholderTextColor={COLORS.textMuted}
+            containerStyle={styles.messageInputContainer}
           />
           <TouchableOpacity
             style={[styles.sendButton, (!message.trim() || sending) && styles.sendButtonDisabled]}
@@ -96,10 +152,10 @@ export default function HelpSupportScreen() {
               setSending(true);
               try {
                 await supportService.createTicket(message.trim(), 'Yardım talebi');
-                Alert.alert('Gönderildi', 'Mesajın destek ekibimize iletildi.');
+                notify('Gönderildi', 'Mesajın destek ekibimize iletildi.');
                 setMessage('');
               } catch (e: any) {
-                Alert.alert('Hata', e?.response?.data?.message || 'Gönderilemedi.');
+                notify('Hata', e?.response?.data?.message || 'Gönderilemedi.');
               } finally {
                 setSending(false);
               }
@@ -147,23 +203,11 @@ const styles = StyleSheet.create({
   searchSection: {
     marginBottom: 24,
   },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
+  searchInputContainer: {
+    marginBottom: 0,
   },
-  searchIcon: {
-    marginRight: 12,
-  },
-  searchInput: {
-    flex: 1,
-    height: 48,
-    fontSize: 14,
-    color: COLORS.text,
+  messageInputContainer: {
+    marginBottom: 16,
   },
   section: {
     marginBottom: 32,
@@ -175,9 +219,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   faqItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
@@ -185,11 +226,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e5e5e5',
   },
+  faqHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
+  },
   faqQuestion: {
     flex: 1,
     fontSize: 14,
     fontWeight: '600',
     color: COLORS.text,
+  },
+  faqAnswer: {
+    marginTop: 10,
+    fontSize: 13,
+    lineHeight: 20,
+    color: COLORS.textMuted,
+  },
+  emptyText: {
+    fontSize: 13,
+    color: COLORS.textMuted,
   },
   contactCard: {
     backgroundColor: '#fff',
@@ -203,6 +260,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
+  contactItemLast: {
+    marginBottom: 0,
+  },
   contactInfo: {
     marginLeft: 12,
   },
@@ -215,18 +275,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: COLORS.text,
-  },
-  messageInput: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-    fontSize: 14,
-    color: COLORS.text,
-    minHeight: 120,
-    textAlignVertical: 'top',
-    marginBottom: 16,
   },
   sendButton: {
     backgroundColor: COLORS.primary,
@@ -244,4 +292,3 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
-

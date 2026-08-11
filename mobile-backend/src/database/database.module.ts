@@ -69,7 +69,9 @@ import { UserPushToken } from './entities/user-push-token.entity';
           SupportTicket,
           UserPushToken,
         ],
-        synchronize: false, // Mevcut veritabanı yapısını korumak için kapalı
+        synchronize:
+          configService.get('DB_SYNCHRONIZE') === 'true' ||
+          configService.get('NODE_ENV') === 'development',
         logging: configService.get('NODE_ENV') === 'development',
       }),
       inject: [ConfigService],

@@ -1,44 +1,41 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { OAuth2Client } from 'google-auth-library';
+import { Credentials, OAuth2Client } from 'google-auth-library';
 import axios from 'axios';
 
 @Injectable()
 export class GoogleOAuthService {
-  private googleClient: OAuth2Client | null;
-  private googleAudiences: string[];
-
   constructor(private readonly configService: ConfigService) {
-    const googleClientId = this.configService.get('GOOGLE_CLIENT_ID');
-    const googleClientSecret = this.configService.get('GOOGLE_CLIENT_SECRET');
-    const googleClientIdsRaw = this.configService.get('GOOGLE_CLIENT_IDS');
+  }
 
-    this.googleAudiences = String(googleClientIdsRaw || '')
-      .split(',')
-      .map((v) => v.trim())
-      .filter(Boolean);
+  private resolveAudiences(preferredAudience?: string) {
+    return this.configService.get('GOOGLE_CLIENT_ID');
+  }
 
-    if (googleClientId && !this.googleAudiences.includes(googleClientId)) {
-      this.googleAudiences.push(googleClientId);
+  private createClient(clientId?: string) {
+    const secret = this.configService.get('GOOGLE_CLIENT_SECRET');
+    const effectiveId = clientId || this.configService.get('GOOGLE_CLIENT_ID');
+    if (!effectiveId) {
+      throw new UnauthorizedException(
+        'Google OAuth not configured. Set GOOGLE_CLIENT_ID/SECRET in mobile-backend/.env (same Web client as EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID).',
+      );
     }
-
-    if (googleClientId && googleClientId !== 'your_google_client_id_here') {
-      this.googleClient = new OAuth2Client(googleClientId, googleClientSecret);
-    } else {
-      this.googleClient = null;
-    }
+    return {
+      client: new OAuth2Client(effectiveId, secret),
+      clientId: effectiveId,
+    };
   }
 
   async getProfile(idToken: string, preferredAudience?: string) {
-    if (!this.googleClient) {
-      throw new UnauthorizedException('Google OAuth not configured');
+    const { client } = this.createClient(preferredAudience);
+    const audience = this.configService.get('GOOGLE_CLIENT_ID');
+    if (!audience) {
+      throw new UnauthorizedException(
+        'Google OAuth not configured. Set GOOGLE_CLIENT_ID in mobile-backend/.env.',
+      );
     }
 
-    const googleClientId = this.configService.get('GOOGLE_CLIENT_ID');
-    const dynamicAudiences = preferredAudience ? [preferredAudience] : [];
-    const mergedAudiences = [...dynamicAudiences, ...this.googleAudiences].filter(Boolean);
-    const audience = mergedAudiences.length > 0 ? mergedAudiences : googleClientId;
-    const ticket = await this.googleClient.verifyIdToken({
+    const ticket = await client.verifyIdToken({
       idToken,
       audience,
     });
@@ -84,30 +81,27 @@ export class GoogleOAuthService {
     codeVerifier?: string,
     clientId?: string,
   ) {
-    if (!this.googleClient && !clientId) {
-      throw new UnauthorizedException('Google OAuth not configured');
-    }
+    const { client: exchangeClient, clientId: effectiveClientId } = this.createClient(clientId);
 
-    const configuredClientId = this.configService.get('GOOGLE_CLIENT_ID');
-    const configuredClientSecret = this.configService.get('GOOGLE_CLIENT_SECRET');
-    const effectiveClientId = clientId || configuredClientId;
-    const effectiveClientSecret = effectiveClientId === configuredClientId ? configuredClientSecret : undefined;
-    const exchangeClient = new OAuth2Client(effectiveClientId, effectiveClientSecret);
+    const attempts: Array<{
+      code: string;
+      codeVerifier?: string;
+      redirect_uri?: string;
+    }> = [];
 
-    const tokenRequests: any[] = [];
-    const baseRequest: any = { code: authorizationCode };
-    if (codeVerifier) baseRequest.codeVerifier = codeVerifier;
+    const base = {
+      code: authorizationCode,
+      ...(codeVerifier ? { codeVerifier } : {}),
+    };
 
-    // 1) First try with redirect_uri (strict OAuth flow)
     if (redirectUri) {
-      tokenRequests.push({ ...baseRequest, redirect_uri: redirectUri });
+      attempts.push({ ...base, redirect_uri: redirectUri });
     }
-    // 2) Fallback for installed-app flows where redirect_uri may be omitted
-    tokenRequests.push({ ...baseRequest });
+    attempts.push({ ...base });
 
-    let lastError: any;
-    let tokens: any | undefined;
-    for (const req of tokenRequests) {
+    let lastError: unknown;
+    let tokens: Credentials | undefined;
+    for (const req of attempts) {
       try {
         const result = await exchangeClient.getToken(req);
         tokens = result.tokens;
@@ -132,4 +126,3 @@ export class GoogleOAuthService {
     throw new UnauthorizedException('Google code exchange failed');
   }
 }
-

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
-import MapView, { Marker, Callout } from 'react-native-maps';
+import { MapView, Marker, Callout } from '@/presentation/components/maps/RNMaps';
 import * as Location from 'expo-location';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';

@@ -5,24 +5,22 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  TextInput,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
 import { useNavigation, useRoute } from "expo-router/react-navigation";
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { Input } from '@/presentation/components/forms/Input';
 import api from '@/infrastructure/api/api';
 import { petsService } from '@/infrastructure/api/pets.service';
 
 export default function AppointmentManagementScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const expoClinic = useLocalSearchParams<{ clinicId: string }>().clinicId;
-  const navClinic = (route.params as { clinicId?: string } | undefined)?.clinicId;
-  const clinicId = navClinic ?? expoClinic;
+  const clinicId = (route.params as { clinicId?: string } | undefined)?.clinicId;
   const [clinic, setClinic] = useState<any>(null);
+  const [clinicError, setClinicError] = useState<string | null>(null);
   const [myPets, setMyPets] = useState<any[]>([]);
   const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
   const [selectedService, setSelectedService] = useState<any>(null);
@@ -38,6 +36,9 @@ export default function AppointmentManagementScreen() {
   useEffect(() => {
     if (clinicId) {
       loadClinic();
+    } else {
+      setClinic(null);
+      setClinicError('Klinik seçilmedi.');
     }
   }, [clinicId]);
 
@@ -56,10 +57,16 @@ export default function AppointmentManagementScreen() {
 
   const loadClinic = async () => {
     try {
+      setClinicError(null);
       const response = await api.get(`/veterinarians/${clinicId}`);
       setClinic(response.data);
-    } catch (error) {
-      console.error('Error loading clinic:', error);
+    } catch (error: any) {
+      setClinic(null);
+      setClinicError(
+        error?.response?.status === 404
+          ? 'Bu klinik bulunamadı.'
+          : 'Klinik bilgileri yüklenemedi.',
+      );
     }
   };
 
@@ -105,6 +112,9 @@ export default function AppointmentManagementScreen() {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {clinicError ? (
+          <Text style={styles.hintText}>{clinicError}</Text>
+        ) : null}
         {clinic && (
           <>
             <Text style={styles.clinicName}>{clinic.name}</Text>
@@ -198,9 +208,8 @@ export default function AppointmentManagementScreen() {
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Notlar (Opsiyonel)</Text>
-              <TextInput
-                style={styles.notesInput}
+              <Input
+                label="Notlar (Opsiyonel)"
                 placeholder="Randevu ile ilgili notlarınız..."
                 value={notes}
                 onChangeText={setNotes}
@@ -352,17 +361,6 @@ const styles = StyleSheet.create({
   },
   timeTextSelected: {
     color: '#fff',
-  },
-  notesInput: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-    fontSize: 14,
-    color: COLORS.text,
-    minHeight: 100,
-    textAlignVertical: 'top',
   },
   footer: {
     padding: 24,

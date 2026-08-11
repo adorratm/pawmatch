@@ -6,23 +6,17 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from "expo-router/react-navigation";
 import { useAuthStore } from '@/application/stores/authStore';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
+import { confirmDeleteAccount, confirmLogout } from '@/presentation/utils/accountActions';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
-  const { logout, user } = useAuthStore();
-  const handleLogout = () => {
-    Alert.alert('Hesaptan Çıkış', 'Çıkış yapmak istediğine emin misin?', [
-      { text: 'İptal', style: 'cancel' },
-      { text: 'Çıkış Yap', style: 'destructive', onPress: () => logout() },
-    ]);
-  };
+  const { user } = useAuthStore();
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -46,7 +40,7 @@ export default function ProfileScreen() {
               <Text style={styles.profileName}>
                 {user?.firstName} {user?.lastName}
               </Text>
-              <TouchableOpacity onPress={() => (navigation as any).navigate('Settings1')}>
+              <TouchableOpacity onPress={() => (navigation as any).navigate('EditProfile')}>
                 <Text style={styles.editProfileText}>Profili Düzenle</Text>
               </TouchableOpacity>
             </View>
@@ -117,11 +111,11 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.footerSection}>
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <TouchableOpacity style={styles.logoutButton} onPress={confirmLogout}>
             <Ionicons name="log-out-outline" size={18} color={COLORS.text} />
             <Text style={styles.logoutText}>Çıkış Yap</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.deleteButton}>
+          <TouchableOpacity style={styles.deleteButton} onPress={confirmDeleteAccount}>
             <Text style={styles.deleteText}>Hesabı Sil</Text>
           </TouchableOpacity>
           <View style={styles.versionWrap}>

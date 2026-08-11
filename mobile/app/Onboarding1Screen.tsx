@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#8a7a6a',
   },
   content: {
@@ -123,12 +123,12 @@ const styles = StyleSheet.create({
   badgeText: {
     color: COLORS.primary,
     fontSize: 12,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     letterSpacing: 1,
   },
   title: {
     fontSize: 30,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     textAlign: 'center',
     color: '#333333',
     marginBottom: 16,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 15,
-    fontFamily: 'PlusJakartaSans-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: '#8a7a6a',
     textAlign: 'center',
     lineHeight: 24,
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   nextButtonText: {
     color: '#fff',
     fontSize: 17,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
   },
 });
 

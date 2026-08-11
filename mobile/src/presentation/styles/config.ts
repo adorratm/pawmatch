@@ -17,4 +17,11 @@ export const COLORS = {
   success: '#10b981',
 };
 
+/** Loaded via `useAppFonts` — use these names in StyleSheet fontFamily */
+export const FONTS = {
+  regular: 'Ubuntu',
+  medium: 'Ubuntu-Medium',
+  bold: 'Ubuntu-Bold',
+} as const;
+
 

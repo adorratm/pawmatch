@@ -35,9 +35,12 @@ import InAppPurchasesScreen from '@app/InAppPurchasesScreen';
 import ProfileScreen from '@app/ProfileScreen';
 import FavoritesScreen from '@app/FavoritesScreen';
 import IncomingLikesScreen from '@app/IncomingLikesScreen';
+import EditProfileScreen from '@app/EditProfileScreen';
+import LegalDocumentScreen from '@app/LegalDocumentScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { COLORS } from '@/presentation/styles/config';
+import { COLORS, FONTS } from '@/presentation/styles/config';
+import { useAppFonts } from '@/presentation/styles/fonts';
 import { revenueCatService } from '@/infrastructure/purchases/revenueCat.service';
 
 const Stack = createNativeStackNavigator();
@@ -50,6 +53,7 @@ function MainTabs() {
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.textMuted,
         headerShown: false,
+        tabBarLabelStyle: { fontFamily: FONTS.medium },
       }}
     >
       <Tab.Screen
@@ -94,6 +98,7 @@ function MainTabs() {
 
 export default function AppNavigator() {
   const { isAuthenticated, isLoading } = useAuthStore();
+  const { fontsLoaded, fontError } = useAppFonts();
 
   useEffect(() => {
     let alive = true;
@@ -107,6 +112,10 @@ export default function AppNavigator() {
       alive = false;
     };
   }, []);
+
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
 
   if (isLoading) {
     return null; // Show loading screen
@@ -151,6 +160,8 @@ export default function AppNavigator() {
                 <Stack.Screen name="NotificationPreferences2" component={NotificationPreferencesScreen2} />
                 <Stack.Screen name="About" component={AboutScreen} />
                 <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
+                <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+                <Stack.Screen name="LegalDocument" component={LegalDocumentScreen} />
                 <Stack.Screen name="InAppPurchases" component={InAppPurchasesScreen} />
               </>
             )}

@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: COLORS.primary,
   },
   content: {
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   cardBadgeText: {
     color: '#ffffff',
     fontSize: 12,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
   },
   cardDetails: {
     flex: 1,
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   },
   petName: {
     fontSize: 22,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#111827',
   },
   locationRow: {
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: '#6b7280',
   },
   heartIcon: {
@@ -240,14 +240,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#111827',
     marginBottom: 12,
     textAlign: 'center',
   },
   description: {
     fontSize: 16,
-    fontFamily: 'PlusJakartaSans-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: '#4b5563',
     textAlign: 'center',
     lineHeight: 24,
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   nextButtonText: {
     color: '#fff',
     fontSize: 18,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
   },
 });
 

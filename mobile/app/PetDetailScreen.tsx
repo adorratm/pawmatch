@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
   photoCountText: {
     color: '#fff',
     fontSize: 10,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
   },
   content: {
     paddingHorizontal: 20,
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
   },
   nameText: {
     fontSize: 32,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#181611',
   },
   genderIcon: {
@@ -470,7 +470,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: '#666',
   },
   statsGrid: {
@@ -497,13 +497,13 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 10,
-    fontFamily: 'PlusJakartaSans-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: '#888',
     marginBottom: 2,
   },
   statValue: {
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#181611',
   },
   tagsContainer: {
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
   },
   tagText: {
     fontSize: 13,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#444',
   },
   sectionHeader: {
@@ -531,7 +531,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#181611',
   },
   verifiedBadge: {
@@ -544,7 +544,7 @@ const styles = StyleSheet.create({
   },
   verifiedText: {
     fontSize: 10,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#27ae60',
   },
   healthCard: {
@@ -574,13 +574,13 @@ const styles = StyleSheet.create({
   },
   healthLabel: {
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#181611',
     marginBottom: 2,
   },
   healthSub: {
     fontSize: 11,
-    fontFamily: 'PlusJakartaSans-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: '#888',
   },
   aboutSection: {
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
   },
   aboutText: {
     fontSize: 15,
-    fontFamily: 'PlusJakartaSans-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: '#444',
     lineHeight: 24,
   },

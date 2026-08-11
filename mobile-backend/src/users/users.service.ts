@@ -156,5 +156,24 @@ export class UsersService {
       return { avatar: avatarUrl };
     });
   }
+
+  /** Soft-delete: hesabı pasifleştirir (e-posta çakışmasını önlemek için anonymize). */
+  async deleteAccount(userId: number) {
+    return this.entityManager.transaction(async (manager) => {
+      const user = await manager.findOne(User, { where: { id: userId } });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      const stamp = Date.now();
+      user.isActive = false;
+      user.email = `deleted_${userId}_${stamp}@deleted.local`;
+      user.phone = null as any;
+      user.password = null as any;
+      user.firstName = 'Silinmiş';
+      user.lastName = 'Kullanıcı';
+      await manager.save(user);
+    });
+  }
 }
 

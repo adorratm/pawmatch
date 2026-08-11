@@ -46,7 +46,9 @@ export default function VeterinariansScreen() {
         <View style={styles.clinicMeta}>
           <View style={styles.ratingContainer}>
             <Ionicons name="star" size={16} color="#fbbf24" />
-            <Text style={styles.rating}>{item.rating?.toFixed(1) || '4.5'}</Text>
+            <Text style={styles.rating}>
+              {Number.isFinite(Number(item.rating)) ? Number(item.rating).toFixed(1) : '4.5'}
+            </Text>
           </View>
           <Text style={styles.reviews}>{item.reviewCount || 0} Yorum</Text>
           <View style={styles.statusBadge}>

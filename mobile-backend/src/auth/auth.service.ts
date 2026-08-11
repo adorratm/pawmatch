@@ -34,9 +34,9 @@ export class AuthService {
     const { email, password, firstName, lastName, phone } = registerDto;
 
     return this.entityManager.transaction(async (manager) => {
-      // Check if user exists
+      // Check if user exists (phone optional — undefined where TypeORM'de hata verir)
       const existingUser = await manager.findOne(User, {
-        where: [{ email }, { phone }],
+        where: phone ? [{ email }, { phone }] : [{ email }],
       });
 
       if (existingUser) {
@@ -104,7 +104,7 @@ export class AuthService {
       }
 
       const profile = oauthDto.idToken
-        ? await this.googleOAuthService.getProfile(oauthDto.idToken)
+        ? await this.googleOAuthService.getProfile(oauthDto.idToken, oauthDto.clientId)
         : oauthDto.accessToken
           ? await this.googleOAuthService.getProfileByAccessToken(String(oauthDto.accessToken))
           : await this.googleOAuthService.getProfileByAuthorizationCode(

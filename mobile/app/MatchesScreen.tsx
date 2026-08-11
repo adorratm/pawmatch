@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#181611',
   },
   section: {
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#181611',
   },
   newCountBadge: {
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   },
   newCountText: {
     fontSize: 12,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: COLORS.primary,
   },
   horizontalList: {
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
   },
   newMatchName: {
     fontSize: 12,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#181611',
     textAlign: 'center',
   },
@@ -287,12 +287,12 @@ const styles = StyleSheet.create({
   },
   convName: {
     fontSize: 16,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#181611',
   },
   convTime: {
     fontSize: 12,
-    fontFamily: 'PlusJakartaSans-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: '#aaa',
   },
   waitingMsgRow: {
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
   },
   waitingMsgText: {
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-Bold',
+    fontFamily: 'Ubuntu-Bold',
     color: COLORS.primary,
   },
   emptyContainer: {
@@ -312,12 +312,12 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    fontFamily: 'PlusJakartaSans-ExtraBold',
+    fontFamily: 'Ubuntu-Bold',
     color: '#181611',
   },
   emptySub: {
     fontSize: 14,
-    fontFamily: 'PlusJakartaSans-Medium',
+    fontFamily: 'Ubuntu-Medium',
     color: '#888',
     textAlign: 'center',
     paddingHorizontal: 40,

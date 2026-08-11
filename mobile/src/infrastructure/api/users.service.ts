@@ -6,7 +6,15 @@ export const usersService = {
     return response.data;
   },
 
-  async updateProfile(data: any) {
+  async updateProfile(data: {
+    firstName?: string;
+    lastName?: string;
+    bio?: string;
+    avatar?: string;
+    dateOfBirth?: string;
+    gender?: string;
+    preferences?: Record<string, unknown>;
+  }) {
     const response = await api.put('/users/me', data);
     return response.data;
   },
@@ -25,6 +33,10 @@ export const usersService = {
       },
     });
     return response.data;
+  },
+
+  async deleteAccount() {
+    await api.delete('/users/me');
   },
 };
 

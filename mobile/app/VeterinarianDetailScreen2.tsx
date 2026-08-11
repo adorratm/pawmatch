@@ -57,7 +57,11 @@ export default function VeterinarianDetailScreen2() {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.bookButton}
-          onPress={() => navigation.navigate('AppointmentManagement' as never)}
+          onPress={() =>
+            (navigation as any).navigate('AppointmentManagement', {
+              clinicId: String(clinicId),
+            })
+          }
         >
           <Text style={styles.bookButtonText}>Randevu Al</Text>
         </TouchableOpacity>

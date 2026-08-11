@@ -16,6 +16,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   setUser: (user: User | null) => void;
+  applyOAuthSession: (userJson: unknown) => Promise<void>;
   login: (credentials: LoginDto) => Promise<void>;
   register: (data: RegisterDto) => Promise<void>;
   logout: () => Promise<void>;
@@ -29,6 +30,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   setUser: (user: User | null) => {
     set({ user, isAuthenticated: !!user });
+  },
+
+  applyOAuthSession: async (userJson: unknown) => {
+    const user = User.fromJSON(userJson);
+    set({ user, isAuthenticated: true, isLoading: false });
+    await revenueCatService.logInAppUser(String(user.id));
+    await socketService.connect();
+    void syncPatiSubscriptionToBackendProfile();
+    void registerPushTokenWithBackend();
   },
 
   login: async (credentials) => {

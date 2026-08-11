@@ -82,7 +82,10 @@ export default function SettingsScreen1() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.profileSection}>
-          <TouchableOpacity style={styles.profileCard}>
+          <TouchableOpacity
+            style={styles.profileCard}
+            onPress={() => navigation.navigate('EditProfile' as never)}
+          >
             <View style={styles.profileImageContainer}>
               <Image source={{ uri: avatarUri }} style={styles.profileImage} />
               <View style={styles.editBadge}>
@@ -182,19 +185,28 @@ export default function SettingsScreen1() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Hesap</Text>
           <View style={styles.settingsList}>
-            <TouchableOpacity style={styles.settingItem}>
+            <TouchableOpacity
+              style={styles.settingItem}
+              onPress={() => navigation.navigate('EditProfile' as never)}
+            >
               <Ionicons name="person" size={24} color={COLORS.text} />
               <Text style={styles.settingTitle}>Profil Ayarları</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.settingItem}>
+            <TouchableOpacity
+              style={styles.settingItem}
+              onPress={() => navigation.navigate('Settings2' as never)}
+            >
               <Ionicons name="lock-closed" size={24} color={COLORS.text} />
               <Text style={styles.settingTitle}>Gizlilik</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.settingItem}>
+            <TouchableOpacity
+              style={styles.settingItem}
+              onPress={() => navigation.navigate('About' as never)}
+            >
               <Ionicons name="shield-checkmark" size={24} color={COLORS.text} />
-              <Text style={styles.settingTitle}>Güvenlik</Text>
+              <Text style={styles.settingTitle}>Güvenlik & Yasal</Text>
               <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
             </TouchableOpacity>
           </View>

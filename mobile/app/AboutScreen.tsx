@@ -5,9 +5,10 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from "expo-router/react-navigation";
+import { useNavigation } from 'expo-router/react-navigation';
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -35,38 +36,51 @@ export default function AboutScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionText}>
-            PawMatch, hayvan sahiplenmek isteyen ve hayvanını sahiplendirmek isteyen kullanıcıları buluşturan bir platformdur.
+            PawMatch, hayvan sahiplenmek isteyen ve hayvanını sahiplendirmek isteyen
+            kullanıcıları buluşturan bir platformdur.
           </Text>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>İletişim</Text>
-          <TouchableOpacity style={styles.linkItem}>
+          <TouchableOpacity
+            style={styles.linkItem}
+            onPress={() => Linking.openURL('mailto:destek@pawmatch.com.tr')}
+          >
             <Ionicons name="mail" size={20} color={COLORS.primary} />
-            <Text style={styles.linkText}>destek@pawmatch.com</Text>
+            <Text style={styles.linkText}>destek@pawmatch.com.tr</Text>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.linkItem}>
+          <TouchableOpacity
+            style={styles.linkItem}
+            onPress={() => Linking.openURL('https://www.pawmatch.com.tr')}
+          >
             <Ionicons name="globe" size={20} color={COLORS.primary} />
-            <Text style={styles.linkText}>www.pawmatch.com</Text>
+            <Text style={styles.linkText}>www.pawmatch.com.tr</Text>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Yasal</Text>
-          <TouchableOpacity style={styles.linkItem}>
-            <Text style={styles.linkText}>Kullanım Koşulları</Text>
+          <TouchableOpacity
+            style={styles.linkItem}
+            onPress={() => (navigation as any).navigate('LegalDocument', { doc: 'terms' })}
+          >
+            <Text style={[styles.linkText, styles.linkTextNoIcon]}>Kullanım Koşulları</Text>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.linkItem}>
-            <Text style={styles.linkText}>Gizlilik Politikası</Text>
+          <TouchableOpacity
+            style={styles.linkItem}
+            onPress={() => (navigation as any).navigate('LegalDocument', { doc: 'privacy' })}
+          >
+            <Text style={[styles.linkText, styles.linkTextNoIcon]}>Gizlilik Politikası</Text>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textMuted} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>© 2024 PawMatch. Tüm hakları saklıdır.</Text>
+          <Text style={styles.footerText}>© 2026 PawMatch. Tüm hakları saklıdır.</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -151,6 +165,9 @@ const styles = StyleSheet.create({
     color: COLORS.text,
     marginLeft: 12,
   },
+  linkTextNoIcon: {
+    marginLeft: 0,
+  },
   footer: {
     paddingVertical: 32,
     alignItems: 'center',
@@ -161,5 +178,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-

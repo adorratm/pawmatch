@@ -179,7 +179,7 @@ async function seed() {
   for (let i = 0; i < 50; i++) {
     const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
     const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-    const email = `user${i + 1}@pawmatch.com`;
+    const email = `user${i + 1}@pawmatch.com.tr`;
     const phone = `+90555${String(i + 1).padStart(7, '0')}`;
 
     let user = await userRepo.findOne({ where: { email } });
