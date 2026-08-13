@@ -11,7 +11,7 @@ PawMatch, hayvan sahiplenmek isteyen ve hayvanını sahiplendirmek isteyen kulla
 ```
 pawmatch/
 ├── mobile/                    # React Expo mobil uygulama
-├── mobile-backend/            # NestJS API (mobil için)
+├── backend/            # NestJS API (mobil için)
 ├── admin/                     # React admin paneli
 ├── admin-backend/             # NestJS API (admin için)
 ├── web/                       # Next.js tanıtım sitesi
@@ -36,7 +36,7 @@ Detaylı kurulum rehberi için [SETUP_GUIDE.md](docs/SETUP_GUIDE.md) dosyasına 
 
 ```bash
 # Her modül için ayrı ayrı kurulum yapın
-cd mobile-backend && yarn install
+cd backend && yarn install
 cd admin-backend && yarn install
 cd web-backend && yarn install
 cd mobile && yarn install

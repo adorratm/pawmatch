@@ -1,10 +1,10 @@
 # Environment Variables Setup Guide
 
-Bu dosya, `mobile-backend/.env` dosyasında hangi key'lerin bulunması gerektiğini açıklar.
+Bu dosya, `backend/.env` dosyasında hangi key'lerin bulunması gerektiğini açıklar.
 
 ## .env Dosyası Oluşturma
 
-`mobile-backend` klasöründe `.env` dosyası oluşturun ve aşağıdaki içeriği ekleyin:
+`backend` klasöründe `.env` dosyası oluşturun ve aşağıdaki içeriği ekleyin:
 
 ```env
 # ============================================
@@ -141,14 +141,14 @@ CORS_ORIGIN=http://localhost:3000,http://localhost:19006,http://localhost:8081
 
 ## Hızlı Başlangıç
 
-1. `mobile-backend` klasöründe `.env` dosyası oluşturun
+1. `backend` klasöründe `.env` dosyası oluşturun
 2. Yukarıdaki içeriği kopyalayın
 3. Zorunlu key'leri doldurun (DB, REDIS, JWT)
 4. Opsiyonel key'leri ihtiyacınıza göre doldurun
 5. Backend'i başlatın: `yarn start:dev`
 
 ## Auth Doğrulama (Seeder sonrası)
-1. `mobile-backend` klasöründe seeder’ı çalıştırın: `yarn seed`
+1. `backend` klasöründe seeder’ı çalıştırın: `yarn seed`
 2. Login:
    - URL: `POST http://localhost:3000/auth/login`
    - Body (JSON):

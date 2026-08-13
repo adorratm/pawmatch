@@ -6,7 +6,7 @@ PawMatch projesi başarıyla implement edildi. Tüm backend modülleri, veritaba
 
 ## Tamamlanan Bileşenler
 
-### Backend (NestJS) - `mobile-backend/`
+### Backend (NestJS) - `backend/`
 
 ✅ **Proje Yapısı**
 - NestJS projesi kuruldu
@@ -93,7 +93,7 @@ DB_DATABASE=pawmatch
 
 ### Backend
 ```bash
-cd mobile-backend
+cd backend
 yarn install
 # .env dosyasını düzenleyin
 yarn start:dev
@@ -109,7 +109,7 @@ yarn start
 
 ### Fake Data Yükleme
 ```bash
-cd mobile-backend
+cd backend
 yarn seed
 ```
 
@@ -143,7 +143,7 @@ yarn seed
 
 ```
 pawmatch/
-├── mobile-backend/          # NestJS Backend
+├── backend/          # NestJS Backend
 │   ├── src/
 │   │   ├── auth/
 │   │   ├── users/

@@ -59,7 +59,7 @@ redis-cli ping
 
 Her backend projesi için `.env` dosyası oluşturulmalıdır:
 
-#### mobile-backend/.env
+#### backend/.env
 ```env
 # Database
 DB_HOST=localhost
@@ -141,7 +141,7 @@ NODE_ENV=development
 ### 5. Mobile Backend Kurulumu
 
 ```bash
-cd mobile-backend
+cd backend
 yarn install
 yarn run migration:run
 yarn start:dev
@@ -191,7 +191,7 @@ yarn dev
 
 ### Migration Oluşturma
 ```bash
-cd mobile-backend
+cd backend
 yarn run migration:create --name=CreateUsersTable
 ```
 
@@ -226,7 +226,7 @@ yarn run migration:revert
 
 ### Backend Tests
 ```bash
-cd mobile-backend
+cd backend
 yarn test
 yarn test:e2e
 ```

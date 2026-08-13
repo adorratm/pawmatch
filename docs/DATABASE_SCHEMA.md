@@ -2,7 +2,7 @@
 
 ## Genel Bakış
 
-Tüm backend'ler (mobile-backend, admin-backend, web-backend) aynı PostgreSQL veritabanını kullanır.
+Tüm backend'ler (backend, admin-backend, web-backend) aynı PostgreSQL veritabanını kullanır.
 
 ## Tablolar
 
@@ -382,7 +382,7 @@ Değerlendirmeler
 
 ## Migration Stratejisi
 
-TypeORM migration'ları kullanılacak. Migration dosyaları `mobile-backend/src/migrations/` klasöründe tutulacak.
+TypeORM migration'ları kullanılacak. Migration dosyaları `backend/src/migrations/` klasöründe tutulacak.
 
 
 

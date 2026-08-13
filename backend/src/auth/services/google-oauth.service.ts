@@ -17,7 +17,7 @@ export class GoogleOAuthService {
     const effectiveId = clientId || this.configService.get('GOOGLE_CLIENT_ID');
     if (!effectiveId) {
       throw new UnauthorizedException(
-        'Google OAuth not configured. Set GOOGLE_CLIENT_ID/SECRET in mobile-backend/.env (same Web client as EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID).',
+        'Google OAuth not configured. Set GOOGLE_CLIENT_ID/SECRET in backend/.env (same Web client as EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID).',
       );
     }
     return {
@@ -31,7 +31,7 @@ export class GoogleOAuthService {
     const audience = this.configService.get('GOOGLE_CLIENT_ID');
     if (!audience) {
       throw new UnauthorizedException(
-        'Google OAuth not configured. Set GOOGLE_CLIENT_ID in mobile-backend/.env.',
+        'Google OAuth not configured. Set GOOGLE_CLIENT_ID in backend/.env.',
       );
     }
 

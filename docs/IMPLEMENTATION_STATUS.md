@@ -3,7 +3,7 @@
 ## Tamamlanan Görevler ✅
 
 ### 1. Proje Yapısı
-- ✅ Tüm klasör yapısı oluşturuldu (mobile, mobile-backend, admin, admin-backend, web, web-backend, docs)
+- ✅ Tüm klasör yapısı oluşturuldu (mobile, backend, admin, admin-backend, web, web-backend, docs)
 - ✅ Dökümantasyon klasörü ve dosyaları oluşturuldu
 
 ### 2. Dökümantasyon
@@ -85,7 +85,7 @@
 ## Notlar
 
 - Tüm backend'ler aynı PostgreSQL veritabanını kullanacak şekilde yapılandırıldı
-- Güvenlik önlemleri mobile-backend'de uygulandı
+- Güvenlik önlemleri backend'de uygulandı
 - Socket.IO real-time chat sistemi hazır
 - AWS S3 dosya yükleme sistemi hazır
 - OAuth entegrasyonları hazır (Google, Facebook - Apple için placeholder var)
