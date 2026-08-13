@@ -18,6 +18,7 @@ import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { User } from '../database/entities/user.entity';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
+import { imageUploadOptions } from '../uploads/multer.options';
 
 @Controller('pets')
 @UseGuards(JwtAuthGuard)
@@ -82,14 +83,19 @@ export class PetsController {
   }
 
   @Post(':id/photos')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', imageUploadOptions))
   async addPhoto(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: User,
     @UploadedFile() file: Express.Multer.File,
     @Body('isMain') isMain?: boolean,
   ) {
-    return this.petsService.addPhoto(id, user.id, file, isMain === true);
+    return this.petsService.addPhoto(
+      id,
+      user.id,
+      file,
+      isMain === true || String(isMain) === 'true',
+    );
   }
 
   @Delete(':id/photos/:photoId')

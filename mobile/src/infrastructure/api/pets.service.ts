@@ -1,4 +1,5 @@
 import api from '@/infrastructure/api/api';
+import { appendImageFile } from '@/infrastructure/api/imageUpload';
 
 export const petsService = {
   async getMyPets() {
@@ -25,17 +26,13 @@ export const petsService = {
     await api.delete(`/pets/${id}`);
   },
 
-  async uploadPhoto(petId: number, file: any, isMain?: boolean) {
+  async uploadPhoto(petId: number, fileUri: string, isMain?: boolean) {
     const formData = new FormData();
-    formData.append('file', file);
+    await appendImageFile(formData, fileUri);
     if (isMain) {
       formData.append('isMain', 'true');
     }
-    const response = await api.post(`/pets/${petId}/photos`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await api.post(`/pets/${petId}/photos`, formData);
     return response.data;
   },
 };

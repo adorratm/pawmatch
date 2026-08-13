@@ -28,6 +28,13 @@ import { PetFavorite } from './entities/pet-favorite.entity';
 import { ClinicReview } from './entities/clinic-review.entity';
 import { SupportTicket } from './entities/support-ticket.entity';
 import { UserPushToken } from './entities/user-push-token.entity';
+import { TranslationLocale } from './entities/translation-locale.entity';
+import { TranslationEntry } from './entities/translation-entry.entity';
+import { AdPlacement } from './entities/ad-placement.entity';
+import { AdCreative } from './entities/ad-creative.entity';
+import { SubscriptionPlan } from './entities/subscription-plan.entity';
+import { AppSetting } from './entities/app-setting.entity';
+import { CmsPage } from './entities/cms-page.entity';
 
 @Module({
   imports: [
@@ -68,6 +75,13 @@ import { UserPushToken } from './entities/user-push-token.entity';
           ClinicReview,
           SupportTicket,
           UserPushToken,
+          TranslationLocale,
+          TranslationEntry,
+          AdPlacement,
+          AdCreative,
+          SubscriptionPlan,
+          AppSetting,
+          CmsPage,
         ],
         synchronize:
           configService.get('DB_SYNCHRONIZE') === 'true' ||

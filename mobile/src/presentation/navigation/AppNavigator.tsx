@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import '@/i18n';
 import { loadRemoteTranslations } from '@/i18n/remote';
 import { useAuthStore } from '@/application/stores/authStore';
+import * as SplashScreen from 'expo-splash-screen';
 import WelcomeScreen from '@app/WelcomeScreen';
 import Onboarding1Screen from '@app/Onboarding1Screen';
 import Onboarding2Screen from '@app/Onboarding2Screen';
@@ -128,12 +129,14 @@ export default function AppNavigator() {
     };
   }, []);
 
-  if (!fontsLoaded && !fontError) {
-    return null;
-  }
+  useEffect(() => {
+    if ((fontsLoaded || fontError) && !isLoading) {
+      void SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError, isLoading]);
 
-  if (isLoading) {
-    return null; // Show loading screen
+  if ((!fontsLoaded && !fontError) || isLoading) {
+    return null;
   }
 
   return (

@@ -39,6 +39,7 @@ export class PasswordAuthService {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        role: user.role,
         profile: user.profile,
       },
     };

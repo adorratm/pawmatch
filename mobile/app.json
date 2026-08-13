@@ -5,7 +5,9 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
     "splash": {
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#6a3f2a"
     },
@@ -19,10 +21,19 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.pawmatchmobile.app"
+      "bundleIdentifier": "com.pawmatchmobile.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "PawMatch, pet profiline fotoğraf eklemek için kameranıza ihtiyaç duyar.",
+        "NSPhotoLibraryUsageDescription": "PawMatch, pet fotoğraflarını galerinizden seçmek için fotoğraflarınıza erişir.",
+        "NSMicrophoneUsageDescription": "PawMatch, video kaydı sırasında mikrofon kullanabilir.",
+        "NSLocationWhenInUseUsageDescription": "Yakındaki petleri ve veterinerleri göstermek için konumunuz kullanılır.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Keşif yarıçapını güncel tutmak için konum izni gerekir.",
+        "NSLocationAlwaysUsageDescription": "Keşif yarıçapını güncel tutmak için konum izni gerekir."
+      }
     },
     "android": {
       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#6a3f2a"
       },
       "package": "com.pawmatchmobile.app"

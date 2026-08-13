@@ -14,8 +14,8 @@ import { useNavigation } from "expo-router/react-navigation";
 import { COLORS } from '@/presentation/styles/config';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '@/presentation/components/forms/Input';
-import * as ImagePicker from 'expo-image-picker';
 import { petsService } from '@/infrastructure/api/pets.service';
+import { pickImageUri } from '@/infrastructure/api/imageUpload';
 import { useTranslation } from 'react-i18next';
 
 import { shadowStyle } from '@/presentation/styles/shadow';
@@ -36,16 +36,9 @@ export default function CreatePetProfileScreen() {
   const [photos, setPhotos] = useState<string[]>([]);
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled && result.assets[0]) {
-      setPhotos([...photos, result.assets[0].uri]);
-    }
+    const uri = await pickImageUri({ allowsEditing: true, aspect: [4, 3] });
+    if (!uri) return;
+    setPhotos((prev) => (prev.length >= 5 ? prev : [...prev, uri]));
   };
 
   const handleContinue = () => {
@@ -91,13 +84,7 @@ export default function CreatePetProfileScreen() {
       const petId = pet.id as number;
       const uris = photos.filter(Boolean);
       for (let i = 0; i < uris.length; i++) {
-        const uri = uris[i];
-        const mime =
-          uri.toLowerCase().includes('.png') || uri.includes('image/png')
-            ? 'image/png'
-            : 'image/jpeg';
-        const file = { uri, name: `pet-${petId}-${i}.jpg`, type: mime };
-        await petsService.uploadPhoto(petId, file as any, i === 0);
+        await petsService.uploadPhoto(petId, uris[i], i === 0);
       }
       Alert.alert(t('pets.alertCreatedTitle'), t('pets.alertCreatedMsg'), [
         { text: t('common.continue'), onPress: () => navigation.goBack() },
@@ -183,7 +170,11 @@ export default function CreatePetProfileScreen() {
         <Text style={styles.subtitle}>{t('pets.whoSubtitle')}</Text>
 
         <View style={styles.photoGrid}>
-          <TouchableOpacity style={styles.mainPhotoSlot} onPress={pickImage}>
+          <TouchableOpacity
+            style={styles.mainPhotoSlot}
+            onPress={pickImage}
+            onLongPress={() => setPhotos((prev) => prev.filter((_, i) => i !== 0))}
+          >
             {photos[0] ? (
               <Image source={{ uri: photos[0] }} style={styles.photo} />
             ) : (
@@ -198,7 +189,12 @@ export default function CreatePetProfileScreen() {
             )}
           </TouchableOpacity>
           {[1, 2, 3, 4].map((index) => (
-            <TouchableOpacity key={index} style={styles.photoSlot} onPress={pickImage}>
+            <TouchableOpacity
+              key={index}
+              style={styles.photoSlot}
+              onPress={pickImage}
+              onLongPress={() => setPhotos((prev) => prev.filter((_, i) => i !== index))}
+            >
               {photos[index] ? (
                 <Image source={{ uri: photos[index] }} style={styles.photo} />
               ) : (

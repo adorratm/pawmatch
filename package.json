@@ -1,0 +1,40 @@
+{
+  "name": "pawmatch",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PawMatch monorepo — mobile, API, admin, web",
+  "workspaces": [
+    "backend",
+    "mobile",
+    "admin",
+    "web"
+  ],
+  "scripts": {
+    "start:api": "yarn workspace backend start:dev",
+    "start:mobile": "yarn workspace pawmatch-mobile start",
+    "start:admin": "yarn workspace pawmatch-admin dev",
+    "start:web": "yarn workspace pawmatch-web dev",
+    "build:api": "yarn workspace backend build",
+    "build:admin": "yarn workspace pawmatch-admin build",
+    "build:web": "yarn workspace pawmatch-web build",
+    "seed": "yarn workspace backend seed",
+    "lint:api": "yarn workspace backend lint"
+  },
+  "packageManager": "yarn@4.18.0",
+  "volta": {
+    "node": "26.7.0",
+    "yarn": "4.18.0"
+  },
+  "resolutions": {
+    "@babel/core": "7.29.7",
+    "image-size": "portal:./mobile/vendor/image-size",
+    "image-size@npm:^1.0.2": "portal:./mobile/vendor/image-size",
+    "expo-modules-jsi@npm:~56.0.10": "patch:expo-modules-jsi@npm%3A56.0.10#./mobile/.yarn/patches/expo-modules-jsi-npm-56.0.10-70e070c3a6.patch",
+    "nanoid": "3.3.18",
+    "tar": "7.5.22",
+    "ws@~8.17.1": "8.21.0",
+    "socket.io-parser": "4.2.7",
+    "form-data": "4.0.6",
+    "uuid": "11.1.1"
+  }
+}

@@ -277,6 +277,8 @@
     "savedTitle": "Kaydedildi",
     "savedMsg": "Profilin güncellendi.",
     "saveFailed": "Profil güncellenemedi.",
+    "changePhoto": "Fotoğrafı değiştir",
+    "photoFailed": "Fotoğraf yüklenemedi.",
     "fallbackDisplayName": "Profil"
   },
   "chat": {

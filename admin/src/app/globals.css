@@ -1,0 +1,49 @@
+@import 'tailwindcss';
+
+:root {
+  --brand: #6a3f2a;
+  --brand-light: #82543e;
+  --brand-soft: #a67c5d;
+  --ink: #f7f3f0;
+  --muted: #b9a89a;
+  --surface: #1a100c;
+  --surface-2: #241610;
+  --card: rgba(247, 243, 240, 0.04);
+  --border: rgba(247, 243, 240, 0.12);
+  --danger: #e05a4f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  color: var(--ink);
+  background: var(--surface);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(166, 124, 93, 0.45);
+}
+
+input,
+select,
+textarea {
+  color-scheme: dark;
+}

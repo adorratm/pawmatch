@@ -2,7 +2,7 @@
 
 ## Genel Bakış
 
-Tüm backend'ler (backend, admin-backend, web-backend) aynı PostgreSQL veritabanını kullanır.
+Tüm uygulamalar (backend API — mobil + admin + public CMS) aynı PostgreSQL veritabanını kullanır.
 
 ## Tablolar
 

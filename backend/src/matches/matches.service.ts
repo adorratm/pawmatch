@@ -7,6 +7,7 @@ import { Pet, PetPurpose } from '../database/entities/pet.entity';
 import { Conversation } from '../database/entities/conversation.entity';
 import { User } from '../database/entities/user.entity';
 import { UserProfile } from '../database/entities/user-profile.entity';
+import { SubscriptionPlan } from '../database/entities/subscription-plan.entity';
 import { NotificationsService } from '../notifications/notifications.service';
 import type { LikePetDto } from './dto/like-pet.dto';
 import {
@@ -827,7 +828,11 @@ export class MatchesService {
     if (pati.usageWeekKey !== weekKey) {
       used = 0;
     }
-    if (used >= GOLD_SUPER_LIKE_WEEKLY) {
+    const goldPlan = await manager.findOne(SubscriptionPlan, {
+      where: { tier: 'gold', isActive: true },
+    });
+    const weeklyLimit = goldPlan?.superlikesWeeklyLimit ?? GOLD_SUPER_LIKE_WEEKLY;
+    if (used >= weeklyLimit) {
       throw new ForbiddenException('Haftalık süper beğeni hakkın doldu');
     }
   }

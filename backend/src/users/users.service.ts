@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { User } from '../database/entities/user.entity';
 import { UserProfile } from '../database/entities/user-profile.entity';
@@ -135,6 +135,9 @@ export class UsersService {
   }
 
   async uploadAvatar(userId: number, file: Express.Multer.File) {
+    if (!file?.buffer?.length) {
+      throw new BadRequestException('Dosya gerekli');
+    }
     return this.entityManager.transaction(async (manager) => {
       const user = await manager.findOne(User, {
         where: { id: userId },
@@ -149,7 +152,7 @@ export class UsersService {
         user.profile = manager.create(UserProfile, { userId });
       }
 
-      const avatarUrl = await this.uploadsService.uploadFile(file);
+      const avatarUrl = await this.uploadsService.uploadFile(file, 'avatars');
       user.profile.avatar = avatarUrl;
       await manager.save(user.profile);
 

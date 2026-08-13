@@ -1,4 +1,5 @@
 import api from '@/infrastructure/api/api';
+import { appendImageFile } from '@/infrastructure/api/imageUpload';
 
 export const usersService = {
   async getMe() {
@@ -24,14 +25,10 @@ export const usersService = {
     return response.data;
   },
 
-  async uploadAvatar(file: any) {
+  async uploadAvatar(fileUri: string) {
     const formData = new FormData();
-    formData.append('file', file);
-    const response = await api.post('/users/me/avatar', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    await appendImageFile(formData, fileUri);
+    const response = await api.post('/users/me/avatar', formData);
     return response.data;
   },
 

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { EntityManager, In } from 'typeorm';
 import { Pet } from '../database/entities/pet.entity';
 import { PetFavorite } from '../database/entities/pet-favorite.entity';
@@ -127,6 +127,9 @@ export class PetsService {
   }
 
   async addPhoto(petId: number, ownerId: number, file: Express.Multer.File, isMain?: boolean) {
+    if (!file?.buffer?.length) {
+      throw new BadRequestException('Dosya gerekli');
+    }
     return this.entityManager.transaction(async (manager) => {
       const pet = await manager.findOne(Pet, {
         where: { id: petId },
@@ -144,7 +147,7 @@ export class PetsService {
         throw new ForbiddenException('Bu pati sahiplendirildi; fotoğraf eklenemez');
       }
 
-      const url = await this.uploadsService.uploadFile(file);
+      const url = await this.uploadsService.uploadFile(file, 'pets');
 
       if (isMain) {
         // Unset other main photos

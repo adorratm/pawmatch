@@ -39,4 +39,7 @@ lerna-debug.log*
 .env.local
 .env.*.local
 
+# Local fallback uploads (S3 yokken)
+/uploads
+
 

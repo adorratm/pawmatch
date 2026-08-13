@@ -1,24 +1,56 @@
 import { DataSource } from 'typeorm';
-import { User } from '../database/entities/user.entity';
+import { User, UserRole } from '../database/entities/user.entity';
 import { UserProfile } from '../database/entities/user-profile.entity';
 import { UserLocation } from '../database/entities/user-location.entity';
+import { OAuthAccount } from '../database/entities/oauth-account.entity';
 import { Pet } from '../database/entities/pet.entity';
 import { PetPhoto } from '../database/entities/pet-photo.entity';
 import { Temperament } from '../database/entities/temperament.entity';
 import { PetTemperament } from '../database/entities/pet-temperament.entity';
 import { Match } from '../database/entities/match.entity';
 import { MatchLike } from '../database/entities/match-like.entity';
+import { MatchDislike } from '../database/entities/match-dislike.entity';
 import { Conversation } from '../database/entities/conversation.entity';
 import { Message } from '../database/entities/message.entity';
+import { MessageRead } from '../database/entities/message-read.entity';
 import { Notification } from '../database/entities/notification.entity';
+import { Rating } from '../database/entities/rating.entity';
 import { Veterinarian } from '../database/entities/veterinarian.entity';
 import { VeterinarianClinic } from '../database/entities/veterinarian-clinic.entity';
 import { VeterinarianService } from '../database/entities/veterinarian-service.entity';
 import { Appointment } from '../database/entities/appointment.entity';
+import { AppointmentSlot } from '../database/entities/appointment-slot.entity';
+import { Shelter } from '../database/entities/shelter.entity';
+import { ShelterPet } from '../database/entities/shelter-pet.entity';
+import { PetFavorite } from '../database/entities/pet-favorite.entity';
+import { ClinicReview } from '../database/entities/clinic-review.entity';
+import { SupportTicket } from '../database/entities/support-ticket.entity';
+import { UserPushToken } from '../database/entities/user-push-token.entity';
 import { Gender } from '../database/entities/user-profile.entity';
 import { PetSpecies, PetGender } from '../database/entities/pet.entity';
 import { AppointmentStatus } from '../database/entities/appointment.entity';
+import { TranslationLocale } from '../database/entities/translation-locale.entity';
+import { TranslationEntry } from '../database/entities/translation-entry.entity';
+import { AdPlacement } from '../database/entities/ad-placement.entity';
+import { AdCreative } from '../database/entities/ad-creative.entity';
+import { SubscriptionPlan } from '../database/entities/subscription-plan.entity';
+import { AppSetting } from '../database/entities/app-setting.entity';
+import { CmsPage } from '../database/entities/cms-page.entity';
+import { flattenObject } from '../common/i18n-flatten.util';
 import * as bcrypt from 'bcrypt';
+import * as dotenv from 'dotenv';
+import * as fs from 'fs';
+import * as path from 'path';
+
+const envPaths = [
+  path.resolve(__dirname, '../../.env'),
+  path.resolve(process.cwd(), '.env'),
+  path.resolve(process.cwd(), 'backend/.env'),
+];
+const envFile = envPaths.find((candidate) => fs.existsSync(candidate));
+if (envFile) {
+  dotenv.config({ path: envFile });
+}
 
 const AppDataSource = new DataSource({
   type: 'postgres',
@@ -31,19 +63,37 @@ const AppDataSource = new DataSource({
     User,
     UserProfile,
     UserLocation,
+    OAuthAccount,
     Pet,
     PetPhoto,
     Temperament,
     PetTemperament,
     Match,
     MatchLike,
+    MatchDislike,
     Conversation,
     Message,
+    MessageRead,
     Notification,
+    Rating,
     Veterinarian,
     VeterinarianClinic,
     VeterinarianService,
     Appointment,
+    AppointmentSlot,
+    Shelter,
+    ShelterPet,
+    PetFavorite,
+    ClinicReview,
+    SupportTicket,
+    UserPushToken,
+    TranslationLocale,
+    TranslationEntry,
+    AdPlacement,
+    AdCreative,
+    SubscriptionPlan,
+    AppSetting,
+    CmsPage,
   ],
   synchronize: true,
   logging: true,
@@ -175,6 +225,294 @@ async function seed() {
 
   await ensureUserProfileAndLocation(targetUser.id);
   users.push(targetUser);
+
+  // Admin account for management panel
+  const adminEmail = 'admin@pawmatch.local';
+  const hashedAdmin = await bcrypt.hash('admin123', 10);
+  let adminUser = await userRepo.findOne({ where: { email: adminEmail } });
+  if (!adminUser) {
+    adminUser = userRepo.create({
+      email: adminEmail,
+      password: hashedAdmin,
+      phone: '+905550000098',
+      firstName: 'Admin',
+      lastName: 'PawMatch',
+      emailVerified: true,
+      phoneVerified: true,
+      isActive: true,
+      role: UserRole.ADMIN,
+    });
+    adminUser = await userRepo.save(adminUser);
+  } else {
+    adminUser.password = hashedAdmin;
+    adminUser.role = UserRole.ADMIN;
+    adminUser.isActive = true;
+    await userRepo.save(adminUser);
+  }
+  await ensureUserProfileAndLocation(adminUser.id);
+  console.log(`Admin ready: ${adminEmail} / admin123`);
+
+  // CMS defaults: locales, plans, ads, settings
+  const localeRepo = AppDataSource.getRepository(TranslationLocale);
+  const entryRepo = AppDataSource.getRepository(TranslationEntry);
+  const placementRepo = AppDataSource.getRepository(AdPlacement);
+  const creativeRepo = AppDataSource.getRepository(AdCreative);
+  const planRepo = AppDataSource.getRepository(SubscriptionPlan);
+  const settingRepo = AppDataSource.getRepository(AppSetting);
+
+  let trLocale = await localeRepo.findOne({ where: { code: 'tr' } });
+  if (!trLocale) {
+    trLocale = await localeRepo.save(
+      localeRepo.create({ code: 'tr', name: 'Türkçe', isDefault: true, isActive: true }),
+    );
+  }
+
+  const trJsonPath = path.resolve(__dirname, '../../../mobile/src/i18n/resources/tr.json');
+  if (fs.existsSync(trJsonPath)) {
+    const entryCount = await entryRepo.count({ where: { localeId: trLocale.id } });
+    if (entryCount === 0) {
+      const raw = JSON.parse(fs.readFileSync(trJsonPath, 'utf8')) as Record<string, unknown>;
+      const flat = flattenObject(raw);
+      for (const [key, value] of Object.entries(flat)) {
+        await entryRepo.save(entryRepo.create({ localeId: trLocale.id, key, value }));
+      }
+      console.log(`Imported ${Object.keys(flat).length} i18n keys for tr`);
+    }
+  }
+
+  for (const plan of [
+    {
+      tier: 'free',
+      name: 'Ücretsiz',
+      description: 'Temel özellikler',
+      productId: null as string | null,
+      priceLabel: 'Ücretsiz',
+      features: ['Keşfet', 'Eşleşme', 'Sohbet'],
+      superlikesWeeklyLimit: 0,
+      removesAds: false,
+      sortOrder: 0,
+    },
+    {
+      tier: 'gold',
+      name: 'Pati Gold',
+      description: 'Reklamsız deneyim ve süper beğeniler',
+      productId: 'pati_gold_monthly',
+      priceLabel: 'Aylık',
+      features: ['Reklamsız', 'Haftalık süper beğeni', 'Kimler beğendi'],
+      superlikesWeeklyLimit: 3,
+      removesAds: true,
+      sortOrder: 1,
+    },
+  ]) {
+    const existing = await planRepo.findOne({ where: { tier: plan.tier } });
+    if (!existing) {
+      await planRepo.save(planRepo.create({ ...plan, isActive: true }));
+    }
+  }
+
+  let discoverPlacement = await placementRepo.findOne({ where: { key: 'discover' } });
+  if (!discoverPlacement) {
+    discoverPlacement = await placementRepo.save(
+      placementRepo.create({
+        key: 'discover',
+        name: 'Keşfet banner',
+        description: 'Keşfet ekranı alt reklamı',
+        isActive: true,
+      }),
+    );
+  }
+  const creativeCount = await creativeRepo.count({
+    where: { placementId: discoverPlacement.id },
+  });
+  if (creativeCount === 0) {
+    await creativeRepo.save(
+      creativeRepo.create({
+        placementId: discoverPlacement.id,
+        title: 'Pati Gold ile reklamsız gez',
+        body: 'Haftalık süper beğeni ve sınırsız keşfet.',
+        ctaLabel: 'Gold ol',
+        ctaUrl: 'pawmatch://iap',
+        sortOrder: 0,
+        isActive: true,
+      }),
+    );
+  }
+
+  for (const s of [
+    { key: 'maintenance_mode', value: 'false', description: 'Bakım modu' },
+    { key: 'min_app_version', value: '1.0.0', description: 'Minimum mobil sürüm' },
+    { key: 'web.heroTitle', value: 'PawMatch', description: 'Tanıtım sitesi kahraman başlığı' },
+    {
+      key: 'web.heroSubtitle',
+      value: 'Tüylü dostun için eşleşme. Sahiplen veya oyun arkadaşı bul — swipe ile.',
+      description: 'Tanıtım sitesi kahraman alt metni',
+    },
+    { key: 'web.appStoreUrl', value: '#', description: 'App Store indirme bağlantısı' },
+    { key: 'web.playStoreUrl', value: '#', description: 'Google Play indirme bağlantısı' },
+    { key: 'web.heroImage', value: '', description: 'Tanıtım sitesi kahraman görseli (S3 URL)' },
+  ]) {
+    const existing = await settingRepo.findOne({ where: { key: s.key } });
+    if (!existing) await settingRepo.save(settingRepo.create(s));
+  }
+
+  const cmsRepo = AppDataSource.getRepository(CmsPage);
+  const cmsPages = [
+    {
+      slug: 'hakkimizda',
+      title: 'Hakkımızda',
+      excerpt: 'PawMatch’in hikâyesi ve amacı.',
+      seoDescription: 'PawMatch hakkında: pet eşleşmesi, sahiplenme ve oyun arkadaşı.',
+      sortOrder: 10,
+      body: `PawMatch, tüylü dostların yeni arkadaşlar ve yuvalar bulması için kurulmuş bir eşleşme uygulamasıdır.
+
+## Neden varız?
+
+Profil oluştur, yakındaki patileri keşfet, karşılıklı beğenince sohbet et. Sahiplenmek isteyenlerle barınakları; oyun arkadaşı arayanları da aynı çatı altında buluşturuyoruz.
+
+## Ne yapıyoruz?
+
+- Konuma göre keşif ve filtre
+- Karşılıklı beğeni ile güvenli sohbet
+- Barınak ilanları ve veteriner randevusu
+- Moderasyon ve destek ekibi
+
+Ekibimiz hayvan refahını merkeze alır. Güvenli sohbet, şeffaf ilanlar ve yerel veteriner bağlantıları ile patilerin hayatını kolaylaştırmayı hedefliyoruz.
+
+## Nasıl başlarız?
+
+Uygulamayı indir, petini ekle, kaydırmaya başla. Ücretsiz plan keşfet ve eşleşme için yeterlidir; Pati Gold tempo isteyenler içindir.`,
+    },
+    {
+      slug: 'iletisim',
+      title: 'İletişim',
+      excerpt: 'Bize nasıl ulaşabileceğiniz.',
+      seoDescription: 'PawMatch iletişim: e-posta ve adres bilgileri.',
+      sortOrder: 20,
+      body: `Sorularınız, iş birliği talepleriniz veya destek için bize yazın.
+
+## İletişim kanalları
+
+- E-posta: hello@pawmatch.com.tr
+- Adres: Levent, Beşiktaş / İstanbul
+- Destek: Uygulama içi Destek ekranından ticket açabilirsiniz
+
+## Çalışma saatleri
+
+Hafta içi 10:00–18:00 arasında yanıtlamaya çalışırız. Acil hayvan sağlığı için lütfen en yakın veteriner kliniğine başvurun; PawMatch tıbbi acil hat değildir.
+
+## İş birliği
+
+Barınak, klinik veya belediye iş birlikleri için aynı e-posta üzerinden “İş birliği” konu başlığı ile yazabilirsiniz.`,
+    },
+    {
+      slug: 'gizlilik',
+      title: 'Gizlilik politikası',
+      excerpt: 'Kişisel verilerin nasıl işlendiği.',
+      seoDescription: 'PawMatch gizlilik politikası ve kişisel veri işleme esasları.',
+      sortOrder: 30,
+      body: `PawMatch; hesap, pet profili, konum (keşif için) ve cihaz bildirim jetonu gibi verileri hizmeti sunmak amacıyla işler.
+
+## Hangi veriler?
+
+- Kimlik ve iletişim: ad, e-posta, telefon
+- Pet profili ve fotoğraflar
+- Yaklaşık konum (keşif yarıçapı)
+- Cihaz bildirim jetonu
+
+## Nasıl kullanırız?
+
+Konum izni keşif yarıçapı için kullanılır. Fotoğraflar profil görselleri için saklanır. Veriler hesabınız silindiğinde veya talebiniz üzerine silinebilir.
+
+## Üçüncü taraflar
+
+Analitik veya reklam SDK’ları mağaza listesinde ayrıca belirtilir. Ayrıntılar için KVKK aydınlatma metnimize bakabilirsiniz.
+
+## Haklarınız
+
+Erişim, düzeltme, silme ve itiraz taleplerini hello@pawmatch.com.tr adresine iletebilirsiniz.`,
+    },
+    {
+      slug: 'kullanim-kosullari',
+      title: 'Kullanım koşulları',
+      excerpt: 'Hizmeti kullanırken geçerli kurallar.',
+      seoDescription: 'PawMatch kullanım koşulları.',
+      sortOrder: 40,
+      body: `PawMatch, pet sahipleri arasında eşleşme ve iletişim sağlar. Kullanıcılar doğru bilgi vermek, diğer kullanıcılara saygılı olmak ve yasadışı içerik paylaşmamakla yükümlüdür.
+
+## Hesap ve içerik
+
+Yanıltıcı ilan, saldırgan mesaj veya hayvan refahına aykırı davranış hesap askısına yol açabilir.
+
+## Abonelik
+
+Pati Gold aboneliği uygulama içi satın alma ile yönetilir. İptal ve iade mağaza kurallarına tabidir.
+
+## Sorumluluk
+
+Hizmet “olduğu gibi” sunulur. Kullanıcılar buluşmaları kendi sorumluluklarında planlar. Uygulamayı kullanarak bu koşulları kabul etmiş sayılırsınız.`,
+    },
+    {
+      slug: 'kvkk',
+      title: 'KVKK aydınlatma metni',
+      excerpt: '6698 sayılı Kanun kapsamında bilgilendirme.',
+      seoDescription: 'PawMatch KVKK aydınlatma metni.',
+      sortOrder: 50,
+      body: `6698 sayılı Kişisel Verilerin Korunması Kanunu uyarınca veri sorumlusu PawMatch’tir.
+
+## İşlenen veriler
+
+- Kimlik (ad, e-posta)
+- İletişim ve konum (keşif)
+- Pet profilleri
+- Kullanım kayıtları
+
+## Amaç
+
+Hesap yönetimi, eşleşme, bildirim ve yasal yükümlülükler.
+
+## Haklarınız
+
+Bilgi talep etme, düzeltme, silme ve itiraz. Taleplerinizi hello@pawmatch.com.tr adresine iletebilirsiniz.
+
+## Saklama
+
+Hesap aktifken veriler hizmet için tutulur. Silme talebinden sonra yasal zorunluluklar saklı kalmak kaydıyla silinir veya anonimleştirilir.`,
+    },
+    {
+      slug: 'cerez-politikasi',
+      title: 'Çerez politikası',
+      excerpt: 'Sitede kullanılan çerezler.',
+      seoDescription: 'PawMatch çerez politikası.',
+      sortOrder: 60,
+      body: `Tanıtım sitemiz oturum ve tercih çerezleri kullanabilir. Zorunlu çerezler sitenin çalışması içindir.
+
+## Çerez türleri
+
+- Zorunlu: oturum ve güvenlik
+- Tercih: dil veya benzeri seçimler
+- Analitik: performans ölçümü (kullanılırsa)
+
+## Mobil uygulama
+
+Mobil uygulama çerez değil, cihaz bildirim jetonu kullanır. Tarayıcı ayarlarınızdan analitik çerezleri reddedebilirsiniz.
+
+## Güncelleme
+
+Bu metin değişirse sitede yayın tarihi güncellenir.`,
+    },
+  ];
+  for (const page of cmsPages) {
+    const existing = await cmsRepo.findOne({ where: { slug: page.slug } });
+    if (!existing) {
+      await cmsRepo.save(cmsRepo.create({ ...page, isPublished: true }));
+    } else if ((existing.body?.length ?? 0) < 600) {
+      existing.title = page.title;
+      existing.excerpt = page.excerpt;
+      existing.body = page.body;
+      existing.seoDescription = page.seoDescription;
+      await cmsRepo.save(existing);
+    }
+  }
 
   for (let i = 0; i < 50; i++) {
     const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];

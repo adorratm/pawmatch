@@ -27,6 +27,9 @@ export class SupportTicket {
   @Column({ type: 'varchar', length: 32, default: 'open' })
   status: string;
 
+  @Column({ type: 'text', nullable: true })
+  adminNote: string | null;
+
   @CreateDateColumn()
   createdAt: Date;
 

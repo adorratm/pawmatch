@@ -8,6 +8,7 @@ import {
   Alert,
   ActivityIndicator,
   Platform,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from 'expo-router/react-navigation';
@@ -17,6 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Input } from '@/presentation/components/forms/Input';
 import { useAuthStore } from '@/application/stores/authStore';
 import { usersService } from '@/infrastructure/api/users.service';
+import { pickImageUri } from '@/infrastructure/api/imageUpload';
 import { User } from '@/domain/entities/User';
 
 function showAlert(title: string, message: string) {
@@ -35,6 +37,25 @@ export default function EditProfileScreen() {
   const [lastName, setLastName] = useState(user?.lastName || '');
   const [bio, setBio] = useState(user?.profile?.bio || '');
   const [saving, setSaving] = useState(false);
+  const [avatarUri, setAvatarUri] = useState(user?.profile?.photoUrl || '');
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  const handlePickAvatar = async () => {
+    const uri = await pickImageUri({ allowsEditing: true, aspect: [1, 1] });
+    if (!uri) return;
+    setUploadingAvatar(true);
+    try {
+      const data = await usersService.uploadAvatar(uri);
+      const next = data?.avatar as string | undefined;
+      if (next) setAvatarUri(next);
+      const me = await usersService.getMe();
+      setUser(User.fromJSON(me));
+    } catch (e: any) {
+      showAlert(t('common.error'), e?.response?.data?.message || t('profile.photoFailed'));
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   const handleSave = async () => {
     if (!firstName.trim() || !lastName.trim()) {
@@ -75,6 +96,23 @@ export default function EditProfileScreen() {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <TouchableOpacity style={styles.avatarWrap} onPress={handlePickAvatar} disabled={uploadingAvatar}>
+          {avatarUri ? (
+            <Image source={{ uri: avatarUri }} style={styles.avatar} />
+          ) : (
+            <View style={[styles.avatar, styles.avatarPh]}>
+              <Ionicons name="person" size={36} color={COLORS.textMuted} />
+            </View>
+          )}
+          <View style={styles.avatarBadge}>
+            {uploadingAvatar ? (
+              <ActivityIndicator color="#fff" size="small" />
+            ) : (
+              <Ionicons name="camera" size={14} color="#fff" />
+            )}
+          </View>
+        </TouchableOpacity>
+        <Text style={styles.avatarHint}>{t('profile.changePhoto')}</Text>
         <Input
           label={t('profile.labelFirstName')}
           value={firstName}
@@ -125,5 +163,25 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 18, fontWeight: '700', color: COLORS.text },
   saveText: { fontSize: 16, fontWeight: '700', color: COLORS.primary },
   content: { flex: 1, padding: 24 },
+  avatarWrap: { alignSelf: 'center', marginBottom: 8 },
+  avatar: { width: 96, height: 96, borderRadius: 48, backgroundColor: '#eee' },
+  avatarPh: { alignItems: 'center', justifyContent: 'center' },
+  avatarBadge: {
+    position: 'absolute',
+    right: 2,
+    bottom: 2,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: COLORS.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarHint: {
+    textAlign: 'center',
+    color: COLORS.textMuted,
+    fontSize: 13,
+    marginBottom: 20,
+  },
   disabledField: { opacity: 0.7 },
 });

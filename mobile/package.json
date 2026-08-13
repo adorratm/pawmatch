@@ -13,7 +13,7 @@
     "@expo/vector-icons": "^15.1.1",
     "@gorhom/bottom-sheet": "^5.2.14",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "@react-native/metro-config": "^0.86.2",
+    "@react-native/metro-config": "0.86.2",
     "axios": "^1.19.0",
     "babel-plugin-module-resolver": "^5.0.3",
     "expo": "~57.0.12",
@@ -51,8 +51,8 @@
   "devDependencies": {
     "@babel/core": "^8.0.1",
     "@types/react": "~19.2.18",
-    "@types/react-native-web": "^0",
-    "eas-cli": "^21.7.1",
+    "@types/react-native-web": "^0.19.2",
+    "eas-cli": "^21.8.0",
     "typescript": "~6.0.3"
   },
   "private": true,

@@ -22,6 +22,7 @@ import {
   revenueCatService,
 } from '@/infrastructure/purchases/revenueCat.service';
 import { syncPatiSubscriptionToBackendProfile } from '@/infrastructure/api/patiSubscriptionSync';
+import { plansService, type SubscriptionPlanDto } from '@/infrastructure/api/plans.service';
 
 import { shadowStyle } from '@/presentation/styles/shadow';
 function isUserCancelled(e: unknown): boolean {
@@ -42,13 +43,17 @@ export default function InAppPurchasesScreen() {
   const [loadingOfferings, setLoadingOfferings] = useState(true);
   const [purchasingId, setPurchasingId] = useState<string | null>(null);
   const [restoring, setRestoring] = useState(false);
+  const [cmsGold, setCmsGold] = useState<SubscriptionPlanDto | null>(null);
 
-  const FEATURES = [
-    t('purchases.featureUnlimitedLikes'),
-    t('purchases.featureSeeWhoLiked'),
-    t('purchases.featureAdFree'),
-    t('purchases.featurePrioritySupport'),
-  ];
+  const FEATURES =
+    cmsGold?.features?.length
+      ? cmsGold.features
+      : [
+          t('purchases.featureUnlimitedLikes'),
+          t('purchases.featureSeeWhoLiked'),
+          t('purchases.featureAdFree'),
+          t('purchases.featurePrioritySupport'),
+        ];
 
   const refreshStatus = useCallback(async () => {
     try {
@@ -81,6 +86,10 @@ export default function InAppPurchasesScreen() {
   useEffect(() => {
     void refreshStatus();
     void loadOfferings();
+    plansService.listActive().then((plans) => {
+      const gold = plans.find((p) => p.tier === 'gold') ?? null;
+      setCmsGold(gold);
+    });
   }, [refreshStatus, loadOfferings]);
 
   const onPurchase = async (pkg: PurchasesPackage) => {
